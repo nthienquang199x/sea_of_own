@@ -51,6 +51,9 @@ class AppIcons {
   //Nutrition
   static const ic_flash = "assets/icons/ic_flash.svg";
   static const ic_arrow_right = "assets/icons/ic_arrow_right.svg";
+
+  //Saved List
+  static const ic_chevron_right = "assets/icons/ic_chevron_right.svg";
 }
 
 class AppImages {

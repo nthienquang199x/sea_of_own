@@ -87,7 +87,7 @@ class AppColorScheme {
       );
 
   factory AppColorScheme.dark() => const AppColorScheme(
-        primary: AppColor.primary,
+        primary: AppColor.primaryDark,
         appBarBackground: AppColor.backgroundDark,
         scaffoldBackgroundColor: AppColor.backgroundDark,
         cardColor: AppColor.cardDark,
@@ -117,7 +117,7 @@ class AppColorScheme {
 }
 
 class AppColor {
-  static const primary = Color(0xFF417afe);
+  static const primary = Color(0xFF141414);
   static const primary10 = Color(0xFFDF7838);
   static const base10 = Color(0xFFFAF8F6);
   static const base20 = Color(0xFFDFD6D2);

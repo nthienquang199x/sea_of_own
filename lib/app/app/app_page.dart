@@ -1,7 +1,6 @@
 import 'package:app_base/app/config/routes.dart';
-import 'package:app_base/features/products/products_page.dart';
+import 'package:app_base/features/profile/profile_page.dart';
 import 'package:app_base/features/splash/splash_page.dart';
-import 'package:app_base/models/category.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
@@ -60,9 +59,28 @@ class _AppPageState extends BaseState<AppState, AppCubit, AppPage> {
         //     updatedAt: DateTime.now(),
         //   ),
         // );
-        return ProductsPage(
-          category: Category(name: 'Watches'),
-        );
+        // return ProductsPage(
+        //   category: Category(name: 'Watches'),
+        // );
+        return const ProfilePage();
+      // return ProductPage(
+      //     product: Product(
+      //   id: '1',
+      //   name: 'Oblong Watch',
+      //   price: 450.00,
+      //   currency: 'CA\$',
+      //   description:
+      //       'Oblong is a bold, contemporary take on the classic rectangular timepiece. A hybrid of past and present with a modernist edge.',
+      //   images: [
+      //     'https://example.com/watch1.jpg',
+      //     'https://example.com/watch2.jpg',
+      //     'https://example.com/watch3.jpg',
+      //   ],
+      //   category: 'Watches',
+      //   isAvailable: true,
+      //   createdAt: DateTime.now().subtract(const Duration(days: 30)),
+      //   updatedAt: DateTime.now(),
+      // ));
       case PageStatus.error:
         return Container();
     }

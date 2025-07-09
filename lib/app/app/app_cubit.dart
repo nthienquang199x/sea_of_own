@@ -13,7 +13,7 @@ import 'app_state.dart';
 class AppCubit extends BaseCubit<AppState> {
   AppCubit()
       : super(AppState(
-            status: PageStatus.loading, appTheme: AppThemeData.light()));
+            status: PageStatus.loading, appTheme: AppThemeData.dark()));
 
   final AppRouter appRouter = AppRouter();
   final UserService _userService = UserService();

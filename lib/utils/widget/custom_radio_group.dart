@@ -1,10 +1,8 @@
-import 'package:app_base/app/theme/colors.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/spacer_widget.dart';
 import 'package:flutter/material.dart';
 
 class CustomRadioGroup<T> extends StatelessWidget {
-  final String title;
   final T? selected;
   final List<T> options;
   final void Function(T?) onChanged;
@@ -12,7 +10,6 @@ class CustomRadioGroup<T> extends StatelessWidget {
 
   const CustomRadioGroup({
     super.key,
-    required this.title,
     required this.selected,
     required this.options,
     required this.onChanged,
@@ -24,24 +21,27 @@ class CustomRadioGroup<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: context.myTheme.textThemeT1.body.copyWith(
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        const VSpacing(spacing: 8),
         Column(
           children: options.map((option) {
             final label = itemLabelBuilder?.call(option) ?? option.toString();
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: CustomRadio<T>(
-                value: option,
-                groupValue: selected,
-                onChanged: onChanged,
-                label: label,
-              ),
+            return Column(
+              children: [
+                CustomRadio<T>(
+                  value: option,
+                  groupValue: selected,
+                  onChanged: onChanged,
+                  label: label,
+                ),
+                if (option != options.last)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Divider(
+                      color: context.myTheme.colorScheme.separator1,
+                      height: 1,
+                      thickness: 1,
+                    ),
+                  ),
+              ],
             );
           }).toList(),
         ),
@@ -124,18 +124,22 @@ class CustomRadio<T> extends StatelessWidget {
     return GestureDetector(
       onTap: () => onChanged(value),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Text(
+            label,
+            style: context.myTheme.textThemeT1.title.copyWith(
+              color: context.myTheme.colorScheme.foreground,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const HSpacing(spacing: 8),
           Container(
             width: 24,
             height: 24,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: isSelected
-                    ? AppColor.colorDF7838.withOpacity(0.8)
-                    : AppColor.base90,
-                width: 1,
-              ),
+              color: context.myTheme.colorScheme.separator1,
             ),
             child: Center(
               child: Container(
@@ -143,19 +147,13 @@ class CustomRadio<T> extends StatelessWidget {
                 height: 12,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected ? AppColor.colorDF7838 : AppColor.base90,
+                  color: isSelected
+                      ? context.myTheme.colorScheme.foreground
+                      : Colors.transparent,
                 ),
               ),
             ),
           ),
-          const HSpacing(spacing: 8),
-          Text(
-            label,
-            style: context.myTheme.textThemeT1.title.copyWith(
-              color: AppColor.base30,
-              fontWeight: FontWeight.w400,
-            ),
-          )
         ],
       ),
     );
