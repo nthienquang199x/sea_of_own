@@ -1,5 +1,7 @@
+import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -46,6 +48,7 @@ class LoginPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Handle Apple login
+                    context.router.replaceNamed(Routes.home);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.myTheme.colorScheme.foreground,
@@ -83,6 +86,7 @@ class LoginPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Handle Google login
+                    context.router.replaceNamed(Routes.home);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.myTheme.colorScheme.foreground,

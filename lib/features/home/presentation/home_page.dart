@@ -1,6 +1,9 @@
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/core/network/base/api_client.dart';
+import 'package:app_base/features/profile/profile_page.dart';
+import 'package:app_base/features/saved_list/saved_list_page.dart';
+import 'package:app_base/features/search/search_page.dart';
 import 'package:app_base/models/category.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:auto_route/auto_route.dart';
@@ -20,7 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
-  int currentIndex = 0;
+  NavigationType currentType = NavigationType.discover;
   final List<Category> categories = [
     Category(name: 'Tech & Audio'),
     Category(name: 'Tools'),
@@ -44,12 +47,25 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
   Widget buildByState(BuildContext context, HomeState state) {
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
-      body: _buildBody(),
+      body: SafeArea(child: _buildBody()),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
   Widget _buildBody() {
+    switch (currentType) {
+      case NavigationType.discover:
+        return _buildHome();
+      case NavigationType.search:
+        return const SearchPage();
+      case NavigationType.bookmarks:
+        return const SavedListPage();
+      case NavigationType.profile:
+        return const ProfilePage();
+    }
+  }
+
+  Widget _buildHome() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -607,13 +623,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: NavigationType.values.map((e) {
-          final index = NavigationType.values.indexOf(e);
-          final isSelected = currentIndex == index;
+          final isSelected = currentType == e;
 
           return GestureDetector(
             onTap: () {
               setState(() {
-                currentIndex = index;
+                currentType = e;
               });
             },
             behavior: HitTestBehavior.translucent,

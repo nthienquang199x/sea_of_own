@@ -1,5 +1,5 @@
 import 'package:app_base/app/config/routes.dart';
-import 'package:app_base/features/profile/profile_page.dart';
+import 'package:app_base/features/login/login_page.dart';
 import 'package:app_base/features/splash/splash_page.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,7 @@ class _AppPageState extends BaseState<AppState, AppCubit, AppPage> {
         // return ProductsPage(
         //   category: Category(name: 'Watches'),
         // );
-        return const ProfilePage();
+        return const LoginPage();
       // return ProductPage(
       //     product: Product(
       //   id: '1',

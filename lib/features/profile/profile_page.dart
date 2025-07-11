@@ -42,127 +42,129 @@ class _ProfilePageState extends State<ProfilePage>
       backgroundColor: context.myTheme.colorScheme.muted,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const CustomCircleAvatar(
-              isEditEnabled: false,
-              avatarSize: 120,
-              imageUrl: "assets/images/img_profile.png",
-            ),
-            Text(
-              "User Name",
-              style: context.myTheme.textThemeT1.title.copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: context.myTheme.colorScheme.foreground,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const CustomCircleAvatar(
+                isEditEnabled: false,
+                avatarSize: 120,
+                imageUrl: "assets/images/img_profile.png",
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "emailaddress@domain.com",
-              style: context.myTheme.textThemeT1.title.copyWith(
-                fontWeight: FontWeight.w500,
-                color: context.myTheme.colorScheme.foreground,
-              ),
-            ),
-            const SizedBox(height: 40),
-            _buildGroup([
-              _buildSettingItem(
-                SettingsType.editProfile.title,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => buildDialogEditProfile(),
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Divider(
-                  color: context.myTheme.colorScheme.separator1,
-                  height: 1,
+              Text(
+                "User Name",
+                style: context.myTheme.textThemeT1.title.copyWith(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w500,
+                  color: context.myTheme.colorScheme.foreground,
                 ),
               ),
-              _buildSettingItem(
-                SettingsType.theme.title,
-                subtitle: SettingsType.theme.subtitle,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => buildDialogAppTheme(),
-                  );
-                },
-              ),
-            ]),
-            const SizedBox(height: 16),
-            _buildGroup([
-              _buildSettingItem(
-                SettingsType.logout.title,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => buildDialogLogout(),
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Divider(
-                  color: context.myTheme.colorScheme.separator1,
-                  height: 1,
+              const SizedBox(height: 12),
+              Text(
+                "emailaddress@domain.com",
+                style: context.myTheme.textThemeT1.title.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: context.myTheme.colorScheme.foreground,
                 ),
               ),
-              _buildSettingItem(
-                SettingsType.deleteAccount.title,
-                textColor: context.myTheme.colorScheme.destructive,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => buildDialogDeleteAccount(),
-                  );
-                },
+              const SizedBox(height: 40),
+              _buildGroup([
+                _buildSettingItem(
+                  SettingsType.editProfile.title,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => buildDialogEditProfile(),
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Divider(
+                    color: context.myTheme.colorScheme.separator1,
+                    height: 1,
+                  ),
+                ),
+                _buildSettingItem(
+                  SettingsType.theme.title,
+                  subtitle: SettingsType.theme.subtitle,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => buildDialogAppTheme(),
+                    );
+                  },
+                ),
+              ]),
+              const SizedBox(height: 16),
+              _buildGroup([
+                _buildSettingItem(
+                  SettingsType.logout.title,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => buildDialogLogout(),
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Divider(
+                    color: context.myTheme.colorScheme.separator1,
+                    height: 1,
+                  ),
+                ),
+                _buildSettingItem(
+                  SettingsType.deleteAccount.title,
+                  textColor: context.myTheme.colorScheme.destructive,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => buildDialogDeleteAccount(),
+                    );
+                  },
+                ),
+              ]),
+              const SizedBox(height: 16),
+              _buildGroup([
+                _buildSettingItem(
+                  SettingsType.privacyPolicy.title,
+                  onTap: () => showDataCookiesDialog(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Divider(
+                    color: context.myTheme.colorScheme.separator1,
+                    height: 1,
+                  ),
+                ),
+                _buildSettingItem(
+                  SettingsType.termsOfService.title,
+                  onTap: () {},
+                ),
+              ]),
+              const SizedBox(height: 16),
+              _buildGroup([
+                _buildSettingItem(
+                  SettingsType.sendUsYourFeedback.title,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => buildDialogSendFeedback(),
+                    );
+                  },
+                ),
+              ]),
+              const SizedBox(
+                height: 16,
               ),
-            ]),
-            const SizedBox(height: 16),
-            _buildGroup([
-              _buildSettingItem(
-                SettingsType.privacyPolicy.title,
-                onTap: () => showDataCookiesDialog(context),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Divider(
-                  color: context.myTheme.colorScheme.separator1,
-                  height: 1,
+              Text(
+                "App version 1.0.0",
+                style: context.myTheme.textThemeT1.body.copyWith(
+                  color: context.myTheme.colorScheme.mutedForeground,
                 ),
               ),
-              _buildSettingItem(
-                SettingsType.termsOfService.title,
-                onTap: () {},
-              ),
-            ]),
-            const SizedBox(height: 16),
-            _buildGroup([
-              _buildSettingItem(
-                SettingsType.sendUsYourFeedback.title,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => buildDialogSendFeedback(),
-                  );
-                },
-              ),
-            ]),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              "App version 1.0.0",
-              style: context.myTheme.textThemeT1.body.copyWith(
-                color: context.myTheme.colorScheme.mutedForeground,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
