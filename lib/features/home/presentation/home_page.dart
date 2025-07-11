@@ -165,58 +165,61 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: 4,
                 itemBuilder: (context, index) {
-                  return AspectRatio(
-                    aspectRatio: 194 / 239,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: context.myTheme.colorScheme.background,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 194 / 188,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                  return GestureDetector(
+                    onTap: () {},
+                    child: AspectRatio(
+                      aspectRatio: 194 / 239,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.myTheme.colorScheme.background,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 194 / 188,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12),
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.build,
-                                    size: 60,
-                                    color: Colors.grey[400],
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.build,
+                                      size: 60,
+                                      color: Colors.grey[400],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Bulbul-Oblong',
-                                    style: context.myTheme.textThemeT1.title
-                                        .copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: context
-                                          .myTheme.colorScheme.foreground,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )
-                                ],
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Bulbul-Oblong',
+                                      style: context.myTheme.textThemeT1.title
+                                          .copyWith(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: context
+                                            .myTheme.colorScheme.foreground,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
