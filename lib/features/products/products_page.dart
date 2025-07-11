@@ -1,9 +1,12 @@
+import 'package:app_base/features/product/product_page.dart';
 import 'package:app_base/models/category.dart';
 import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+@RoutePage()
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key, required this.category});
   final Category category;
@@ -126,51 +129,61 @@ class _ProductsPageState extends State<ProductsPage> {
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                return Container(
-                  decoration: BoxDecoration(
-                    color: context.myTheme.colorScheme.background,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(8),
-                                  topRight: Radius.circular(8)),
-                              child: Container())),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              product.name,
-                              style: context.myTheme.textThemeT1.title.copyWith(
-                                color: context.myTheme.colorScheme.foreground,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                return GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ProductPage(product: product),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: context.myTheme.colorScheme.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8)),
+                                child: Container())),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                product.name,
+                                style:
+                                    context.myTheme.textThemeT1.title.copyWith(
+                                  color: context.myTheme.colorScheme.foreground,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${product.currency} ${product.price.toStringAsFixed(2)}',
-                              style: context.myTheme.textThemeT1.title.copyWith(
-                                color:
-                                    context.myTheme.colorScheme.mutedForeground,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
+                              const SizedBox(height: 4),
+                              Text(
+                                '${product.currency} ${product.price.toStringAsFixed(2)}',
+                                style:
+                                    context.myTheme.textThemeT1.title.copyWith(
+                                  color: context
+                                      .myTheme.colorScheme.mutedForeground,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
               },
@@ -184,18 +197,21 @@ class _ProductsPageState extends State<ProductsPage> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       leadingWidth: 40,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 16),
-        child: SvgPicture.asset(
-          "assets/icons/ic_chevron_left.svg",
-          colorFilter: ColorFilter.mode(
-            context.myTheme.colorScheme.foreground,
-            BlendMode.srcIn,
+      leading: GestureDetector(
+        onTap: () => context.router.maybePop(),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: SvgPicture.asset(
+            "assets/icons/ic_chevron_left.svg",
+            colorFilter: ColorFilter.mode(
+              context.myTheme.colorScheme.foreground,
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),
       title: Text(
-        'Category',
+        widget.category.name,
         style: context.myTheme.textThemeT1.title.copyWith(
             color: context.myTheme.colorScheme.foreground,
             fontWeight: FontWeight.w500),

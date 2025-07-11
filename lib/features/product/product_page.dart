@@ -1,5 +1,6 @@
 import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -16,136 +17,164 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.myTheme.colorScheme.background,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: context.myTheme.colorScheme.primary,
-                  image: product.images.isNotEmpty
-                      ? DecorationImage(
-                          image: NetworkImage(product.images.first),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(product.category,
-                            style: context.myTheme.textThemeT1.title.copyWith(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
-                              color: context.myTheme.colorScheme.foreground,
-                            )),
+    return Stack(
+      children: [
+        Container(
+          margin:
+              const EdgeInsets.only(top: 50, bottom: 16, left: 16, right: 16),
+          decoration: BoxDecoration(
+            color: context.myTheme.colorScheme.background,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: context.myTheme.colorScheme.primary,
+                        image: product.images.isNotEmpty
+                            ? DecorationImage(
+                                image: NetworkImage(product.images.first),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                       ),
-                      SvgPicture.asset(
-                        "assets/icons/ic_product_share.svg",
-                        colorFilter: ColorFilter.mode(
-                          context.myTheme.colorScheme.foreground,
-                          BlendMode.srcIn,
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    product.name,
-                    style: context.myTheme.textThemeT1.title.copyWith(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w500,
-                        color: context.myTheme.colorScheme.foreground),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${product.currency} ${product.price.toStringAsFixed(2)}',
-                    style: context.myTheme.textThemeT1.title.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
-                        color: context.myTheme.colorScheme.foreground),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      SvgPicture.asset("assets/icons/ic_product_heart.svg",
-                          colorFilter: ColorFilter.mode(
-                            context.myTheme.colorScheme.foreground,
-                            BlendMode.srcIn,
-                          )),
-                      const SizedBox(width: 8),
-                      Text('124',
-                          style: context.myTheme.textThemeT1.title.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                            color: context.myTheme.colorScheme.foreground,
-                          )),
-                      const SizedBox(width: 24),
-                      SvgPicture.asset("assets/icons/ic_product_bookmark.svg",
-                          colorFilter: ColorFilter.mode(
-                            context.myTheme.colorScheme.foreground,
-                            BlendMode.srcIn,
-                          )),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    product.description,
-                    style: context.myTheme.textThemeT1.body.copyWith(
-                      fontSize: 18,
-                      color: context.myTheme.colorScheme.foreground,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  ExpandableWidget(
-                    title: 'Specs',
-                    body: product.description,
-                  ),
-                  ExpandableWidget(
-                    title: 'Buy Here',
-                    body: product.description,
-                  ),
-                  ExpandableWidget(
-                    title: 'What we like',
-                    body: product.description,
-                  ),
-                  ExpandableWidget(
-                    title: 'What we don’t like',
-                    body: product.description,
-                  ),
-                  ListView.separated(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 16),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return AspectRatio(
-                          aspectRatio: 1,
-                          child: Container(
-                            width: double.infinity,
-                            color: context.myTheme.colorScheme.primary,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(product.category,
+                                style:
+                                    context.myTheme.textThemeT1.title.copyWith(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: context.myTheme.colorScheme.foreground,
+                                )),
                           ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(height: 8);
-                      },
-                      itemCount: 5)
-                ],
+                          SvgPicture.asset(
+                            "assets/icons/ic_product_share.svg",
+                            colorFilter: ColorFilter.mode(
+                              context.myTheme.colorScheme.foreground,
+                              BlendMode.srcIn,
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        product.name,
+                        style: context.myTheme.textThemeT1.title.copyWith(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w500,
+                            color: context.myTheme.colorScheme.foreground),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${product.currency} ${product.price.toStringAsFixed(2)}',
+                        style: context.myTheme.textThemeT1.title.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: context.myTheme.colorScheme.foreground),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          SvgPicture.asset("assets/icons/ic_product_heart.svg",
+                              colorFilter: ColorFilter.mode(
+                                context.myTheme.colorScheme.foreground,
+                                BlendMode.srcIn,
+                              )),
+                          const SizedBox(width: 8),
+                          Text('124',
+                              style: context.myTheme.textThemeT1.title.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                                color: context.myTheme.colorScheme.foreground,
+                              )),
+                          const SizedBox(width: 24),
+                          SvgPicture.asset(
+                              "assets/icons/ic_product_bookmark.svg",
+                              colorFilter: ColorFilter.mode(
+                                context.myTheme.colorScheme.foreground,
+                                BlendMode.srcIn,
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        product.description,
+                        style: context.myTheme.textThemeT1.body.copyWith(
+                          fontSize: 18,
+                          color: context.myTheme.colorScheme.foreground,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ExpandableWidget(
+                        title: 'Specs',
+                        body: product.description,
+                      ),
+                      ExpandableWidget(
+                        title: 'Buy Here',
+                        body: product.description,
+                      ),
+                      ExpandableWidget(
+                        title: 'What we like',
+                        body: product.description,
+                      ),
+                      ExpandableWidget(
+                        title: 'What we don’t like',
+                        body: product.description,
+                      ),
+                      ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(top: 16),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return AspectRatio(
+                              aspectRatio: 1,
+                              child: Container(
+                                width: double.infinity,
+                                color: context.myTheme.colorScheme.primary,
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(height: 8);
+                          },
+                          itemCount: 5)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          top: 16,
+          right: 20,
+          child: GestureDetector(
+            onTap: () => context.router.maybePop(),
+            child: SvgPicture.asset(
+              "assets/icons/ic_close.svg",
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
               ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -24,6 +24,7 @@ class LocalStorage extends ILocalStorage {
 
   static const String KEY_FIRST_LAUNCH = "KEY_FIRST_LAUNCH";
   static const String KEY_FCM_TOKEN = "KEY_FCM_TOKEN";
+  static const String KEY_THEME = "KEY_THEME";
 
   late Box _box;
 
@@ -52,5 +53,11 @@ class LocalStorage extends ILocalStorage {
   @override
   void saveFcmToken(String value) {
     _box.put(KEY_FCM_TOKEN, value);
+  }
+
+  String get theme => _box.get(KEY_THEME, defaultValue: "dark");
+
+  void saveTheme(String value) {
+    _box.put(KEY_THEME, value);
   }
 }

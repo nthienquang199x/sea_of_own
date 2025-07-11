@@ -1,3 +1,4 @@
+import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/features/profile/components/custom_circle_avatar.dart';
 import 'package:app_base/features/profile/components/custom_dialog.dart';
@@ -5,6 +6,8 @@ import 'package:app_base/features/profile/components/privacy_policy.dart';
 import 'package:app_base/features/profile/models/app_theme.dart';
 import 'package:app_base/features/profile/models/feedback_reason.dart';
 import 'package:app_base/features/profile/models/settings_type.dart';
+import 'package:app_base/features/profile/presentation/profile_cubit.dart';
+import 'package:app_base/features/profile/presentation/profile_state.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
@@ -17,17 +20,18 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
+class _ProfilePageState
+    extends BaseState<ProfileState, ProfileCubit, ProfilePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   bool? isVisibleOldPassword = false;
   bool? isVisibleNewPassword = false;
-  AppTheme? selectedTheme = AppTheme.system;
 
   @override
   void initState() {
-    super.initState();
+    cubit.init();
     _controller = AnimationController(vsync: this);
+    super.initState();
   }
 
   @override
@@ -37,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildByState(BuildContext context, ProfileState state) {
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       body: Padding(
@@ -86,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
                 _buildSettingItem(
                   SettingsType.theme.title,
-                  subtitle: SettingsType.theme.subtitle,
+                  subtitle: state.selectedTheme.name,
                   onTap: () {
                     showDialog(
                       context: context,
@@ -311,9 +315,16 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Widget buildDialogAppTheme() {
-    return CustomDialog(
+    AppTheme? tempSelectedTheme = state.selectedTheme;
+
+    return StatefulBuilder(
+      builder: (context, setDialogState) => CustomDialog(
         title: AppLocale.app_theme,
         titleButton: AppLocale.save_changes,
+        onTap: () {
+          cubit.onSavedTheme(tempSelectedTheme!);
+          Navigator.pop(context);
+        },
         child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
@@ -321,16 +332,18 @@ class _ProfilePageState extends State<ProfilePage>
             borderRadius: BorderRadius.circular(12),
           ),
           child: CustomRadioGroup<AppTheme>(
-            selected: selectedTheme,
+            selected: tempSelectedTheme,
             options: AppTheme.values,
             itemLabelBuilder: (option) => option.name.tr(context),
             onChanged: (value) {
-              setState(() {
-                selectedTheme = value;
+              setDialogState(() {
+                tempSelectedTheme = value;
               });
             },
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget buildDialogDeleteAccount() {

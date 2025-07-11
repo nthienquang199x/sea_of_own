@@ -1,7 +1,11 @@
 import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/features/home/presentation/home_page.dart';
+import 'package:app_base/features/products/products_page.dart';
+import 'package:app_base/features/saved_list/product_saved_list.dart';
 import 'package:app_base/features/splash/splash_page.dart';
+import 'package:app_base/models/category.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 
 import '../app/app_page.dart';
 
@@ -24,6 +28,12 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: HomeRoute.page,
           path: Routes.home,
+        ),
+        AutoRoute(
+            page: ProductSavedListRoute.page, path: Routes.productSavedList),
+        AutoRoute(
+          page: ProductsRoute.page,
+          path: Routes.products,
         ),
       ];
 }

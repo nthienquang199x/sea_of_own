@@ -1,5 +1,6 @@
 import 'package:app_base/core/network/base/api_client.dart';
 import 'package:app_base/core/network/services/user_service.dart';
+import 'package:app_base/core/storage/local_storage.dart';
 import 'package:app_base/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -12,13 +13,40 @@ import 'app_state.dart';
 @singleton
 class AppCubit extends BaseCubit<AppState> {
   AppCubit()
-      : super(AppState(
-            status: PageStatus.loading, appTheme: AppThemeData.dark()));
+      : super(
+            AppState(status: PageStatus.loading, appTheme: _getInitialTheme()));
 
   final AppRouter appRouter = AppRouter();
   final UserService _userService = UserService();
 
-  changeTheme(AppThemeData appTheme) {
+  static AppThemeData _getInitialTheme() {
+    final themeString = LocalStorage().theme;
+    switch (themeString) {
+      case 'light':
+        return AppThemeData.light();
+      case 'dark':
+        return AppThemeData.dark();
+      case 'system':
+        final brightness =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        if (brightness == Brightness.dark) {
+          return AppThemeData.dark();
+        } else {
+          return AppThemeData.light();
+        }
+      default:
+        return AppThemeData.dark();
+    }
+  }
+
+  void changeTheme(AppThemeData appTheme, {String? themeName}) {
+    if (themeName != null) {
+      LocalStorage().saveTheme(themeName);
+    } else if (appTheme == AppThemeData.light()) {
+      LocalStorage().saveTheme('light');
+    } else if (appTheme == AppThemeData.dark()) {
+      LocalStorage().saveTheme('dark');
+    }
     emit(state.copyWith(appTheme: appTheme));
   }
 

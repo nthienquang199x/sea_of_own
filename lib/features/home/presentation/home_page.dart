@@ -1,10 +1,13 @@
+import 'package:app_base/app/config/app_router.dart';
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/core/network/base/api_client.dart';
-import 'package:app_base/features/profile/profile_page.dart';
+import 'package:app_base/features/product/product_page.dart';
+import 'package:app_base/features/profile/presentation/profile_page.dart';
 import 'package:app_base/features/saved_list/saved_list_page.dart';
-import 'package:app_base/features/search/search_page.dart';
+import 'package:app_base/features/search/presentation/search_page.dart';
 import 'package:app_base/models/category.dart';
+import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +35,24 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
     Category(name: 'Personal'),
     Category(name: 'Craft'),
   ];
+
+  final product = Product(
+    id: '3',
+    name: 'Sport Pro',
+    price: 380.00,
+    currency: 'CA\$',
+    description:
+        'Designed for active lifestyles with water resistance and durable materials.',
+    images: [
+      'https://example.com/watch6.jpg',
+      'https://example.com/watch7.jpg',
+      'https://example.com/watch8.jpg',
+    ],
+    category: 'Watches',
+    isAvailable: true,
+    createdAt: DateTime.now().subtract(const Duration(days: 20)),
+    updatedAt: DateTime.now(),
+  );
 
   void _onAuthenticationChanged() {
     if (!ApiClient.isAuthenticated.value) {}
@@ -91,57 +112,66 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               separatorBuilder: (context, index) => const SizedBox(width: 8),
               itemCount: 5,
               itemBuilder: (context, index) {
-                return AspectRatio(
-                  aspectRatio: 396 / 353,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: context.myTheme.colorScheme.background,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 396 / 304,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(12),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
+                return InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ProductPage(product: product),
+                    );
+                  },
+                  child: AspectRatio(
+                    aspectRatio: 396 / 353,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: context.myTheme.colorScheme.background,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 396 / 304,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12),
                               ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.build,
-                                  size: 60,
-                                  color: Colors.grey[400],
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.build,
+                                    size: 60,
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Hoto-12V Brushless Drill Tool Set',
-                                  style: context.myTheme.textThemeT1.title
-                                      .copyWith(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color:
-                                        context.myTheme.colorScheme.foreground,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                )
-                              ],
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Hoto-12V Brushless Drill Tool Set',
+                                    style: context.myTheme.textThemeT1.title
+                                        .copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: context
+                                          .myTheme.colorScheme.foreground,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -166,7 +196,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 itemCount: 4,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => ProductPage(product: product),
+                      );
+                    },
                     child: AspectRatio(
                       aspectRatio: 194 / 239,
                       child: Container(
@@ -255,27 +290,35 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                   ),
                   itemBuilder: (context, index) {
                     final category = categories[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            category.name,
-                            style: context.myTheme.textThemeT1.title.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: context.myTheme.colorScheme.cardForeground,
+                    return InkWell(
+                      onTap: () {
+                        context.router.push(
+                          ProductsRoute(category: category),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              category.name,
+                              style: context.myTheme.textThemeT1.title.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    context.myTheme.colorScheme.cardForeground,
+                              ),
                             ),
-                          ),
-                          SvgPicture.asset(
-                            'assets/icons/ic_home_arrow_right.svg',
-                            colorFilter: ColorFilter.mode(
-                              context.myTheme.colorScheme.iconInactive,
-                              BlendMode.srcIn,
+                            SvgPicture.asset(
+                              'assets/icons/ic_home_arrow_right.svg',
+                              colorFilter: ColorFilter.mode(
+                                context.myTheme.colorScheme.iconInactive,
+                                BlendMode.srcIn,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -298,58 +341,66 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemCount: 4,
                 itemBuilder: (context, index) {
-                  return AspectRatio(
-                    aspectRatio: 194 / 239,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: context.myTheme.colorScheme.background,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 194 / 188,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                  return InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => ProductPage(product: product),
+                      );
+                    },
+                    child: AspectRatio(
+                      aspectRatio: 194 / 239,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.myTheme.colorScheme.background,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 194 / 188,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12),
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.build,
-                                    size: 60,
-                                    color: Colors.grey[400],
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.build,
+                                      size: 60,
+                                      color: Colors.grey[400],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Bulbul-Oblong',
-                                    style: context.myTheme.textThemeT1.title
-                                        .copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: context
-                                          .myTheme.colorScheme.foreground,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )
-                                ],
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Bulbul-Oblong',
+                                      style: context.myTheme.textThemeT1.title
+                                          .copyWith(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: context
+                                            .myTheme.colorScheme.foreground,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

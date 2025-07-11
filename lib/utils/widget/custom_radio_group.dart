@@ -121,7 +121,7 @@ class CustomRadio<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => onChanged(value),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

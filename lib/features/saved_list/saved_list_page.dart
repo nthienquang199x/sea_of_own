@@ -1,8 +1,10 @@
+import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/app/theme/icons.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/features/profile/components/custom_dialog.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -85,58 +87,65 @@ class _SavedListPageState extends State<SavedListPage> {
   }
 
   Widget buildProductCard(String productName, String productImage) {
-    return Container(
-      margin: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: context.myTheme.colorScheme.background,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              bottomLeft: Radius.circular(8),
-            ),
-            child: Image.asset(
-              "assets/images/img_search_product.png",
-              fit: BoxFit.cover,
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    productName,
-                    style: context.myTheme.textThemeT1.title.copyWith(
-                      color: context.myTheme.colorScheme.textColor,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "12 items",
-                        style: context.myTheme.textThemeT1.body.copyWith(
-                          color: context.myTheme.colorScheme.mutedForeground,
-                        ),
-                      ),
-                      SvgPicture.asset(
-                        AppIcons.ic_chevron_right,
-                        colorFilter: ColorFilter.mode(
-                          context.myTheme.colorScheme.iconInactive,
-                          BlendMode.srcIn,
-                        ),
-                      )
-                    ],
-                  )
-                ],
+    return InkWell(
+      onTap: () {
+        context.router.pushNamed(
+          Routes.productSavedList,
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: context.myTheme.colorScheme.background,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
+              ),
+              child: Image.asset(
+                "assets/images/img_search_product.png",
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      productName,
+                      style: context.myTheme.textThemeT1.title.copyWith(
+                        color: context.myTheme.colorScheme.textColor,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "12 items",
+                          style: context.myTheme.textThemeT1.body.copyWith(
+                            color: context.myTheme.colorScheme.mutedForeground,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          AppIcons.ic_chevron_right,
+                          colorFilter: ColorFilter.mode(
+                            context.myTheme.colorScheme.iconInactive,
+                            BlendMode.srcIn,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
