@@ -104,6 +104,7 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
   ];
   @override
   Widget build(BuildContext context) {
+    selectedFilter ??= FilterList.values.first;
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       appBar: _buildAppBar(context),
@@ -207,7 +208,9 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         onTap: () {
-          showDialog(
+          showModalBottomSheet(
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
             context: context,
             builder: (context) => ProductPage(product: product),
           );
@@ -255,26 +258,28 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
   }
 
   Widget buildFilter() {
-    return CustomDialog(
-        title: AppLocale.sort_by,
-        titleButton: AppLocale.sort,
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: context.myTheme.colorScheme.background,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: CustomRadioGroup<FilterList>(
-            selected: selectedFilter,
-            options: FilterList.values,
-            itemLabelBuilder: (option) => option.title.tr(context),
-            onChanged: (value) {
-              setState(() {
-                selectedFilter = value;
-              });
-            },
-          ),
-        ));
+    return StatefulBuilder(builder: (context, setStateBuilder) {
+      return CustomDialog(
+          title: AppLocale.sort_by,
+          titleButton: AppLocale.sort,
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: context.myTheme.colorScheme.background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: CustomRadioGroup<FilterList>(
+              selected: selectedFilter,
+              options: FilterList.values,
+              itemLabelBuilder: (option) => option.title.tr(context),
+              onChanged: (value) {
+                setStateBuilder(() {
+                  selectedFilter = value;
+                });
+              },
+            ),
+          ));
+    });
   }
 
   Widget buildOptionDialog() {

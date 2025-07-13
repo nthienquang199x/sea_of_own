@@ -20,8 +20,7 @@ class _ProductPageState extends State<ProductPage> {
     return Stack(
       children: [
         Container(
-          margin:
-              const EdgeInsets.only(top: 50, bottom: 16, left: 16, right: 16),
+          margin: const EdgeInsets.only(top: 70),
           decoration: BoxDecoration(
             color: context.myTheme.colorScheme.background,
             borderRadius: BorderRadius.circular(4),
@@ -161,8 +160,8 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
         Positioned(
-          top: 16,
-          right: 20,
+          top: 40,
+          right: 10,
           child: GestureDetector(
             onTap: () => context.router.maybePop(),
             child: SvgPicture.asset(

@@ -114,7 +114,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    showDialog(
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
                       context: context,
                       builder: (context) => ProductPage(product: product),
                     );
@@ -197,7 +199,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      showDialog(
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
                         context: context,
                         builder: (context) => ProductPage(product: product),
                       );
@@ -343,7 +347,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      showDialog(
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
                         context: context,
                         builder: (context) => ProductPage(product: product),
                       );

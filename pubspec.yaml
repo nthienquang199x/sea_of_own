@@ -63,7 +63,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   firebase_core: ^3.11.0
   uuid: ^4.5.1
-  flutter_secure_storage: ^4.2.1
   firebase_messaging: ^15.2.7
   device_info_plus: ^11.3.0
   mime: ^2.0.0
@@ -71,6 +70,7 @@ dependencies:
   connectivity_plus: ^6.1.4
   auto_size_text: ^3.0.0
   jwt_decoder: ^2.0.1
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   # Base

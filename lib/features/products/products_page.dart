@@ -131,7 +131,9 @@ class _ProductsPageState extends State<ProductsPage> {
                 final product = products[index];
                 return GestureDetector(
                   onTap: () {
-                    showDialog(
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
                       context: context,
                       builder: (context) => ProductPage(product: product),
                     );
