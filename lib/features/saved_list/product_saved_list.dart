@@ -226,6 +226,7 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
               child: Image.asset(
                 "assets/images/img_search_product.png",
                 fit: BoxFit.cover,
+                height: 114,
               ),
             ),
             Expanded(

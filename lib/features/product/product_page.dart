@@ -29,7 +29,6 @@ class _ProductPageState extends State<ProductPage> {
             child: Column(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: Container(
@@ -140,11 +139,14 @@ class _ProductPageState extends State<ProductPage> {
                           padding: const EdgeInsets.only(top: 16),
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            return AspectRatio(
-                              aspectRatio: 1,
-                              child: Container(
-                                width: double.infinity,
-                                color: context.myTheme.colorScheme.primary,
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Container(
+                                  width: double.infinity,
+                                  color: context.myTheme.colorScheme.primary,
+                                ),
                               ),
                             );
                           },

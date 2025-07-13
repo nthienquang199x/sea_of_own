@@ -5,30 +5,31 @@ import 'package:app_base/utils/widget/spacer_widget.dart';
 import 'package:flutter/material.dart';
 
 class TextFormFieldCustom extends StatefulWidget {
-  const TextFormFieldCustom(
-      {super.key,
-      this.title,
-      this.isRequired = false,
-      this.controller,
-      this.hintText,
-      this.obscureText = false,
-      this.enabled,
-      this.keyboardType,
-      this.onChanged,
-      this.maxlines,
-      this.minLines,
-      this.minLength,
-      this.maxLength,
-      this.suffix,
-      this.borderRadius,
-      this.suffixIcon,
-      this.prefix,
-      this.prefixIcon,
-      this.initialValue,
-      this.borderColor,
-      this.validator,
-      this.validators,
-      this.fillColor});
+  const TextFormFieldCustom({
+    super.key,
+    this.title,
+    this.isRequired = false,
+    this.controller,
+    this.hintText,
+    this.obscureText = false,
+    this.enabled,
+    this.keyboardType,
+    this.onChanged,
+    this.maxlines,
+    this.minLines,
+    this.minLength,
+    this.maxLength,
+    this.suffix,
+    this.borderRadius,
+    this.suffixIcon,
+    this.prefix,
+    this.prefixIcon,
+    this.initialValue,
+    this.borderColor,
+    this.validator,
+    this.validators,
+    this.fillColor,
+  });
   final String? title;
   final String? hintText;
   final bool isRequired;
@@ -101,9 +102,9 @@ class _TextFormFieldCustomState extends State<TextFormFieldCustom> {
             fillColor: widget.fillColor,
             filled: widget.fillColor != null,
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             hintStyle: context.myTheme.textThemeT1.body
-                .copyWith(color: context.myTheme.colorScheme.foreground),
+                .copyWith(color: context.myTheme.colorScheme.mutedForeground),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                   color: widget.borderColor ?? AppColor.base90, width: 1.0),

@@ -92,18 +92,17 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 30),
+          // const SizedBox(height: 15),
           // Header
           Text(
             'SeaOfOwn',
             style: context.myTheme.textThemeT1.bigTitle.copyWith(
               fontSize: 32,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: context.myTheme.colorScheme.foreground,
             ),
           ),
           const SizedBox(height: 24),
-
           // Featured Product
           SizedBox(
             height: 320,
@@ -138,8 +137,8 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                 top: Radius.circular(12),
                               ),
                               child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
                                 ),
                                 child: Center(
                                   child: Icon(
@@ -180,7 +179,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               },
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
 
           // Newly Added Section
           Text(AppLocale.newly_added.tr(context),
@@ -194,7 +193,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               height: 194,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
                 itemCount: 4,
                 itemBuilder: (context, index) {
                   return GestureDetector(
@@ -342,7 +341,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               height: 194,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
                 itemCount: 4,
                 itemBuilder: (context, index) {
                   return InkWell(
@@ -667,7 +666,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
 
   Widget _buildBottomNavigationBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 12,
+        bottom: MediaQuery.of(context).padding.bottom - 4,
+      ),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.tab,
         boxShadow: [
@@ -692,22 +696,19 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               });
             },
             behavior: HitTestBehavior.translucent,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset(
-                    e.icon,
-                    colorFilter: ColorFilter.mode(
-                      isSelected
-                          ? context.myTheme.colorScheme.iconActive
-                          : context.myTheme.colorScheme.iconInactive,
-                      BlendMode.srcIn,
-                    ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  e.icon,
+                  colorFilter: ColorFilter.mode(
+                    isSelected
+                        ? context.myTheme.colorScheme.iconActive
+                        : context.myTheme.colorScheme.iconInactive,
+                    BlendMode.srcIn,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }).toList(),

@@ -48,10 +48,11 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
               Text(
                 "Search",
                 style: context.myTheme.textThemeT1.title.copyWith(
@@ -60,7 +61,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 0),
               TextFormFieldCustom(
                 hintText: "Search Account or Product name",
                 borderColor: Colors.transparent,
@@ -69,10 +70,10 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                 keyboardType: TextInputType.text,
                 borderRadius: BorderRadius.circular(8),
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
-        const SizedBox(height: 8),
         SizedBox(
           height: 44,
           child: ListView.builder(
@@ -84,7 +85,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
               final isSelected = category == state.categorySelected;
               return Padding(
                 padding: EdgeInsets.only(
-                  right: index < categories.length - 1 ? 12 : 16,
+                  right: index < categories.length - 1 ? 8 : 8,
                   left: index == 0 ? 16 : 0,
                 ),
                 child: GestureDetector(
@@ -159,7 +160,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
                     itemCount: 4,
                     itemBuilder: (context, index) {
                       return InkWell(

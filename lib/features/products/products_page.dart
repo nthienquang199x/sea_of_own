@@ -69,7 +69,8 @@ class _ProductsPageState extends State<ProductsPage> {
     ),
     Product(
       id: '4',
-      name: 'Minimalist',
+      name:
+          'Minimalist MinimalistMinimalistMinimalistMinimalistMinimalistMinimalist',
       price: 295.00,
       currency: 'CA\$',
       description:
@@ -104,93 +105,180 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
-      appBar: _buildAppBar(context),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.category.name,
-              style: context.myTheme.textThemeT1.title.copyWith(
-                color: context.myTheme.colorScheme.foreground,
-                fontWeight: FontWeight.w500,
-                fontSize: 32,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Expanded(
-                child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 200 / 261,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) => ProductPage(product: product),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: context.myTheme.colorScheme.background,
-                      borderRadius: BorderRadius.circular(8),
+      // appBar: _buildAppBar(context),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.router.maybePop(),
+                      child: SvgPicture.asset(
+                        "assets/icons/ic_chevron_left.svg",
+                        colorFilter: ColorFilter.mode(
+                          context.myTheme.colorScheme.foreground,
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                            child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(8),
-                                    topRight: Radius.circular(8)),
-                                child: Container())),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                product.name,
-                                style:
-                                    context.myTheme.textThemeT1.title.copyWith(
-                                  color: context.myTheme.colorScheme.foreground,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${product.currency} ${product.price.toStringAsFixed(2)}',
-                                style:
-                                    context.myTheme.textThemeT1.title.copyWith(
-                                  color: context
-                                      .myTheme.colorScheme.mutedForeground,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                    Expanded(
+                      child: Text(
+                        "Back",
+                        style: context.myTheme.textThemeT1.title.copyWith(
+                            color: context.myTheme.colorScheme.foreground,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return const FilterWidget();
+                          },
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.myTheme.colorScheme.menuIconBg,
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(
+                            "assets/icons/ic_products_filter.svg",
+                            colorFilter: ColorFilter.mode(
+                              context.myTheme.colorScheme.foreground,
+                              BlendMode.srcIn,
+                            )),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: context.myTheme.colorScheme.menuIconBg,
+                            shape: BoxShape.circle,
                           ),
-                        )
-                      ],
+                          child: SvgPicture.asset(
+                            "assets/icons/ic_products_sort.svg",
+                            colorFilter: ColorFilter.mode(
+                              context.myTheme.colorScheme.foreground,
+                              BlendMode.srcIn,
+                            ),
+                          )),
                     ),
-                  ),
-                );
-              },
-            ))
-          ],
+                    const SizedBox(width: 4),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.category.name,
+                      style: context.myTheme.textThemeT1.title.copyWith(
+                        color: context.myTheme.colorScheme.foreground,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 32,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    GridView.builder(
+                      padding: const EdgeInsets.only(bottom: 200),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 200 / 261,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 16),
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              context: context,
+                              builder: (context) =>
+                                  ProductPage(product: product),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: context.myTheme.colorScheme.background,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                    child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(8),
+                                            topRight: Radius.circular(8)),
+                                        child: Container(
+                                          color: Colors.red,
+                                        ))),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        product.name,
+                                        style: context.myTheme.textThemeT1.title
+                                            .copyWith(
+                                          color: context
+                                              .myTheme.colorScheme.foreground,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${product.currency} ${product.price.toStringAsFixed(2)}',
+                                        style: context.myTheme.textThemeT1.title
+                                            .copyWith(
+                                          color: context.myTheme.colorScheme
+                                              .mutedForeground,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -316,6 +404,9 @@ class _FilterWidgetState extends State<FilterWidget> {
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
