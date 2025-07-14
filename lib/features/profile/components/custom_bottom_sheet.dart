@@ -41,16 +41,16 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             decoration: BoxDecoration(
               color: context.myTheme.colorScheme.muted,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
               ),
             ),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   padding: EdgeInsets.only(
-                    left: 24,
-                    right: 24,
+                    left: 16,
+                    right: 16,
                     top: 24,
                     bottom: MediaQuery.of(context).viewInsets.bottom +
                         MediaQuery.of(context).padding.bottom,
@@ -91,8 +91,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           ),
           if (widget.showCloseButton)
             Positioned(
-              top: -35,
-              right: 16,
+              top: -30,
+              right: 6,
               child: GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
                 child:

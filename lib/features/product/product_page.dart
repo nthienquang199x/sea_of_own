@@ -25,7 +25,7 @@ class _ProductPageState extends State<ProductPage> {
           margin: const EdgeInsets.only(top: 70),
           decoration: BoxDecoration(
             color: context.myTheme.colorScheme.background,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: SingleChildScrollView(
             child: Column(

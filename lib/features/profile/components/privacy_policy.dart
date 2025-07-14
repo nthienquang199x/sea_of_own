@@ -158,10 +158,9 @@ Widget _buildSubSection(
     children: [
       Text(
         title,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey,
+        style: context.myTheme.textThemeT1.title.copyWith(
+          fontWeight: FontWeight.w500,
+          color: context.myTheme.colorScheme.mutedForeground,
         ),
       ),
       const SizedBox(height: 6),

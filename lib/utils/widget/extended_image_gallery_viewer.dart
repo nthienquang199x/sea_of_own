@@ -67,7 +67,7 @@ class _ExtendedImageGalleryViewerState
                 itemBuilder: (BuildContext context, int index) {
                   final imageIndex = index % widget.images.length;
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: GalleryExtendedImage(
                       imageUrl: widget.images[imageIndex],
                       onTap: _closeDialog,

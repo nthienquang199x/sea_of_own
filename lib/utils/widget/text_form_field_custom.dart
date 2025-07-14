@@ -103,8 +103,9 @@ class _TextFormFieldCustomState extends State<TextFormFieldCustom> {
             filled: widget.fillColor != null,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            hintStyle: context.myTheme.textThemeT1.body
-                .copyWith(color: context.myTheme.colorScheme.mutedForeground),
+            hintStyle: context.myTheme.textThemeT1.title.copyWith(
+                color: context.myTheme.colorScheme.mutedForeground,
+                fontWeight: FontWeight.w500),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                   color: widget.borderColor ?? AppColor.base90, width: 1.0),

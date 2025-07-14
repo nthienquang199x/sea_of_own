@@ -121,7 +121,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           // Featured Product
           Container(
             height: 320,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: PageView.builder(
               itemCount: 5,
               padEnds: false,

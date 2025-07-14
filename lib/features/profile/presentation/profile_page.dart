@@ -207,29 +207,24 @@ class _ProfilePageState
   }) {
     return InkWell(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title.tr(context),
+            style: context.myTheme.textThemeT1.title.copyWith(
+              fontWeight: FontWeight.w500,
+              color: textColor ?? context.myTheme.colorScheme.foreground,
+            ),
+          ),
+          if (subtitle != null)
             Text(
-              title.tr(context),
-              style: context.myTheme.textThemeT1.title.copyWith(
-                fontWeight: FontWeight.w500,
-                color: textColor ?? context.myTheme.colorScheme.foreground,
+              subtitle.tr(context),
+              style: context.myTheme.textThemeT1.body.copyWith(
+                color: context.myTheme.colorScheme.mutedForeground,
               ),
             ),
-            if (subtitle != null)
-              Text(
-                subtitle.tr(context),
-                style: context.myTheme.textThemeT1.body.copyWith(
-                  color: context.myTheme.colorScheme.mutedForeground,
-                ),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -400,23 +395,31 @@ class _ProfilePageState
       title: AppLocale.tell_us_why_you_decided_to_leave,
       titleButton: AppLocale.confirm_delete,
       textColor: context.myTheme.colorScheme.destructive,
-      child: Column(
-        children: [
-          CustomRadioGroup<FeedbackReason>(
-            selected: FeedbackReason.other,
-            options: FeedbackReason.values,
-            onChanged: (value) {},
-            itemLabelBuilder: (option) => option.title.tr(context),
-          ),
-          TextFormFieldCustom(
-            hintText: AppLocale.please_explain_a_little_more.tr(context),
-            borderColor: context.myTheme.colorScheme.mutedForeground,
-            fillColor: context.myTheme.colorScheme.background,
-            controller: cubit.textEditingController,
-            keyboardType: TextInputType.text,
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ],
+      child: Container(
+        padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          color: context.myTheme.colorScheme.background,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            CustomRadioGroup<FeedbackReason>(
+              selected: FeedbackReason.other,
+              options: FeedbackReason.values,
+              onChanged: (value) {},
+              itemLabelBuilder: (option) => option.title.tr(context),
+            ),
+            const SizedBox(height: 4),
+            TextFormFieldCustom(
+              hintText: AppLocale.please_explain_a_little_more.tr(context),
+              borderColor: context.myTheme.colorScheme.mutedForeground,
+              fillColor: context.myTheme.colorScheme.background,
+              controller: cubit.textEditingController,
+              keyboardType: TextInputType.text,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ],
+        ),
       ),
     );
   }
