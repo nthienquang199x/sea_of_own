@@ -55,6 +55,7 @@ class _ProfilePageState
                 avatarSize: 120,
                 imageUrl: "assets/images/img_profile.png",
               ),
+              const SizedBox(height: 12),
               Text(
                 "User Name",
                 style: context.myTheme.textThemeT1.title.copyWith(
@@ -63,7 +64,7 @@ class _ProfilePageState
                   color: context.myTheme.colorScheme.foreground,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Text(
                 "emailaddress@domain.com",
                 style: context.myTheme.textThemeT1.title.copyWith(
@@ -184,7 +185,10 @@ class _ProfilePageState
 
   Widget _buildGroup(List<Widget> children) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 16,
+      ),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.background,
         borderRadius: BorderRadius.circular(12),

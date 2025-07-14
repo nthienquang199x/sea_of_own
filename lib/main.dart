@@ -90,12 +90,16 @@ class _MainPageState extends State<MainPage> with AppLocale {
               title: 'SeaOfOwn',
               debugShowCheckedModeBanner: false,
               builder: FlutterSmartDialog.init(
-                builder: (context, child) =>
-                    ResponsiveBreakpoints.builder(breakpoints: [
-                  const Breakpoint(start: 0, end: 450, name: MOBILE),
-                  const Breakpoint(start: 451, end: 800, name: TABLET),
-                  const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-                ], child: child!),
+                builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: const TextScaler.linear(1.0),
+                  ),
+                  child: ResponsiveBreakpoints.builder(breakpoints: [
+                    const Breakpoint(start: 0, end: 450, name: MOBILE),
+                    const Breakpoint(start: 451, end: 800, name: TABLET),
+                    const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+                  ], child: child!),
+                ),
               ),
               routerDelegate:
                   appCubit.appRouter.delegate(navigatorObservers: () {

@@ -1,7 +1,6 @@
-import 'package:app_base/app/app/models/navigation_type.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/features/product/product_page.dart';
-import 'package:app_base/features/profile/components/custom_dialog.dart';
+import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/saved_list/models/filter_list.dart';
 import 'package:app_base/models/category.dart';
 import 'package:app_base/models/product.dart';
@@ -10,6 +9,9 @@ import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../home/components/custom_navigation_bar.dart';
+import '../home/models/navigation_type.dart';
 
 @RoutePage()
 class ProductsPage extends StatefulWidget {
@@ -22,7 +24,6 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   FilterList? selectedFilter = FilterList.highestPrice;
-  NavigationType currentType = NavigationType.dashboard;
   final List<Product> products = [
     Product(
       id: '1',
@@ -126,6 +127,12 @@ class _ProductsPageState extends State<ProductsPage> {
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       // appBar: _buildAppBar(context),
+      bottomNavigationBar: CustomNavigationBar(
+        type: NavigationType.discover,
+        onTap: (type) {
+          context.maybePop(type);
+        },
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -180,7 +187,7 @@ class _ProductsPageState extends State<ProductsPage> {
                     const SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
-                        showDialog(
+                        showModalBottomSheet(
                           context: context,
                           builder: (context) => buildFilter(),
                         );
@@ -311,7 +318,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
   Widget buildFilter() {
     return StatefulBuilder(builder: (context, setStateBuilder) {
-      return CustomDialog(
+      return CustomBottomSheet(
           title: AppLocale.sort_by,
           titleButton: AppLocale.sort,
           child: Container(
@@ -461,10 +468,10 @@ class _FilterWidgetState extends State<FilterWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
       ),
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
@@ -479,14 +486,14 @@ class _FilterWidgetState extends State<FilterWidget> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Office',
+                    'Filter',
                     style: context.myTheme.textThemeT1.title.copyWith(
                       color: context.myTheme.colorScheme.foreground,
                       fontWeight: FontWeight.w600,
                       fontSize: 24,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
@@ -558,7 +565,7 @@ class _FilterWidgetState extends State<FilterWidget> {
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -566,7 +573,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                   height: 50,
                   decoration: BoxDecoration(
                     color: context.myTheme.colorScheme.muted,
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
                     child: Text(
@@ -585,7 +592,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                   height: 50,
                   decoration: BoxDecoration(
                     color: context.myTheme.colorScheme.foreground,
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
                     child: Text(
@@ -600,6 +607,7 @@ class _FilterWidgetState extends State<FilterWidget> {
               ),
             ],
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:app_base/core/localization/app_locale.dart';
+import 'package:app_base/features/home/components/custom_navigation_bar.dart';
 import 'package:app_base/features/product/product_page.dart';
-import 'package:app_base/features/profile/components/custom_dialog.dart';
+import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/saved_list/models/filter_list.dart';
 import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
@@ -8,6 +9,8 @@ import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../home/models/navigation_type.dart';
 
 @RoutePage()
 class ProductSavedListPage extends StatefulWidget {
@@ -107,6 +110,12 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
     selectedFilter ??= FilterList.values.first;
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
+      bottomNavigationBar: CustomNavigationBar(
+        type: NavigationType.bookmarks,
+        onTap: (type) {
+          context.maybePop(type);
+        },
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -137,7 +146,7 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        showBottomSheet(
+                        showModalBottomSheet(
                           context: context,
                           builder: (context) => buildFilter(),
                         );
@@ -158,7 +167,7 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
                     const SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
-                        showBottomSheet(
+                        showModalBottomSheet(
                           context: context,
                           builder: (context) => buildOptionDialog(),
                         );
@@ -244,7 +253,7 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
         const SizedBox(width: 12),
         GestureDetector(
           onTap: () {
-            showDialog(
+            showModalBottomSheet(
               context: context,
               builder: (context) => buildOptionDialog(),
             );
@@ -329,7 +338,7 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
 
   Widget buildFilter() {
     return StatefulBuilder(builder: (context, setStateBuilder) {
-      return CustomDialog(
+      return CustomBottomSheet(
           title: AppLocale.sort_by,
           titleButton: AppLocale.sort,
           child: Container(
@@ -353,63 +362,31 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
   }
 
   Widget buildOptionDialog() {
-    return Dialog(
-      backgroundColor: context.myTheme.colorScheme.muted,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
+    return CustomBottomSheet(
+        child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildGroup([
+          _buildItem(
+            AppLocale.rename,
+            onTap: () {},
+          ),
           Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildGroup([
-                  _buildItem(
-                    AppLocale.rename,
-                    onTap: () {},
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Divider(
-                      color: context.myTheme.colorScheme.separator1,
-                      height: 1,
-                    ),
-                  ),
-                  _buildItem(
-                    AppLocale.delete_this_list,
-                    textColor: context.myTheme.colorScheme.destructive,
-                    onTap: () {},
-                  ),
-                ]),
-              ],
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Divider(
+              color: context.myTheme.colorScheme.separator1,
+              height: 1,
             ),
           ),
-          Positioned(
-            top: -40,
-            right: 0,
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
+          _buildItem(
+            AppLocale.delete_this_list,
+            textColor: context.myTheme.colorScheme.destructive,
+            onTap: () {},
           ),
-        ],
-      ),
-    );
+        ]),
+      ],
+    ));
   }
 
   Widget _buildGroup(List<Widget> children) {

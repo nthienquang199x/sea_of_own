@@ -11,8 +11,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../home/models/navigation_type.dart';
+
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  const SearchPage({super.key, this.onTapNavigation});
+  final Function(NavigationType type)? onTapNavigation;
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -248,9 +251,15 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
   Widget buildCategoryCard(Category category) {
     return InkWell(
       onTap: () {
-        context.router.push(
+        context.router
+            .push(
           ProductsRoute(category: category),
-        );
+        )
+            .then((value) {
+          if (value != null && value is NavigationType) {
+            widget.onTapNavigation?.call(value);
+          }
+        });
       },
       child: SizedBox(
         child: Row(

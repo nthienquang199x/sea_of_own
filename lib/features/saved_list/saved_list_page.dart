@@ -2,6 +2,7 @@ import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/app/theme/icons.dart';
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
+import 'package:app_base/features/home/models/navigation_type.dart';
 import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/saved_list/saved_list_cubit.dart';
 import 'package:app_base/features/saved_list/saved_list_state.dart';
@@ -13,7 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class SavedListPage extends StatefulWidget {
-  const SavedListPage({super.key});
+  const SavedListPage({super.key, this.onTapNavigation});
+  final Function(NavigationType type)? onTapNavigation;
 
   @override
   State<SavedListPage> createState() => _SavedListPageState();
@@ -103,16 +105,22 @@ class _SavedListPageState
 
   Widget buildProductCard(String productName, String productImage) {
     return Container(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.background,
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
         onTap: () {
-          context.router.pushNamed(
+          context.router
+              .pushNamed(
             Routes.productSavedList,
-          );
+          )
+              .then((value) {
+            if (value != null && value is NavigationType) {
+              widget.onTapNavigation?.call(value);
+            }
+          });
         },
         child: Row(
           children: [
@@ -124,6 +132,7 @@ class _SavedListPageState
               child: Image.asset(
                 "assets/images/img_search_product.png",
                 fit: BoxFit.cover,
+                height: 114,
               ),
             ),
             Expanded(

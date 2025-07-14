@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:app_base/app/config/app_router.dart';
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
@@ -15,6 +13,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../components/custom_navigation_bar.dart';
 import '../models/navigation_type.dart';
 import 'home_cubit.dart';
 import 'home_state.dart';
@@ -80,9 +79,21 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
       case NavigationType.discover:
         return _buildHome();
       case NavigationType.search:
-        return const SearchPage();
+        return SearchPage(
+          onTapNavigation: (type) {
+            setState(() {
+              currentType = type;
+            });
+          },
+        );
       case NavigationType.bookmarks:
-        return const SavedListPage();
+        return SavedListPage(
+          onTapNavigation: (type) {
+            setState(() {
+              currentType = type;
+            });
+          },
+        );
       case NavigationType.profile:
         return const ProfilePage();
     }
@@ -93,10 +104,10 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // const SizedBox(height: 15),
+          const SizedBox(height: 16),
           // Header
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'SeaOfOwn',
               style: context.myTheme.textThemeT1.bigTitle.copyWith(
@@ -110,14 +121,14 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           // Featured Product
           Container(
             height: 320,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: PageView.builder(
               itemCount: 5,
               padEnds: false,
               controller: PageController(viewportFraction: 1),
               itemBuilder: (context, index) {
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   child: InkWell(
                     onTap: () {
                       showModalBottomSheet(
@@ -127,58 +138,61 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                         builder: (context) => ProductPage(product: product),
                       );
                     },
-                    child: AspectRatio(
-                      aspectRatio: 396 / 353,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: context.myTheme.colorScheme.background,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 396 / 304,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(12),
-                                ),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: AspectRatio(
+                        aspectRatio: 396 / 353,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: context.myTheme.colorScheme.background,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 396 / 304,
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(12),
                                   ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.build,
-                                      size: 60,
-                                      color: Colors.grey[400],
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.build,
+                                        size: 60,
+                                        color: Colors.grey[400],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Hoto-12V Brushless Drill Tool Set',
-                                      style: context.myTheme.textThemeT1.title
-                                          .copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: context
-                                            .myTheme.colorScheme.foreground,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )
-                                  ],
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Hoto-12V Brushless Drill Tool Set',
+                                        style: context.myTheme.textThemeT1.title
+                                            .copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: context
+                                              .myTheme.colorScheme.foreground,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -309,9 +323,17 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                       final category = categories[index];
                       return InkWell(
                         onTap: () {
-                          context.router.push(
+                          context.router
+                              .push(
                             ProductsRoute(category: category),
-                          );
+                          )
+                              .then((value) {
+                            if (value != null && value is NavigationType) {
+                              setState(() {
+                                currentType = value;
+                              });
+                            }
+                          });
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -685,54 +707,13 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
   }
 
   Widget _buildBottomNavigationBar() {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 12,
-        bottom: math.max(0, MediaQuery.of(context).padding.bottom - 4),
-      ),
-      decoration: BoxDecoration(
-        color: context.myTheme.colorScheme.tab,
-        boxShadow: [
-          BoxShadow(
-            color: context.myTheme.colorScheme.foreground.withValues(
-              alpha: 0.1,
-            ),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: NavigationType.values.map((e) {
-          final isSelected = currentType == e;
-
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                currentType = e;
-              });
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(
-                  e.icon,
-                  colorFilter: ColorFilter.mode(
-                    isSelected
-                        ? context.myTheme.colorScheme.iconActive
-                        : context.myTheme.colorScheme.iconInactive,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
+    return CustomNavigationBar(
+      type: currentType,
+      onTap: (type) {
+        setState(() {
+          currentType = type;
+        });
+      },
     );
   }
 }

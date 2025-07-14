@@ -8,8 +8,8 @@ import 'package:flutter_svg/svg.dart';
 class CustomBottomSheet extends StatefulWidget {
   const CustomBottomSheet({
     super.key,
-    required this.title,
-    required this.titleButton,
+    this.title,
+    this.titleButton,
     this.textColor,
     this.onTap,
     required this.child,
@@ -17,8 +17,8 @@ class CustomBottomSheet extends StatefulWidget {
     this.isDismissible = true,
   });
 
-  final String title;
-  final String titleButton;
+  final String? title;
+  final String? titleButton;
   final Color? textColor;
   final void Function()? onTap;
   final Widget child;
@@ -59,26 +59,30 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.title.tr(context),
-                        style: context.myTheme.textThemeT1.title.copyWith(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: context.myTheme.colorScheme.foreground,
+                      if (widget.title != null) ...{
+                        Text(
+                          widget.title!.tr(context),
+                          style: context.myTheme.textThemeT1.title.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: context.myTheme.colorScheme.foreground,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 24),
+                      },
                       widget.child,
-                      const SizedBox(height: 24),
-                      CustomButton(
-                        title: widget.titleButton,
-                        onTap: widget.onTap ??
-                            () {
-                              Navigator.of(context).pop();
-                            },
-                        textColor: widget.textColor ??
-                            context.myTheme.colorScheme.primaryForeground,
-                      ),
+                      if (widget.titleButton != null) ...{
+                        const SizedBox(height: 24),
+                        CustomButton(
+                          title: widget.titleButton!,
+                          onTap: widget.onTap ??
+                              () {
+                                Navigator.of(context).pop();
+                              },
+                          textColor: widget.textColor ??
+                              context.myTheme.colorScheme.primaryForeground,
+                        ),
+                      },
                     ],
                   ),
                 );

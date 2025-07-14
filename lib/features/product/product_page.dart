@@ -48,7 +48,8 @@ class _ProductPageState extends State<ProductPage> {
                 //   ),
                 // ),
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -58,8 +59,8 @@ class _ProductPageState extends State<ProductPage> {
                             child: Text(product.category,
                                 style:
                                     context.myTheme.textThemeT1.title.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
                                   color: context.myTheme.colorScheme.foreground,
                                 )),
                           ),
@@ -80,7 +81,7 @@ class _ProductPageState extends State<ProductPage> {
                             fontWeight: FontWeight.w500,
                             color: context.myTheme.colorScheme.foreground),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       Text(
                         '${product.currency} ${product.price.toStringAsFixed(2)}',
                         style: context.myTheme.textThemeT1.title.copyWith(
@@ -88,7 +89,7 @@ class _ProductPageState extends State<ProductPage> {
                             fontWeight: FontWeight.normal,
                             color: context.myTheme.colorScheme.foreground),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       Row(
                         children: [
                           SvgPicture.asset("assets/icons/ic_product_heart.svg",
@@ -112,7 +113,7 @@ class _ProductPageState extends State<ProductPage> {
                               )),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 40),
                       Text(
                         product.description,
                         style: context.myTheme.textThemeT1.body.copyWith(
@@ -120,7 +121,7 @@ class _ProductPageState extends State<ProductPage> {
                           color: context.myTheme.colorScheme.foreground,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 40),
                       ExpandableWidget(
                         title: 'Specs',
                         body: product.description,
@@ -227,20 +228,28 @@ class _ProductPageState extends State<ProductPage> {
 
   Widget _buildMainProductImage() {
     return ClipRRect(
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            color: context.myTheme.colorScheme.primary,
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(8),
+        topRight: Radius.circular(8),
+      ),
+      child: ClipRRect(
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.myTheme.colorScheme.primary,
+            ),
+            child: product.images.isNotEmpty
+                ? ProductExtendedImage(
+                    imageUrl: product.images.first,
+                    width: double.infinity,
+                    onTap: () => ExtendedImageGalleryViewer.showAsDialog(
+                        context,
+                        images: product.images,
+                        initialIndex: 0),
+                  )
+                : null,
           ),
-          child: product.images.isNotEmpty
-              ? ProductExtendedImage(
-                  imageUrl: product.images.first,
-                  width: double.infinity,
-                  onTap: () => ExtendedImageGalleryViewer.showAsDialog(context,
-                      images: product.images, initialIndex: 0),
-                )
-              : null,
         ),
       ),
     );
