@@ -9,6 +9,8 @@ import 'package:injectable/injectable.dart';
 @injectable
 class ProfileCubit extends BaseCubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
+  TextEditingController textEditingController = TextEditingController();
+  TextEditingController feedbackEditingController = TextEditingController();
 
   void init() {
     final themeName = LocalStorage().theme;

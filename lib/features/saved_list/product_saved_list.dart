@@ -107,21 +107,90 @@ class _ProductSavedListPageState extends State<ProductSavedListPage> {
     selectedFilter ??= FilterList.values.first;
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return buildProductCard(product);
-              },
-            ),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.router.maybePop(),
+                      child: SvgPicture.asset(
+                        "assets/icons/ic_chevron_left.svg",
+                        colorFilter: ColorFilter.mode(
+                          context.myTheme.colorScheme.foreground,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        "Default List",
+                        style: context.myTheme.textThemeT1.title.copyWith(
+                            color: context.myTheme.colorScheme.foreground,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showBottomSheet(
+                          context: context,
+                          builder: (context) => buildFilter(),
+                        );
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: context.myTheme.colorScheme.menuIconBg,
+                            shape: BoxShape.circle,
+                          ),
+                          child: SvgPicture.asset(
+                            "assets/icons/ic_products_sort.svg",
+                            colorFilter: ColorFilter.mode(
+                              context.myTheme.colorScheme.foreground,
+                              BlendMode.srcIn,
+                            ),
+                          )),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        showBottomSheet(
+                          context: context,
+                          builder: (context) => buildOptionDialog(),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.myTheme.colorScheme.menuIconBg,
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset("assets/icons/ic_menu.svg",
+                            colorFilter: ColorFilter.mode(
+                              context.myTheme.colorScheme.foreground,
+                              BlendMode.srcIn,
+                            )),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  return buildProductCard(product);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

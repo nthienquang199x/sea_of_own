@@ -34,29 +34,32 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.isDismissible ? () => Navigator.of(context).pop() : null,
-      child: Container(
-        color: Colors.black.withValues(alpha: 0.5),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: context.myTheme.colorScheme.muted,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: context.myTheme.colorScheme.muted,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: 24,
+                    right: 24,
+                    top: 24,
+                    bottom: MediaQuery.of(context).viewInsets.bottom +
+                        MediaQuery.of(context).padding.bottom,
                   ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 24.0, left: 24, right: 24),
-                      child: Text(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         widget.title.tr(context),
                         style: context.myTheme.textThemeT1.title.copyWith(
                           fontSize: 20,
@@ -64,46 +67,35 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                           color: context.myTheme.colorScheme.foreground,
                         ),
                       ),
-                    ),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            widget.child,
-                            const SizedBox(height: 24),
-                            CustomButton(
-                              title: widget.titleButton,
-                              onTap: widget.onTap ??
-                                  () {
-                                    Navigator.of(context).pop();
-                                  },
-                              textColor: widget.textColor ??
-                                  context.myTheme.colorScheme.primaryForeground,
-                            ),
-                            SizedBox(
-                                height: MediaQuery.of(context).padding.bottom),
-                          ],
-                        ),
+                      const SizedBox(height: 24),
+                      widget.child,
+                      const SizedBox(height: 24),
+                      CustomButton(
+                        title: widget.titleButton,
+                        onTap: widget.onTap ??
+                            () {
+                              Navigator.of(context).pop();
+                            },
+                        textColor: widget.textColor ??
+                            context.myTheme.colorScheme.primaryForeground,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              if (widget.showCloseButton)
-                Positioned(
-                  top: -35,
-                  right: 16,
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: SvgPicture.asset(AppIcons.ic_close,
-                        width: 24, height: 24),
+                    ],
                   ),
-                ),
-            ],
+                );
+              },
+            ),
           ),
-        ),
+          if (widget.showCloseButton)
+            Positioned(
+              top: -35,
+              right: 16,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child:
+                    SvgPicture.asset(AppIcons.ic_close, width: 24, height: 24),
+              ),
+            ),
+        ],
       ),
     );
   }

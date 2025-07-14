@@ -76,9 +76,9 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.editProfile.title,
                   onTap: () {
-                    showBottomSheet(
+                    showModalBottomSheet(
                       context: context,
-                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
                       builder: (context) => buildDialogEditProfile(),
                     );
                   },
@@ -94,9 +94,8 @@ class _ProfilePageState
                   SettingsType.theme.title,
                   subtitle: state.selectedTheme.name,
                   onTap: () {
-                    showBottomSheet(
+                    showModalBottomSheet(
                       context: context,
-                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogAppTheme(),
                     );
                   },
@@ -107,9 +106,8 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.logout.title,
                   onTap: () {
-                    showBottomSheet(
+                    showModalBottomSheet(
                       context: context,
-                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogLogout(),
                     );
                   },
@@ -125,9 +123,9 @@ class _ProfilePageState
                   SettingsType.deleteAccount.title,
                   textColor: context.myTheme.colorScheme.destructive,
                   onTap: () {
-                    showBottomSheet(
+                    showModalBottomSheet(
                       context: context,
-                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
                       builder: (context) => buildDialogDeleteAccount(),
                     );
                   },
@@ -137,9 +135,9 @@ class _ProfilePageState
               _buildGroup([
                 _buildSettingItem(
                   SettingsType.privacyPolicy.title,
-                  onTap: () => showBottomSheet(
+                  onTap: () => showModalBottomSheet(
                     context: context,
-                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
                     builder: (context) => const PrivacyPolicyCookies(),
                   ),
                 ),
@@ -160,9 +158,9 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.sendUsYourFeedback.title,
                   onTap: () {
-                    showBottomSheet(
+                    showModalBottomSheet(
                       context: context,
-                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
                       builder: (context) => buildDialogSendFeedback(),
                     );
                   },
@@ -250,7 +248,7 @@ class _ProfilePageState
               hintText: AppLocale.write_to_us.tr(context),
               borderColor: Colors.transparent,
               fillColor: context.myTheme.colorScheme.background,
-              controller: TextEditingController(),
+              controller: cubit.feedbackEditingController,
               keyboardType: TextInputType.text,
               borderRadius: BorderRadius.circular(8),
               maxlines: 5,
@@ -363,9 +361,9 @@ class _ProfilePageState
       textColor: context.myTheme.colorScheme.destructive,
       onTap: () {
         Navigator.of(context).pop();
-        showBottomSheet(
+        showModalBottomSheet(
           context: context,
-          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
           builder: (context) => buildDialogFeedbackReason(),
         );
       },
@@ -398,30 +396,23 @@ class _ProfilePageState
       title: AppLocale.tell_us_why_you_decided_to_leave,
       titleButton: AppLocale.confirm_delete,
       textColor: context.myTheme.colorScheme.destructive,
-      child: Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          color: context.myTheme.colorScheme.background,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            CustomRadioGroup<FeedbackReason>(
-              selected: FeedbackReason.other,
-              options: FeedbackReason.values,
-              onChanged: (value) {},
-              itemLabelBuilder: (option) => option.title.tr(context),
-            ),
-            TextFormFieldCustom(
-              hintText: AppLocale.please_explain_a_little_more.tr(context),
-              borderColor: context.myTheme.colorScheme.mutedForeground,
-              fillColor: context.myTheme.colorScheme.background,
-              controller: TextEditingController(),
-              keyboardType: TextInputType.text,
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ],
-        ),
+      child: Column(
+        children: [
+          CustomRadioGroup<FeedbackReason>(
+            selected: FeedbackReason.other,
+            options: FeedbackReason.values,
+            onChanged: (value) {},
+            itemLabelBuilder: (option) => option.title.tr(context),
+          ),
+          TextFormFieldCustom(
+            hintText: AppLocale.please_explain_a_little_more.tr(context),
+            borderColor: context.myTheme.colorScheme.mutedForeground,
+            fillColor: context.myTheme.colorScheme.background,
+            controller: cubit.textEditingController,
+            keyboardType: TextInputType.text,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ],
       ),
     );
   }

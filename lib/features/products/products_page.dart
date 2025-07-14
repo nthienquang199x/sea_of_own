@@ -624,20 +624,10 @@ class _FilterWidgetState extends State<FilterWidget> {
           Row(
             children: [
               if (count.isNotEmpty)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: context.myTheme.colorScheme.mutedForeground
-                        .withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    count,
-                    style: context.myTheme.textThemeT1.title.copyWith(
-                      color: context.myTheme.colorScheme.mutedForeground,
-                      fontSize: 12,
-                    ),
+                Text(
+                  count,
+                  style: context.myTheme.textThemeT1.body.copyWith(
+                    color: context.myTheme.colorScheme.mutedForeground,
                   ),
                 ),
               const SizedBox(width: 8),

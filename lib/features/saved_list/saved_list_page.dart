@@ -2,7 +2,7 @@ import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/app/theme/icons.dart';
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
-import 'package:app_base/features/profile/components/custom_dialog.dart';
+import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/saved_list/saved_list_cubit.dart';
 import 'package:app_base/features/saved_list/saved_list_state.dart';
 import 'package:app_base/features/search/components/search_widget.dart';
@@ -61,8 +61,9 @@ class _SavedListPageState
                       ),
                       GestureDetector(
                         onTap: () {
-                          showDialog(
+                          showModalBottomSheet(
                             context: context,
+                            isScrollControlled: true,
                             builder: (context) => buildAddNewListDialog(),
                           );
                         },
@@ -165,14 +166,14 @@ class _SavedListPageState
   }
 
   Widget buildAddNewListDialog() {
-    return CustomDialog(
+    return CustomBottomSheet(
         title: AppLocale.create_new_list,
         titleButton: AppLocale.create,
         child: TextFormFieldCustom(
           hintText: AppLocale.add_a_name.tr(context),
           borderColor: Colors.transparent,
           fillColor: context.myTheme.colorScheme.background,
-          controller: TextEditingController(),
+          controller: cubit.createNameController,
           keyboardType: TextInputType.text,
           borderRadius: BorderRadius.circular(8),
         ),

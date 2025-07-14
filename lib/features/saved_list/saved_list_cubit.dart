@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 class SavedListCubit extends BaseCubit<SavedListState> {
   SavedListCubit() : super(SavedListState());
   final TextEditingController searchController = TextEditingController();
+  final TextEditingController createNameController = TextEditingController();
 
   void init() {
     addSearchListener();

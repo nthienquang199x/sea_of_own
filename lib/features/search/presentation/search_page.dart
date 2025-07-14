@@ -204,7 +204,8 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        showBottomSheet(
+                        showModalBottomSheet(
+                          isScrollControlled: true,
                           context: context,
                           builder: (context) => ProductPage(product: product),
                         );

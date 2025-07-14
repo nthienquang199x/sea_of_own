@@ -126,11 +126,14 @@ class CustomRadio<T> extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: context.myTheme.textThemeT1.title.copyWith(
-              color: context.myTheme.colorScheme.foreground,
-              fontWeight: FontWeight.w500,
+          Expanded(
+            child: Text(
+              label,
+              softWrap: true,
+              style: context.myTheme.textThemeT1.title.copyWith(
+                color: context.myTheme.colorScheme.foreground,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const HSpacing(spacing: 8),
