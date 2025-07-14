@@ -15,6 +15,7 @@ import '../app/app/app_cubit.dart' as _i189;
 import '../core/storage/local_storage.dart' as _i449;
 import '../features/home/presentation/home_cubit.dart' as _i624;
 import '../features/profile/presentation/profile_cubit.dart' as _i336;
+import '../features/saved_list/saved_list_cubit.dart' as _i996;
 import '../features/search/presentation/search_cubit.dart' as _i178;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -29,6 +30,7 @@ _i174.GetIt $initGetit(
     environmentFilter,
   );
   gh.factory<_i624.HomeCubit>(() => _i624.HomeCubit());
+  gh.factory<_i996.SavedListCubit>(() => _i996.SavedListCubit());
   gh.factory<_i178.SearchCubit>(() => _i178.SearchCubit());
   gh.factory<_i336.ProfileCubit>(() => _i336.ProfileCubit());
   gh.singleton<_i449.LocalStorage>(() => _i449.LocalStorage());

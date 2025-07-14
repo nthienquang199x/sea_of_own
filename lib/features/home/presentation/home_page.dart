@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:app_base/app/config/app_router.dart';
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
@@ -44,9 +46,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
     description:
         'Designed for active lifestyles with water resistance and durable materials.',
     images: [
-      'https://example.com/watch6.jpg',
-      'https://example.com/watch7.jpg',
-      'https://example.com/watch8.jpg',
+      'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+      'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+      'https://vn1.vdrive.vn/alohamedia.vn/2025/02/3xoqKJdm-24.jpg',
     ],
     category: 'Watches',
     isAvailable: true,
@@ -88,90 +90,96 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
 
   Widget _buildHome() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // const SizedBox(height: 15),
           // Header
-          Text(
-            'SeaOfOwn',
-            style: context.myTheme.textThemeT1.bigTitle.copyWith(
-              fontSize: 32,
-              fontWeight: FontWeight.w500,
-              color: context.myTheme.colorScheme.foreground,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'SeaOfOwn',
+              style: context.myTheme.textThemeT1.bigTitle.copyWith(
+                fontSize: 32,
+                fontWeight: FontWeight.w500,
+                color: context.myTheme.colorScheme.foreground,
+              ),
             ),
           ),
           const SizedBox(height: 24),
           // Featured Product
-          SizedBox(
+          Container(
             height: 320,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: PageView.builder(
               itemCount: 5,
+              padEnds: false,
+              controller: PageController(viewportFraction: 1),
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) => ProductPage(product: product),
-                    );
-                  },
-                  child: AspectRatio(
-                    aspectRatio: 396 / 353,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: context.myTheme.colorScheme.background,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 396 / 304,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) => ProductPage(product: product),
+                      );
+                    },
+                    child: AspectRatio(
+                      aspectRatio: 396 / 353,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.myTheme.colorScheme.background,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 396 / 304,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12),
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.build,
-                                    size: 60,
-                                    color: Colors.grey[400],
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.build,
+                                      size: 60,
+                                      color: Colors.grey[400],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Hoto-12V Brushless Drill Tool Set',
-                                    style: context.myTheme.textThemeT1.title
-                                        .copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: context
-                                          .myTheme.colorScheme.foreground,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )
-                                ],
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Hoto-12V Brushless Drill Tool Set',
+                                      style: context.myTheme.textThemeT1.title
+                                          .copyWith(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: context
+                                            .myTheme.colorScheme.foreground,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -182,16 +190,20 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           const SizedBox(height: 24),
 
           // Newly Added Section
-          Text(AppLocale.newly_added.tr(context),
-              style: context.myTheme.textThemeT1.title.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: context.myTheme.colorScheme.foreground,
-              )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(AppLocale.newly_added.tr(context),
+                style: context.myTheme.textThemeT1.title.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: context.myTheme.colorScheme.foreground,
+                )),
+          ),
           const SizedBox(height: 16),
           SizedBox(
               height: 194,
               child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
                 separatorBuilder: (context, index) => const SizedBox(width: 8),
                 itemCount: 4,
@@ -265,81 +277,89 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
               )),
           const SizedBox(height: 32),
           // Browse by categories
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: context.myTheme.colorScheme.card,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(AppLocale.browse_by_categories.tr(context),
-                    style: context.myTheme.textThemeT1.title.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                      color: context.myTheme.colorScheme.cardForeground,
-                    )),
-                const SizedBox(height: 12),
-                ListView.separated(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(),
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: categories.length,
-                  separatorBuilder: (context, index) => Divider(
-                    color: context.myTheme.colorScheme.separator2,
-                    height: 1,
-                  ),
-                  itemBuilder: (context, index) {
-                    final category = categories[index];
-                    return InkWell(
-                      onTap: () {
-                        context.router.push(
-                          ProductsRoute(category: category),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              category.name,
-                              style: context.myTheme.textThemeT1.title.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color:
-                                    context.myTheme.colorScheme.cardForeground,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: context.myTheme.colorScheme.card,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(AppLocale.browse_by_categories.tr(context),
+                      style: context.myTheme.textThemeT1.title.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: context.myTheme.colorScheme.cardForeground,
+                      )),
+                  const SizedBox(height: 12),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(),
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: categories.length,
+                    separatorBuilder: (context, index) => Divider(
+                      color: context.myTheme.colorScheme.separator2,
+                      height: 1,
+                    ),
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
+                      return InkWell(
+                        onTap: () {
+                          context.router.push(
+                            ProductsRoute(category: category),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                category.name,
+                                style:
+                                    context.myTheme.textThemeT1.title.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: context
+                                      .myTheme.colorScheme.cardForeground,
+                                ),
                               ),
-                            ),
-                            SvgPicture.asset(
-                              'assets/icons/ic_home_arrow_right.svg',
-                              colorFilter: ColorFilter.mode(
-                                context.myTheme.colorScheme.iconInactive,
-                                BlendMode.srcIn,
+                              SvgPicture.asset(
+                                'assets/icons/ic_home_arrow_right.svg',
+                                colorFilter: ColorFilter.mode(
+                                  context.myTheme.colorScheme.iconInactive,
+                                  BlendMode.srcIn,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                )
-              ],
+                      );
+                    },
+                  )
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 32),
-          Text(AppLocale.browse_by_spaces.tr(context),
-              style: context.myTheme.textThemeT1.title.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: context.myTheme.colorScheme.foreground,
-              )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(AppLocale.browse_by_spaces.tr(context),
+                style: context.myTheme.textThemeT1.title.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: context.myTheme.colorScheme.foreground,
+                )),
+          ),
           const SizedBox(height: 16),
           SizedBox(
               height: 194,
               child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
                 separatorBuilder: (context, index) => const SizedBox(width: 8),
                 itemCount: 4,
@@ -670,7 +690,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
         left: 16,
         right: 16,
         top: 12,
-        bottom: MediaQuery.of(context).padding.bottom - 4,
+        bottom: math.max(0, MediaQuery.of(context).padding.bottom - 4),
       ),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.tab,

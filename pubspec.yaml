@@ -71,6 +71,7 @@ dependencies:
   auto_size_text: ^3.0.0
   jwt_decoder: ^2.0.1
   flutter_secure_storage: ^9.2.4
+  extended_image: ^9.1.0
 
 dev_dependencies:
   # Base

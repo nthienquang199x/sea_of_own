@@ -1,5 +1,6 @@
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
+import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/profile/components/custom_circle_avatar.dart';
 import 'package:app_base/features/profile/components/custom_dialog.dart';
 import 'package:app_base/features/profile/components/privacy_policy.dart';
@@ -75,8 +76,9 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.editProfile.title,
                   onTap: () {
-                    showDialog(
+                    showBottomSheet(
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogEditProfile(),
                     );
                   },
@@ -92,8 +94,9 @@ class _ProfilePageState
                   SettingsType.theme.title,
                   subtitle: state.selectedTheme.name,
                   onTap: () {
-                    showDialog(
+                    showBottomSheet(
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogAppTheme(),
                     );
                   },
@@ -104,8 +107,9 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.logout.title,
                   onTap: () {
-                    showDialog(
+                    showBottomSheet(
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogLogout(),
                     );
                   },
@@ -121,8 +125,9 @@ class _ProfilePageState
                   SettingsType.deleteAccount.title,
                   textColor: context.myTheme.colorScheme.destructive,
                   onTap: () {
-                    showDialog(
+                    showBottomSheet(
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogDeleteAccount(),
                     );
                   },
@@ -132,7 +137,11 @@ class _ProfilePageState
               _buildGroup([
                 _buildSettingItem(
                   SettingsType.privacyPolicy.title,
-                  onTap: () => showDataCookiesDialog(context),
+                  onTap: () => showBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const PrivacyPolicyCookies(),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -151,8 +160,9 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.sendUsYourFeedback.title,
                   onTap: () {
-                    showDialog(
+                    showBottomSheet(
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) => buildDialogSendFeedback(),
                     );
                   },
@@ -223,7 +233,7 @@ class _ProfilePageState
   }
 
   Widget buildDialogSendFeedback() {
-    return CustomDialog(
+    return CustomBottomSheet(
         title: AppLocale.send_us_your_feedback,
         titleButton: AppLocale.send_feedback,
         child: Column(
@@ -288,7 +298,7 @@ class _ProfilePageState
   }
 
   Widget buildDialogEditProfile() {
-    return CustomDialog(
+    return CustomBottomSheet(
         title: AppLocale.edit_profile,
         titleButton: AppLocale.save_changes,
         child: Column(
@@ -318,7 +328,7 @@ class _ProfilePageState
     AppTheme? tempSelectedTheme = state.selectedTheme;
 
     return StatefulBuilder(
-      builder: (context, setDialogState) => CustomDialog(
+      builder: (context, setDialogState) => CustomBottomSheet(
         title: AppLocale.app_theme,
         titleButton: AppLocale.save_changes,
         onTap: () {
@@ -347,10 +357,18 @@ class _ProfilePageState
   }
 
   Widget buildDialogDeleteAccount() {
-    return CustomDialog(
+    return CustomBottomSheet(
       title: AppLocale.delete_account,
       titleButton: AppLocale.delete_account,
       textColor: context.myTheme.colorScheme.destructive,
+      onTap: () {
+        Navigator.of(context).pop();
+        showBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          builder: (context) => buildDialogFeedbackReason(),
+        );
+      },
       child: Text(
         AppLocale.delete_account_description.tr(context),
         style: context.myTheme.textThemeT1.title.copyWith(
@@ -362,7 +380,7 @@ class _ProfilePageState
   }
 
   Widget buildDialogLogout() {
-    return CustomDialog(
+    return CustomBottomSheet(
       title: AppLocale.logout,
       titleButton: AppLocale.logout,
       child: Text(
@@ -376,7 +394,7 @@ class _ProfilePageState
   }
 
   Widget buildDialogFeedbackReason() {
-    return CustomDialog(
+    return CustomBottomSheet(
       title: AppLocale.tell_us_why_you_decided_to_leave,
       titleButton: AppLocale.confirm_delete,
       textColor: context.myTheme.colorScheme.destructive,

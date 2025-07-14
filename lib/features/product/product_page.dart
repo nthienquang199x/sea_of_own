@@ -1,5 +1,7 @@
 import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_extended_image.dart';
+import 'package:app_base/utils/widget/extended_image_gallery_viewer.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -28,22 +30,23 @@ class _ProductPageState extends State<ProductPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ClipRRect(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: context.myTheme.colorScheme.primary,
-                        image: product.images.isNotEmpty
-                            ? DecorationImage(
-                                image: NetworkImage(product.images.first),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                    ),
-                  ),
-                ),
+                _buildMainProductImage(),
+                // ClipRRect(
+                //   child: AspectRatio(
+                //     aspectRatio: 1,
+                //     child: Container(
+                //       decoration: BoxDecoration(
+                //         color: context.myTheme.colorScheme.primary,
+                //         image: product.images.isNotEmpty
+                //             ? DecorationImage(
+                //                 image: NetworkImage(product.images.first),
+                //                 fit: BoxFit.cover,
+                //               )
+                //             : null,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -134,26 +137,28 @@ class _ProductPageState extends State<ProductPage> {
                         title: 'What we don’t like',
                         body: product.description,
                       ),
-                      ListView.separated(
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.only(top: 16),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: Container(
-                                  width: double.infinity,
-                                  color: context.myTheme.colorScheme.primary,
-                                ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(height: 8);
-                          },
-                          itemCount: 5)
+                      const SizedBox(height: 24),
+                      _buildImageGallery(),
+                      // ListView.separated(
+                      //     shrinkWrap: true,
+                      //     padding: const EdgeInsets.only(top: 16),
+                      //     physics: const NeverScrollableScrollPhysics(),
+                      //     itemBuilder: (context, index) {
+                      //       return ClipRRect(
+                      //         borderRadius: BorderRadius.circular(4),
+                      //         child: AspectRatio(
+                      //           aspectRatio: 1,
+                      //           child: Container(
+                      //             width: double.infinity,
+                      //             color: context.myTheme.colorScheme.primary,
+                      //           ),
+                      //         ),
+                      //       );
+                      //     },
+                      //     separatorBuilder: (context, index) {
+                      //       return const SizedBox(height: 8);
+                      //     },
+                      //     itemCount: 5)
                     ],
                   ),
                 ),
@@ -176,6 +181,68 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildImageGallery() {
+    List<String> galleryImages = product.images.isNotEmpty
+        ? product.images
+        : List.generate(
+            5, (index) => 'https://picsum.photos/400/400?random=$index');
+
+    return ListView.separated(
+      shrinkWrap: true,
+      padding: const EdgeInsets.only(top: 16),
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.myTheme.colorScheme.primary,
+              ),
+              child: product.images.isNotEmpty
+                  ? ProductExtendedImage(
+                      imageUrl: product.images[index],
+                      width: double.infinity,
+                      onTap: () => ExtendedImageGalleryViewer.showAsDialog(
+                          context,
+                          images: product.images,
+                          initialIndex: index),
+                      borderRadius: BorderRadius.circular(4),
+                    )
+                  : null,
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(height: 8);
+      },
+      itemCount: galleryImages.length,
+    );
+  }
+
+  Widget _buildMainProductImage() {
+    return ClipRRect(
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.myTheme.colorScheme.primary,
+          ),
+          child: product.images.isNotEmpty
+              ? ProductExtendedImage(
+                  imageUrl: product.images.first,
+                  width: double.infinity,
+                  onTap: () => ExtendedImageGalleryViewer.showAsDialog(context,
+                      images: product.images, initialIndex: 0),
+                )
+              : null,
+        ),
+      ),
     );
   }
 }

@@ -1,7 +1,12 @@
+import 'package:app_base/app/app/models/navigation_type.dart';
+import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/features/product/product_page.dart';
+import 'package:app_base/features/profile/components/custom_dialog.dart';
+import 'package:app_base/features/saved_list/models/filter_list.dart';
 import 'package:app_base/models/category.dart';
 import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,6 +21,8 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
+  FilterList? selectedFilter = FilterList.highestPrice;
+  NavigationType currentType = NavigationType.dashboard;
   final List<Product> products = [
     Product(
       id: '1',
@@ -24,10 +31,14 @@ class _ProductsPageState extends State<ProductsPage> {
       currency: 'CA\$',
       description:
           'Oblong is a bold, contemporary take on the classic rectangular timepiece. A hybrid of past and present with a modernist edge.',
+      // images: [
+      //   'https://example.com/watch4.jpg',
+      //   'https://example.com/watch5.jpg',
+      // ],
       images: [
-        'https://example.com/watch1.jpg',
-        'https://example.com/watch2.jpg',
-        'https://example.com/watch3.jpg',
+        'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+        'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+        'https://vn1.vdrive.vn/alohamedia.vn/2025/02/3xoqKJdm-24.jpg',
       ],
       category: 'Watches',
       isAvailable: true,
@@ -41,9 +52,14 @@ class _ProductsPageState extends State<ProductsPage> {
       currency: 'CA\$',
       description:
           'A timeless piece that combines traditional craftsmanship with modern design elements.',
+      // images: [
+      //   'https://example.com/watch4.jpg',
+      //   'https://example.com/watch5.jpg',
+      // ],
       images: [
-        'https://example.com/watch4.jpg',
-        'https://example.com/watch5.jpg',
+        'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+        'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+        'https://vn1.vdrive.vn/alohamedia.vn/2025/02/3xoqKJdm-24.jpg',
       ],
       category: 'Watches',
       isAvailable: true,
@@ -58,10 +74,14 @@ class _ProductsPageState extends State<ProductsPage> {
       description:
           'Designed for active lifestyles with water resistance and durable materials.',
       images: [
-        'https://example.com/watch6.jpg',
-        'https://example.com/watch7.jpg',
-        'https://example.com/watch8.jpg',
+        'https://example.com/watch4.jpg',
+        'https://example.com/watch5.jpg',
       ],
+      //     images: [
+      //   'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+      //   'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
+      //   'https://vn1.vdrive.vn/alohamedia.vn/2025/02/3xoqKJdm-24.jpg',
+      // ],
       category: 'Watches',
       isAvailable: true,
       createdAt: DateTime.now().subtract(const Duration(days: 20)),
@@ -159,7 +179,12 @@ class _ProductsPageState extends State<ProductsPage> {
                     ),
                     const SizedBox(width: 12),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => buildFilter(),
+                        );
+                      },
                       child: Container(
                           decoration: BoxDecoration(
                             color: context.myTheme.colorScheme.menuIconBg,
@@ -284,6 +309,31 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
+  Widget buildFilter() {
+    return StatefulBuilder(builder: (context, setStateBuilder) {
+      return CustomDialog(
+          title: AppLocale.sort_by,
+          titleButton: AppLocale.sort,
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: context.myTheme.colorScheme.background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: CustomRadioGroup<FilterList>(
+              selected: selectedFilter,
+              options: FilterList.values,
+              itemLabelBuilder: (option) => option.title.tr(context),
+              onChanged: (value) {
+                setStateBuilder(() {
+                  selectedFilter = value;
+                });
+              },
+            ),
+          ));
+    });
+  }
+
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       leadingWidth: 40,
@@ -364,6 +414,8 @@ class _FilterWidgetState extends State<FilterWidget> {
   bool recentlyAdded = false;
   double priceRange = 0.5;
   bool viewAll = true;
+  ScrollController scrollController = ScrollController();
+  double maxHeightFactor = 0.6;
 
   // Categories list
   final List<Category> categories = [
@@ -395,6 +447,15 @@ class _FilterWidgetState extends State<FilterWidget> {
     for (var category in categories) {
       selectedCategories[category.name] = false;
     }
+
+    // Listen to scroll changes
+    scrollController.addListener(() {
+      if (!scrollController.position.atEdge) {
+        setState(() {
+          maxHeightFactor = 0.8;
+        });
+      }
+    });
   }
 
   @override
@@ -406,71 +467,95 @@ class _FilterWidgetState extends State<FilterWidget> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.6,
+        maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Office',
-            style: context.myTheme.textThemeT1.title.copyWith(
-              color: context.myTheme.colorScheme.foreground,
-              fontWeight: FontWeight.w600,
-              fontSize: 24,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.myTheme.colorScheme.muted,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                _buildFilterRow('On Sale', '14', onSale, (value) {
-                  setState(() => onSale = value);
-                }),
-                const Divider(height: 24),
-                _buildFilterRow('Recently Added', '8', recentlyAdded, (value) {
-                  setState(() => recentlyAdded = value);
-                }),
-                const Divider(height: 24),
-                _buildPriceRangeRow(),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.myTheme.colorScheme.muted,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                _buildFilterRow('View all', '', viewAll, (value) {
-                  setState(() => viewAll = value);
-                }, showCheckbox: true),
-                const Divider(height: 24),
-                ...categories.asMap().entries.map((entry) {
-                  final category = entry.value;
-                  final isLast = entry.key == categories.length - 1;
-                  return Column(
-                    children: [
-                      _buildFilterRow(
-                          category.name,
-                          categoryCounts[category.name] ?? '0',
-                          selectedCategories[category.name] ?? false, (value) {
-                        setState(
-                            () => selectedCategories[category.name] = value);
-                      }),
-                      if (!isLast) const Divider(height: 24),
-                    ],
-                  );
-                }),
-              ],
+          Expanded(
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Office',
+                    style: context.myTheme.textThemeT1.title.copyWith(
+                      color: context.myTheme.colorScheme.foreground,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 24,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: context.myTheme.colorScheme.muted,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildFilterRow('On Sale', '14', onSale, (value) {
+                          setState(() => onSale = value);
+                        }),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Divider(height: 24),
+                        ),
+                        _buildFilterRow('Recently Added', '8', recentlyAdded,
+                            (value) {
+                          setState(() => recentlyAdded = value);
+                        }),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Divider(height: 24),
+                        ),
+                        _buildPriceRangeRow(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: context.myTheme.colorScheme.muted,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildFilterRow('View all', '', viewAll, (value) {
+                          setState(() => viewAll = value);
+                        }, showCheckbox: true),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Divider(height: 24),
+                        ),
+                        ...categories.asMap().entries.map((entry) {
+                          final category = entry.value;
+                          final isLast = entry.key == categories.length - 1;
+                          return Column(
+                            children: [
+                              _buildFilterRow(
+                                  category.name,
+                                  categoryCounts[category.name] ?? '0',
+                                  selectedCategories[category.name] ?? false,
+                                  (value) {
+                                setState(() =>
+                                    selectedCategories[category.name] = value);
+                              }),
+                              if (!isLast)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Divider(height: 24),
+                                ),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -523,108 +608,119 @@ class _FilterWidgetState extends State<FilterWidget> {
   Widget _buildFilterRow(
       String title, String count, bool value, Function(bool) onChanged,
       {bool showCheckbox = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: context.myTheme.textThemeT1.title.copyWith(
-            color: context.myTheme.colorScheme.foreground,
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: context.myTheme.textThemeT1.title.copyWith(
+              color: context.myTheme.colorScheme.foreground,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
           ),
-        ),
-        Row(
-          children: [
-            if (count.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: context.myTheme.colorScheme.mutedForeground
-                      .withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  count,
-                  style: context.myTheme.textThemeT1.title.copyWith(
-                    color: context.myTheme.colorScheme.mutedForeground,
-                    fontSize: 12,
+          Row(
+            children: [
+              if (count.isNotEmpty)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: context.myTheme.colorScheme.mutedForeground
+                        .withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    count,
+                    style: context.myTheme.textThemeT1.title.copyWith(
+                      color: context.myTheme.colorScheme.mutedForeground,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
-              ),
-            const SizedBox(width: 8),
-            if (showCheckbox)
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: value
-                      ? context.myTheme.colorScheme.foreground
-                      : context.myTheme.colorScheme.mutedForeground,
-                  borderRadius: BorderRadius.circular(4),
+              const SizedBox(width: 8),
+              if (showCheckbox)
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: value
+                        ? context.myTheme.colorScheme.foreground
+                        : context.myTheme.colorScheme.mutedForeground,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: value
+                      ? Icon(
+                          Icons.check,
+                          color: context.myTheme.colorScheme.background,
+                          size: 16,
+                        )
+                      : null,
+                )
+              else
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: context.myTheme.colorScheme.mutedForeground
+                        .withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-                child: value
-                    ? Icon(
-                        Icons.check,
-                        color: context.myTheme.colorScheme.background,
-                        size: 16,
-                      )
-                    : null,
-              )
-            else
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: context.myTheme.colorScheme.mutedForeground
-                      .withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildPriceRangeRow() {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Price Range',
-              style: context.myTheme.textThemeT1.title.copyWith(
-                color: context.myTheme.colorScheme.foreground,
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Price Range',
+                style: context.myTheme.textThemeT1.title.copyWith(
+                  color: context.myTheme.colorScheme.foreground,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            Text(
-              'Any',
-              style: context.myTheme.textThemeT1.title.copyWith(
-                color: context.myTheme.colorScheme.mutedForeground,
-                fontSize: 14,
+              Text(
+                'Any',
+                style: context.myTheme.textThemeT1.title.copyWith(
+                  color: context.myTheme.colorScheme.mutedForeground,
+                  fontSize: 14,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 16),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: context.myTheme.colorScheme.foreground,
-            inactiveTrackColor:
-                context.myTheme.colorScheme.mutedForeground.withOpacity(0.3),
-            thumbColor: context.myTheme.colorScheme.foreground,
-            trackHeight: 4,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
-          ),
-          child: Slider(
-            value: priceRange,
-            onChanged: (value) {
-              setState(() => priceRange = value);
-            },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: context.myTheme.colorScheme.foreground,
+              inactiveTrackColor:
+                  context.myTheme.colorScheme.mutedForeground.withOpacity(0.3),
+              thumbColor: context.myTheme.colorScheme.foreground,
+              trackHeight: 4,
+              overlayShape: SliderComponentShape.noOverlay,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+            ),
+            child: Slider(
+              value: priceRange,
+              onChanged: (value) {
+                setState(() => priceRange = value);
+              },
+            ),
           ),
         ),
       ],

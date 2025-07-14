@@ -1,7 +1,11 @@
 import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/app/theme/icons.dart';
+import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/features/profile/components/custom_dialog.dart';
+import 'package:app_base/features/saved_list/saved_list_cubit.dart';
+import 'package:app_base/features/saved_list/saved_list_state.dart';
+import 'package:app_base/features/search/components/search_widget.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:auto_route/auto_route.dart';
@@ -15,9 +19,23 @@ class SavedListPage extends StatefulWidget {
   State<SavedListPage> createState() => _SavedListPageState();
 }
 
-class _SavedListPageState extends State<SavedListPage> {
+class _SavedListPageState
+    extends BaseState<SavedListState, SavedListCubit, SavedListPage> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    cubit.init();
+    cubit.addSearchListener();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    cubit.removeSearchListener();
+    super.dispose();
+  }
+
+  @override
+  Widget buildByState(BuildContext context, SavedListState state) {
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       body: SingleChildScrollView(
@@ -25,10 +43,11 @@ class _SavedListPageState extends State<SavedListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -63,17 +82,12 @@ class _SavedListPageState extends State<SavedListPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  TextFormFieldCustom(
-                    hintText: "Search Account or Product name",
-                    borderColor: Colors.transparent,
-                    fillColor: context.myTheme.colorScheme.background,
-                    controller: TextEditingController(),
-                    keyboardType: TextInputType.text,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
                 ],
               ),
+            ),
+            SearchWidget(
+              searchController: cubit.searchController,
+              searchText: state.searchText,
             ),
             const SizedBox(height: 24),
             buildProductCard(
@@ -87,18 +101,18 @@ class _SavedListPageState extends State<SavedListPage> {
   }
 
   Widget buildProductCard(String productName, String productImage) {
-    return InkWell(
-      onTap: () {
-        context.router.pushNamed(
-          Routes.productSavedList,
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: context.myTheme.colorScheme.background,
-          borderRadius: BorderRadius.circular(12),
-        ),
+    return Container(
+      margin: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: context.myTheme.colorScheme.background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: () {
+          context.router.pushNamed(
+            Routes.productSavedList,
+          );
+        },
         child: Row(
           children: [
             ClipRRect(
