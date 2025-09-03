@@ -1,24 +1,36 @@
-import 'package:app_base/models/product.dart';
+import 'package:app_base/base/base_state.dart';
+import 'package:app_base/core/localization/app_locale.dart';
+import 'package:app_base/core/network/models/image_model.dart';
+import 'package:app_base/features/product/product_cubit.dart';
+import 'package:app_base/features/product/product_state.dart';
+import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/custom_extended_image.dart';
 import 'package:app_base/utils/widget/extended_image_gallery_viewer.dart';
+import 'package:app_base/utils/widget/spacer_widget.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key, required this.product});
-  final Product product;
+  const ProductPage({super.key, required this.productId});
+  final int productId;
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
-class _ProductPageState extends State<ProductPage> {
-  Product get product => widget.product;
+class _ProductPageState
+    extends BaseState<ProductState, ProductCubit, ProductPage> {
+  @override
+  void initState() {
+    cubit.init(widget.productId);
+    super.initState();
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildByState(BuildContext context, ProductState state) {
     return Stack(
       children: [
         Container(
@@ -56,10 +68,10 @@ class _ProductPageState extends State<ProductPage> {
                       Row(
                         children: [
                           Expanded(
-                            child: Text(product.category,
+                            child: Text(state.product?.category?.name ?? '',
                                 style:
                                     context.myTheme.textThemeT1.title.copyWith(
-                                  fontSize: 18,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w400,
                                   color: context.myTheme.colorScheme.foreground,
                                 )),
@@ -75,47 +87,85 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        product.name,
+                        state.product?.name ?? '',
                         style: context.myTheme.textThemeT1.title.copyWith(
                             fontSize: 32,
                             fontWeight: FontWeight.w500,
                             color: context.myTheme.colorScheme.foreground),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        '${product.currency} ${product.price.toStringAsFixed(2)}',
-                        style: context.myTheme.textThemeT1.title.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.normal,
-                            color: context.myTheme.colorScheme.foreground),
+                      Row(
+                        children: [
+                          Text(
+                            '${state.product?.currency.symbol ?? '\$'} ${state.product?.salePrice ?? '0'}',
+                            style: context.myTheme.textThemeT1.title.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                                color: context.myTheme.colorScheme.foreground),
+                          ),
+                          if (state.product?.isOnSale == true) ...[
+                            const HSpacing(
+                              spacing: 16,
+                            ),
+                            Text(
+                              '${state.product?.currency.symbol ?? '\$'} ${state.product?.price ?? '0'}',
+                              style: context.myTheme.textThemeT1.title.copyWith(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 18,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationColor:
+                                      context.myTheme.colorScheme.destructive,
+                                  color:
+                                      context.myTheme.colorScheme.destructive),
+                            ),
+                          ]
+                        ],
                       ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          SvgPicture.asset("assets/icons/ic_product_heart.svg",
-                              colorFilter: ColorFilter.mode(
-                                context.myTheme.colorScheme.foreground,
-                                BlendMode.srcIn,
-                              )),
+                          GestureDetector(
+                            onTap: () {
+                              cubit.likeProduct(widget.productId);
+                            },
+                            child: SvgPicture.asset(
+                                "assets/icons/ic_product_heart.svg",
+                                colorFilter: ColorFilter.mode(
+                                  context.myTheme.colorScheme.foreground,
+                                  BlendMode.srcIn,
+                                )),
+                          ),
                           const SizedBox(width: 8),
-                          Text('124',
+                          Text('${state.product?.totalLikes ?? 0}',
                               style: context.myTheme.textThemeT1.title.copyWith(
                                 fontSize: 18,
                                 fontWeight: FontWeight.normal,
                                 color: context.myTheme.colorScheme.foreground,
                               )),
                           const SizedBox(width: 24),
-                          SvgPicture.asset(
-                              "assets/icons/ic_product_bookmark.svg",
-                              colorFilter: ColorFilter.mode(
-                                context.myTheme.colorScheme.foreground,
-                                BlendMode.srcIn,
-                              )),
+                          InkWell(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) => BlocProvider.value(
+                                  value: cubit,
+                                  child: _buildChooseACollection(),
+                                ),
+                              );
+                            },
+                            child: SvgPicture.asset(
+                                "assets/icons/ic_product_bookmark.svg",
+                                colorFilter: ColorFilter.mode(
+                                  context.myTheme.colorScheme.foreground,
+                                  BlendMode.srcIn,
+                                )),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 40),
                       Text(
-                        product.description,
+                        state.product?.description ?? '',
                         style: context.myTheme.textThemeT1.body.copyWith(
                           fontSize: 18,
                           color: context.myTheme.colorScheme.foreground,
@@ -123,20 +173,25 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                       const SizedBox(height: 40),
                       ExpandableWidget(
-                        title: 'Specs',
-                        body: product.description,
+                        title: AppLocale.specs.tr(context),
+                        body: state.product?.spaces != null &&
+                                state.product!.spaces!.isNotEmpty
+                            ? state.product!.spaces!
+                                .map((spec) => '${spec.name}: ${spec.name}')
+                                .join('\n')
+                            : AppLocale.no_specifications_available.tr(context),
                       ),
                       ExpandableWidget(
-                        title: 'Buy Here',
-                        body: product.description,
+                        title: AppLocale.buy_here.tr(context),
+                        body: state.product?.description ?? '',
                       ),
                       ExpandableWidget(
-                        title: 'What we like',
-                        body: product.description,
+                        title: AppLocale.what_we_like.tr(context),
+                        body: state.product?.description ?? '',
                       ),
                       ExpandableWidget(
-                        title: 'What we don’t like',
-                        body: product.description,
+                        title: AppLocale.what_we_dont_like.tr(context),
+                        body: state.product?.description ?? '',
                       ),
                       const SizedBox(height: 24),
                       _buildImageGallery(),
@@ -186,10 +241,10 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Widget _buildImageGallery() {
-    List<String> galleryImages = product.images.isNotEmpty
-        ? product.images
-        : List.generate(
-            5, (index) => 'https://picsum.photos/400/400?random=$index');
+    List<ImageModel>? galleryImages =
+        state.product?.images != null && state.product!.images!.isNotEmpty
+            ? state.product?.images
+            : [];
 
     return ListView.separated(
       shrinkWrap: true,
@@ -204,13 +259,15 @@ class _ProductPageState extends State<ProductPage> {
               decoration: BoxDecoration(
                 color: context.myTheme.colorScheme.primary,
               ),
-              child: product.images.isNotEmpty
+              child: state.product?.images != null &&
+                      state.product!.images!.isNotEmpty
                   ? ProductExtendedImage(
-                      imageUrl: product.images[index],
+                      imageUrl: state.product!.images![index].url,
                       width: double.infinity,
                       onTap: () => ExtendedImageGalleryViewer.showAsDialog(
                           context,
-                          images: product.images,
+                          images:
+                              state.product!.images!.map((e) => e.url).toList(),
                           initialIndex: index),
                       borderRadius: BorderRadius.circular(4),
                     )
@@ -222,7 +279,82 @@ class _ProductPageState extends State<ProductPage> {
       separatorBuilder: (context, index) {
         return const SizedBox(height: 8);
       },
-      itemCount: galleryImages.length,
+      itemCount: galleryImages?.length ?? 0,
+    );
+  }
+
+  Widget _buildChooseACollection() {
+    return BlocBuilder<ProductCubit, ProductState>(
+      builder: (context, state) {
+        return CustomBottomSheet(
+          title: AppLocale.choose_a_collection,
+          textColor: context.myTheme.colorScheme.muted,
+          child: Container(
+            padding: const EdgeInsets.all(24.0),
+            decoration: BoxDecoration(
+              color: context.myTheme.colorScheme.background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final isSelected = state.selectedCollections
+                          .contains(state.collections[index]);
+                      return InkWell(
+                        onTap: () {
+                          if (isSelected) {
+                            cubit.deleteProductFromCollections(
+                                state.collections[index].id, widget.productId);
+                          } else {
+                            cubit.addProductToCollections(
+                                [state.collections[index].id],
+                                widget.productId);
+                          }
+                          // cubit.chooseCollections(state.collections[index]);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                state.collections[index].name,
+                                style:
+                                    context.myTheme.textThemeT1.title.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: context.myTheme.colorScheme.foreground,
+                                ),
+                              ),
+                            ),
+                            isSelected
+                                ? SvgPicture.asset(
+                                    "assets/icons/ic_check.svg",
+                                    colorFilter: ColorFilter.mode(
+                                      context.myTheme.colorScheme.foreground,
+                                      BlendMode.srcIn,
+                                    ),
+                                    fit: BoxFit.cover,
+                                    height: 18,
+                                    width: 18,
+                                  )
+                                : const SizedBox()
+                          ],
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider(
+                        color: context.myTheme.colorScheme.separator1,
+                      );
+                    },
+                    itemCount: state.collections.length)
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -239,13 +371,16 @@ class _ProductPageState extends State<ProductPage> {
             decoration: BoxDecoration(
               color: context.myTheme.colorScheme.primary,
             ),
-            child: product.images.isNotEmpty
+            child: state.product?.images != null &&
+                    state.product!.images!.isNotEmpty
                 ? ProductExtendedImage(
-                    imageUrl: product.images.first,
+                    imageUrl: state.product?.images!.first.url ?? '',
                     width: double.infinity,
                     onTap: () => ExtendedImageGalleryViewer.showAsDialog(
                         context,
-                        images: product.images,
+                        images:
+                            state.product?.images!.map((e) => e.url).toList() ??
+                                [],
                         initialIndex: 0),
                   )
                 : null,
@@ -288,6 +423,7 @@ class _ExpandableWidgetState extends State<ExpandableWidget> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,

@@ -6,10 +6,9 @@ import 'package:app_base/features/product/product_page.dart';
 import 'package:app_base/features/profile/presentation/profile_page.dart';
 import 'package:app_base/features/saved_list/saved_list_page.dart';
 import 'package:app_base/features/search/presentation/search_page.dart';
-import 'package:app_base/models/category.dart';
-import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -28,32 +27,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
   NavigationType currentType = NavigationType.discover;
-  final List<Category> categories = [
-    Category(name: 'Tech & Audio'),
-    Category(name: 'Tools'),
-    Category(name: 'Work'),
-    Category(name: 'Home'),
-    Category(name: 'Personal'),
-    Category(name: 'Craft'),
-  ];
-
-  final product = Product(
-    id: '3',
-    name: 'Sport Pro',
-    price: 380.00,
-    currency: 'CA\$',
-    description:
-        'Designed for active lifestyles with water resistance and durable materials.',
-    images: [
-      'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
-      'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
-      'https://vn1.vdrive.vn/alohamedia.vn/2025/02/3xoqKJdm-24.jpg',
-    ],
-    category: 'Watches',
-    isAvailable: true,
-    createdAt: DateTime.now().subtract(const Duration(days: 20)),
-    updatedAt: DateTime.now(),
-  );
+  @override
+  void initState() {
+    cubit.fetchCategories();
+    cubit.fetchProducts();
+    cubit.fetchSpaces();
+    super.initState();
+  }
 
   void _onAuthenticationChanged() {
     if (!ApiClient.isAuthenticated.value) {}
@@ -67,10 +47,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
 
   @override
   Widget buildByState(BuildContext context, HomeState state) {
-    return Scaffold(
-      backgroundColor: context.myTheme.colorScheme.muted,
-      body: SafeArea(child: _buildBody()),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: context.myTheme.colorScheme.muted,
+        body: _buildBody(),
+        bottomNavigationBar: _buildBottomNavigationBar(),
+      ),
     );
   }
 
@@ -109,7 +91,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
-              'SeaOfOwn',
+              AppLocale.sea_of_own.tr(context),
               style: context.myTheme.textThemeT1.bigTitle.copyWith(
                 fontSize: 32,
                 fontWeight: FontWeight.w500,
@@ -120,13 +102,14 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           const SizedBox(height: 24),
           // Featured Product
           Container(
-            height: 320,
+            height: state.products.isNotEmpty ? 330 : 0,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: PageView.builder(
-              itemCount: 5,
+              itemCount: state.products.length,
               padEnds: false,
               controller: PageController(viewportFraction: 1),
               itemBuilder: (context, index) {
+                final product = state.products[index];
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   child: InkWell(
@@ -135,7 +118,8 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         context: context,
-                        builder: (context) => ProductPage(product: product),
+                        builder: (context) =>
+                            ProductPage(productId: product.id),
                       );
                     },
                     child: ClipRRect(
@@ -156,18 +140,31 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.red,
+                                  child: CachedNetworkImage(
+                                    imageUrl: product.images != null &&
+                                            product.images!.isNotEmpty
+                                        ? product.images!.first.url
+                                        : 'https://via.placeholder.com/150',
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     ),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.build,
-                                        size: 60,
-                                        color: Colors.grey[400],
-                                      ),
-                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
                                   ),
+                                  // child: Container(
+                                  //   decoration: const BoxDecoration(
+                                  //     color: Colors.red,
+                                  //   ),
+                                  //   child: Center(
+                                  //     child: Icon(
+                                  //       Icons.build,
+                                  //       size: 60,
+                                  //       color: Colors.grey[400],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ),
                               ),
                               Expanded(
@@ -177,7 +174,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        'Hoto-12V Brushless Drill Tool Set',
+                                        product.name,
                                         style: context.myTheme.textThemeT1.title
                                             .copyWith(
                                           fontSize: 14,
@@ -203,7 +200,6 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           ),
           const SizedBox(height: 24),
 
-          // Newly Added Section
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(AppLocale.newly_added.tr(context),
@@ -215,20 +211,22 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-              height: 194,
+              height: state.products.isNotEmpty ? 194 : 0,
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
                 separatorBuilder: (context, index) => const SizedBox(width: 8),
-                itemCount: 4,
+                itemCount: state.products.length,
                 itemBuilder: (context, index) {
+                  final product = state.products[index];
                   return GestureDetector(
                     onTap: () {
                       showModalBottomSheet(
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         context: context,
-                        builder: (context) => ProductPage(product: product),
+                        builder: (context) =>
+                            ProductPage(productId: product.id),
                       );
                     },
                     child: AspectRatio(
@@ -247,18 +245,31 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(12),
                                 ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[200],
+                                child: CachedNetworkImage(
+                                  imageUrl: product.images != null &&
+                                          product.images!.isNotEmpty
+                                      ? product.images!.first.url
+                                      : 'https://via.placeholder.com/150',
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
                                   ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.build,
-                                      size: 60,
-                                      color: Colors.grey[400],
-                                    ),
-                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
+                                // child: Container(
+                                //   decoration: BoxDecoration(
+                                //     color: Colors.grey[200],
+                                //   ),
+                                //   child: Center(
+                                //     child: Icon(
+                                //       Icons.build,
+                                //       size: 60,
+                                //       color: Colors.grey[400],
+                                //     ),
+                                //   ),
+                                // ),
                               ),
                             ),
                             Expanded(
@@ -267,15 +278,15 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                     const EdgeInsets.symmetric(horizontal: 16),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      'Bulbul-Oblong',
-                                      style: context.myTheme.textThemeT1.title
-                                          .copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: context
-                                            .myTheme.colorScheme.foreground,
-                                        overflow: TextOverflow.ellipsis,
+                                    Expanded(
+                                      child: Text(
+                                        product.name,
+                                        style: context.myTheme.textThemeT1.body
+                                            .copyWith(
+                                          color: context
+                                              .myTheme.colorScheme.foreground,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     )
                                   ],
@@ -290,7 +301,6 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 },
               )),
           const SizedBox(height: 32),
-          // Browse by categories
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Container(
@@ -304,7 +314,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(AppLocale.browse_by_categories.tr(context),
-                      style: context.myTheme.textThemeT1.title.copyWith(
+                      style: context.myTheme.textThemeT1.bigTitle.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.normal,
                         color: context.myTheme.colorScheme.cardForeground,
@@ -314,13 +324,13 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                     shrinkWrap: true,
                     padding: const EdgeInsets.symmetric(),
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: categories.length,
+                    itemCount: state.categories.length,
                     separatorBuilder: (context, index) => Divider(
                       color: context.myTheme.colorScheme.separator2,
                       height: 1,
                     ),
                     itemBuilder: (context, index) {
-                      final category = categories[index];
+                      final category = state.categories[index];
                       return InkWell(
                         onTap: () {
                           context.router
@@ -379,21 +389,22 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-              height: 194,
+              height: state.spaces.isNotEmpty ? 194 : 0,
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
                 separatorBuilder: (context, index) => const SizedBox(width: 8),
-                itemCount: 4,
+                itemCount: state.spaces.length,
                 itemBuilder: (context, index) {
+                  final space = state.spaces[index];
                   return InkWell(
                     onTap: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        builder: (context) => ProductPage(product: product),
-                      );
+                      // showModalBottomSheet(
+                      //   isScrollControlled: true,
+                      //   backgroundColor: Colors.transparent,
+                      //   context: context,
+                      //   builder: (context) => ProductPage(product: product),
+                      // );
                     },
                     child: AspectRatio(
                       aspectRatio: 194 / 239,
@@ -411,18 +422,36 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(12),
                                 ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[200],
+                                child: CachedNetworkImage(
+                                  imageUrl: space.thumnail ??
+                                      'https://via.placeholder.com/150',
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
                                   ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.build,
-                                      size: 60,
-                                      color: Colors.grey[400],
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: const Center(
+                                      child: Icon(Icons.error),
                                     ),
                                   ),
                                 ),
+                                // child: Container(
+                                //   decoration: BoxDecoration(
+                                //     color: Colors.grey[200],
+                                //   ),
+                                //   child: Center(
+                                //     child: Icon(
+                                //       Icons.build,
+                                //       size: 60,
+                                //       color: Colors.grey[400],
+                                //     ),
+                                //   ),
+                                // ),
                               ),
                             ),
                             Expanded(
@@ -432,7 +461,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Bulbul-Oblong',
+                                      space.name,
                                       style: context.myTheme.textThemeT1.title
                                           .copyWith(
                                         fontSize: 14,

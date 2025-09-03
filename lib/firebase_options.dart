@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDF2y_8TCj4jiECHB2uuhSvRADQ1QJTWdQ',
-    appId: '1:536887165597:android:20ebed63292a9a8d6c0a74',
-    messagingSenderId: '536887165597',
-    projectId: 'fitness-app-f39b3',
-    storageBucket: 'fitness-app-f39b3.firebasestorage.app',
+    apiKey: 'AIzaSyAqjhU6WbPL3SvWNk3j1X8hhtpKY684F-c',
+    appId: '1:991006133524:android:ee101337df3cfe47b54601',
+    messagingSenderId: '991006133524',
+    projectId: 'seaofown-35412',
+    storageBucket: 'seaofown-35412.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAZ1hjftrWdKp_HzAkCvd5whhyzHag_JEk',
-    appId: '1:536887165597:ios:4a080310019bb11e6c0a74',
-    messagingSenderId: '536887165597',
-    projectId: 'fitness-app-f39b3',
-    storageBucket: 'fitness-app-f39b3.firebasestorage.app',
-    iosBundleId: 'com.woodlands.healthy.fitness',
+    apiKey: 'AIzaSyAqjhU6WbPL3SvWNk3j1X8hhtpKY684F-c',
+    appId: '1:991006133524:ios:ee101337df3cfe47b54601',
+    messagingSenderId: '991006133524',
+    projectId: 'seaofown-35412',
+    storageBucket: 'seaofown-35412.firebasestorage.app',
+    iosBundleId: 'com.example.seaofown',
   );
 
 }

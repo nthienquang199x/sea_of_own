@@ -62,7 +62,7 @@ class AppCubit extends BaseCubit<AppState> {
   }
 
   void _delegate({required User user}) {
-    if (user.isVerified == true) {}
+    if (user.bio == true) {}
   }
 
   void changeUser(User user) {
@@ -73,9 +73,9 @@ class AppCubit extends BaseCubit<AppState> {
   void logout() {
     emit(state.copyWith(user: null));
     ApiClient.clearToken();
-    // appRouter.pushAndPopUntil(
-    //   const SignInRoute(),
-    //   predicate: (route) => false,
-    // );
+    appRouter.pushAndPopUntil(
+      const LoginRoute(),
+      predicate: (route) => false,
+    );
   }
 }

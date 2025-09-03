@@ -11,11 +11,14 @@ class ApiClient {
   static ValueNotifier<bool> isAuthenticated = ValueNotifier(false);
 
   static Future<String> getToken() async =>
-      (await storage.read(key: 'access_token')) ?? '';
+      (await storage.read(key: 'access_token')) ??
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzU2NjEyNzI4LCJpYXQiOjE3NTYwMDc5MjgsImp0aSI6IjAxOThkYTNhLTkxMWUtNzkzNC1iMjIwLTAyZjAwNThjN2UzZiJ9.NKS0wJvDscBnk9ZKvND3QPXeVqbiH6msZC3ZLAiqIEk';
 
   static Future<void> checkAuthentication() async {
     final token = await storage.read(key: 'access_token');
-    if (token == null || token.isEmpty) {
+    // const token =
+    //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzU2NjEyNzI4LCJpYXQiOjE3NTYwMDc5MjgsImp0aSI6IjAxOThkYTNhLTkxMWUtNzkzNC1iMjIwLTAyZjAwNThjN2UzZiJ9.NKS0wJvDscBnk9ZKvND3QPXeVqbiH6msZC3ZLAiqIEk';
+    if (token == null || token.isEmpty == true) {
       isAuthenticated.value = false;
     } else {
       isAuthenticated.value = !JwtDecoder.isExpired(token);
@@ -32,9 +35,9 @@ class ApiClient {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await storage.read(key: 'access_token');
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
+        // const token =
+        //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwiZXhwIjoxNzU3MTI3MzU1LCJpYXQiOjE3NTY1MjI1NTUsImp0aSI6IjAxOThmOGU3LTI5YTItNzQxOC05NzYyLWFhMDM4Y2I0MzY3MyJ9.It8F-b7x9oTnuFSnC4GDTaDFXQZ8Xjh3Asx35IMJJQs';
+        options.headers['Authorization'] = 'Bearer $token';
         return handler.next(options);
       },
       onError: (error, handler) {

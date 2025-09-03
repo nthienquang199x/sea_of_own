@@ -12,8 +12,12 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../app/app/app_cubit.dart' as _i189;
+import '../core/network/services/auth_service.dart' as _i844;
 import '../core/storage/local_storage.dart' as _i449;
 import '../features/home/presentation/home_cubit.dart' as _i624;
+import '../features/login/login_cubit.dart' as _i538;
+import '../features/product/product_cubit.dart' as _i98;
+import '../features/products/products_cubit.dart' as _i280;
 import '../features/profile/presentation/profile_cubit.dart' as _i336;
 import '../features/saved_list/saved_list_cubit.dart' as _i996;
 import '../features/search/presentation/search_cubit.dart' as _i178;
@@ -29,11 +33,15 @@ _i174.GetIt $initGetit(
     environment,
     environmentFilter,
   );
+  gh.factory<_i844.AuthService>(() => _i844.AuthService());
   gh.factory<_i624.HomeCubit>(() => _i624.HomeCubit());
   gh.factory<_i996.SavedListCubit>(() => _i996.SavedListCubit());
   gh.factory<_i178.SearchCubit>(() => _i178.SearchCubit());
   gh.factory<_i336.ProfileCubit>(() => _i336.ProfileCubit());
+  gh.factory<_i98.ProductCubit>(() => _i98.ProductCubit());
+  gh.factory<_i280.ProductsCubit>(() => _i280.ProductsCubit());
   gh.singleton<_i449.LocalStorage>(() => _i449.LocalStorage());
   gh.singleton<_i189.AppCubit>(() => _i189.AppCubit());
+  gh.factory<_i538.LoginCubit>(() => _i538.LoginCubit(gh<_i844.AuthService>()));
   return getIt;
 }

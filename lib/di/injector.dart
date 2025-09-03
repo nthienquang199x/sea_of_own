@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+
 import '../app/config/app_config.dart';
 import 'injector.config.dart';
 
@@ -10,9 +11,7 @@ final getIt = GetIt.instance;
   preferRelativeImports: true,
   asExtension: false,
 )
-configureDependencies(
-    AppConfig appConfig) {
-  getIt.registerSingleton<AppConfig>(
-      appConfig);
+configureDependencies(AppConfig appConfig) {
+  getIt.registerSingleton<AppConfig>(appConfig);
   $initGetit(getIt);
 }

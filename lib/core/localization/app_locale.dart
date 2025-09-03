@@ -91,6 +91,31 @@ mixin class AppLocale {
     "sort": "Sort",
     "rename": "Rename",
     "delete_this_list": "Delete this list",
+    "continue_with_google": "Continue with Google",
+    "continue_with_apple": "Continue with Apple",
+    "sea_of_own": "SeaOfOwn",
+    "choose_a_collection": "Choose a collection",
+    "default_title": "Default",
+    "add_to_collection": "Add to Collection",
+    "name": "Name",
+    "price": "Price",
+    "salePrice": "Sale Price",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "created_collection_successfully": "Created collection successfully.",
+    "renamed_collection_successfully": "Renamed collection successfully.",
+    "deleted_collection_successfully": "Deleted collection successfully.",
+    "created_collection_failed": "Created collection failed.",
+    "renamed_collection_failed": "Renamed collection failed.",
+    "deleted_collection_failed": "Deleted collection failed.",
+    "no_specifications_available": "No specifications available.",
+    "saved_list": "Saved List",
+    "specs": "Specs",
+    "buy_here": "Buy Here",
+    "what_we_like": "What we like",
+    "what_we_dont_like": "What we don't like",
+    "send_feedback_successfully": "Send feedback successfully.",
+    "send_feedback_failed": "Send feedback failed. Please try again.",
   };
 
   static const String curated_objects_worth_keeping =
@@ -156,6 +181,36 @@ mixin class AppLocale {
   static const String sort = "sort";
   static const String rename = "rename";
   static const String delete_this_list = "delete_this_list";
+  static const String continue_with_google = "continue_with_google";
+  static const String continue_with_apple = "continue_with_apple";
+  static const String sea_of_own = "sea_of_own";
+  static const String choose_a_collection = "choose_a_collection";
+  static const String default_title = "default_title";
+  static const String add_to_collection = "add_to_collection";
+  static const String name = "name";
+  static const String price = "price";
+  static const String salePrice = "salePrice";
+  static const String createdAt = "createdAt";
+  static const String updatedAt = "updatedAt";
+  static const String created_collection_successfully =
+      "created_collection_successfully";
+  static const String renamed_collection_successfully =
+      "renamed_collection_successfully";
+  static const String deleted_collection_successfully =
+      "deleted_collection_successfully";
+  static const String created_collection_failed = "created_collection_failed";
+  static const String renamed_collection_failed = "renamed_collection_failed";
+  static const String deleted_collection_failed = "deleted_collection_failed";
+  static const String no_specifications_available =
+      "no_specifications_available";
+  static const String saved_list = "saved_list";
+  static const String specs = "specs";
+  static const String buy_here = "buy_here";
+  static const String what_we_like = "what_we_like";
+  static const String what_we_dont_like = "what_we_dont_like";
+  static const String send_feedback_successfully = "send_feedback_successfully";
+  static const String send_feedback_failed = "send_feedback_failed";
+
   void init(
       {required List<MapLocale> mapLocales,
       AppLanguage initLanguage = AppLanguage.en}) {

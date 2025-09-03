@@ -48,11 +48,39 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ProductSavedListPage]
-class ProductSavedListRoute extends PageRouteInfo<void> {
-  const ProductSavedListRoute({List<PageRouteInfo>? children})
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute({List<PageRouteInfo>? children})
       : super(
+          LoginRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const LoginPage();
+    },
+  );
+}
+
+/// generated route for
+/// [ProductSavedListPage]
+class ProductSavedListRoute extends PageRouteInfo<ProductSavedListRouteArgs> {
+  ProductSavedListRoute({
+    Key? key,
+    required int id,
+    String title = "Default List",
+    List<PageRouteInfo>? children,
+  }) : super(
           ProductSavedListRoute.name,
+          args: ProductSavedListRouteArgs(
+            key: key,
+            id: id,
+            title: title,
+          ),
           initialChildren: children,
         );
 
@@ -61,9 +89,33 @@ class ProductSavedListRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ProductSavedListPage();
+      final args = data.argsAs<ProductSavedListRouteArgs>();
+      return ProductSavedListPage(
+        key: args.key,
+        id: args.id,
+        title: args.title,
+      );
     },
   );
+}
+
+class ProductSavedListRouteArgs {
+  const ProductSavedListRouteArgs({
+    this.key,
+    required this.id,
+    this.title = "Default List",
+  });
+
+  final Key? key;
+
+  final int id;
+
+  final String title;
+
+  @override
+  String toString() {
+    return 'ProductSavedListRouteArgs{key: $key, id: $id, title: $title}';
+  }
 }
 
 /// generated route for

@@ -83,6 +83,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                               context.myTheme.colorScheme.primaryForeground,
                         ),
                       },
+                      const SizedBox(
+                        height: 24,
+                      ),
                     ],
                   ),
                 );

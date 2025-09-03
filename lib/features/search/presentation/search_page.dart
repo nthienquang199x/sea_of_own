@@ -1,13 +1,15 @@
 import 'package:app_base/app/config/app_router.dart';
 import 'package:app_base/base/base_state.dart';
+import 'package:app_base/core/network/models/category.dart';
+import 'package:app_base/core/network/models/product.dart';
+import 'package:app_base/core/network/models/sub_category.dart';
 import 'package:app_base/features/product/product_page.dart';
 import 'package:app_base/features/search/components/search_widget.dart';
 import 'package:app_base/features/search/presentation/search_cubit.dart';
 import 'package:app_base/features/search/presentation/search_state.dart';
-import 'package:app_base/models/category.dart';
-import 'package:app_base/models/product.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -22,32 +24,13 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
-  final product = Product(
-    id: '2',
-    name: 'Classic Elegance',
-    price: 520.00,
-    currency: 'CA\$',
-    description:
-        'A timeless piece that combines traditional craftsmanship with modern design elements.',
-    images: [
-      'https://example.com/watch4.jpg',
-      'https://example.com/watch5.jpg',
-    ],
-    //     images: [
-    //   'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
-    //   'https://hoanghamobile.com/tin-tuc/wp-content/uploads/2023/07/hinh-dep.jpg',
-    //   'https://vn1.vdrive.vn/alohamedia.vn/2025/02/3xoqKJdm-24.jpg',
-    // ],
-    category: 'Watches',
-    isAvailable: true,
-    createdAt: DateTime.now().subtract(const Duration(days: 25)),
-    updatedAt: DateTime.now(),
-  );
   @override
   void initState() {
-    cubit.init();
     cubit.addSearchListener();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cubit.init();
+    });
   }
 
   @override
@@ -81,6 +64,9 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
             SearchWidget(
               searchController: cubit.searchController,
               searchText: state.searchText,
+              onChanged: () {
+                cubit.fetchProducts();
+              },
             ),
             const SizedBox(height: 16),
             state.searchText.isNotEmpty
@@ -98,11 +84,12 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: 5,
+        itemCount: state.products.length,
         separatorBuilder: (context, index) => const SizedBox(
           height: 12,
         ),
         itemBuilder: (context, index) {
+          final product = state.products[index];
           return buildProductCard(product);
         },
       ),
@@ -114,45 +101,43 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
       children: [
         const SizedBox(height: 8),
         SizedBox(
-          height: 44,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                final isSelected = category == state.categorySelected;
-                return GestureDetector(
-                  onTap: () {
-                    cubit.selectCategory(category);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
+          height: state.categories.isNotEmpty ? 44 : 0,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: state.categories.length,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemBuilder: (context, index) {
+              final category = state.categories[index];
+              final isSelected = category == state.categorySelected;
+              return GestureDetector(
+                onTap: () {
+                  cubit.selectCategory(category);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? context.myTheme.colorScheme.foreground
+                        : context.myTheme.colorScheme.background,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    category.name,
+                    style: context.myTheme.textThemeT1.body.copyWith(
                       color: isSelected
-                          ? context.myTheme.colorScheme.foreground
-                          : context.myTheme.colorScheme.background,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      category.name,
-                      style: context.myTheme.textThemeT1.body.copyWith(
-                        color: isSelected
-                            ? context.myTheme.colorScheme.background
-                            : context.myTheme.colorScheme.foreground,
-                        fontWeight: FontWeight.w500,
-                      ),
+                          ? context.myTheme.colorScheme.background
+                          : context.myTheme.colorScheme.foreground,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
         const SizedBox(height: 8),
@@ -171,15 +156,16 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                 child: ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: categories.length,
+                  itemCount: state.subCategoriesCategory.length,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   separatorBuilder: (context, index) => const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12.0),
                     child: Divider(height: 1),
                   ),
                   itemBuilder: (context, index) {
-                    final category = categories[index];
-                    return buildCategoryCard(category);
+                    final subCategory = state.subCategoriesCategory[index];
+                    return buildCategoryCard(
+                        subCategory, state.categorySelected!);
                   },
                 ),
               ),
@@ -203,14 +189,17 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   separatorBuilder: (context, index) =>
                       const SizedBox(width: 12),
-                  itemCount: 4,
+                  itemCount: state.productsRecentlyViewed.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
                         showModalBottomSheet(
                           isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
                           context: context,
-                          builder: (context) => ProductPage(product: product),
+                          builder: (context) => ProductPage(
+                              productId:
+                                  state.productsRecentlyViewed[index].id),
                         );
                       },
                       child: AspectRatio(
@@ -229,9 +218,27 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(8),
                                   ),
-                                  child: Image.asset(
-                                    "assets/images/img_search_product.png",
+                                  child: CachedNetworkImage(
+                                    imageUrl: state
+                                            .productsRecentlyViewed[index]
+                                            .thumbnail ??
+                                        '',
                                     fit: BoxFit.cover,
+                                    height: 114,
+                                    width: 114,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                      ),
+                                      child: const Center(
+                                        child: Icon(Icons.error),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -242,13 +249,14 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                     );
                   },
                 )),
+            const SizedBox(height: 24),
           ],
         )
       ],
     );
   }
 
-  Widget buildCategoryCard(Category category) {
+  Widget buildCategoryCard(SubCategory subCategory, Category category) {
     return InkWell(
       onTap: () {
         context.router
@@ -266,7 +274,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              category.name,
+              subCategory.name,
               style: context.myTheme.textThemeT1.body.copyWith(
                 color: context.myTheme.colorScheme.foreground,
               ),
@@ -302,7 +310,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             context: context,
-            builder: (context) => ProductPage(product: product),
+            builder: (context) => ProductPage(productId: product.id),
           );
         },
         child: Row(
@@ -313,9 +321,22 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                 topLeft: Radius.circular(4),
                 bottomLeft: Radius.circular(4),
               ),
-              child: Image.asset(
-                "assets/images/img_search_product.png",
+              child: CachedNetworkImage(
+                imageUrl: product.thumbnail ?? '',
+                width: 80,
+                height: 80,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.error),
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -332,7 +353,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                       ),
                     ),
                     Text(
-                      "CA\$ 450.00",
+                      product.price,
                       style: context.myTheme.textThemeT1.body.copyWith(
                         color: context.myTheme.colorScheme.mutedForeground,
                       ),

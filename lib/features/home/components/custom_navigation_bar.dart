@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,12 +12,12 @@ class CustomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 12,
-        bottom: math.max(0, MediaQuery.of(context).padding.bottom - 4),
-      ),
+      padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 12,
+          // bottom: math.max(0, MediaQuery.of(context).padding.bottom - 4),
+          bottom: 12),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.tab,
         border: Border(

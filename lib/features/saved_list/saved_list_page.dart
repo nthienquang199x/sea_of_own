@@ -1,7 +1,8 @@
-import 'package:app_base/app/config/routes.dart';
+import 'package:app_base/app/config/app_router.dart';
 import 'package:app_base/app/theme/icons.dart';
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
+import 'package:app_base/core/network/models/collection.dart';
 import 'package:app_base/features/home/models/navigation_type.dart';
 import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/saved_list/saved_list_cubit.dart';
@@ -10,6 +11,7 @@ import 'package:app_base/features/search/components/search_widget.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -93,17 +95,24 @@ class _SavedListPageState
               searchText: state.searchText,
             ),
             const SizedBox(height: 24),
-            buildProductCard(
-              "Default list",
-              "assets/images/img_search_product.png",
-            ),
+            ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final collection = state.savedCollections[index];
+                  return buildProductCard(collection);
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: 16);
+                },
+                itemCount: state.savedCollections.length),
           ],
         ),
       ),
     );
   }
 
-  Widget buildProductCard(String productName, String productImage) {
+  Widget buildProductCard(Collection collection) {
     return Container(
       margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
       decoration: BoxDecoration(
@@ -113,12 +122,13 @@ class _SavedListPageState
       child: InkWell(
         onTap: () {
           context.router
-              .pushNamed(
-            Routes.productSavedList,
-          )
+              .push(ProductSavedListRoute(
+                  id: collection.id, title: collection.name))
               .then((value) {
             if (value != null && value is NavigationType) {
               widget.onTapNavigation?.call(value);
+            } else if (value != null && value is bool && value) {
+              cubit.fetchSavedCollections();
             }
           });
         },
@@ -129,10 +139,22 @@ class _SavedListPageState
                 topLeft: Radius.circular(8),
                 bottomLeft: Radius.circular(8),
               ),
-              child: Image.asset(
-                "assets/images/img_search_product.png",
+              child: CachedNetworkImage(
+                imageUrl: collection.thumbnail ?? '',
                 fit: BoxFit.cover,
                 height: 114,
+                width: 114,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.error),
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -142,7 +164,7 @@ class _SavedListPageState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      productName,
+                      collection.name,
                       style: context.myTheme.textThemeT1.title.copyWith(
                         color: context.myTheme.colorScheme.textColor,
                       ),
@@ -187,7 +209,9 @@ class _SavedListPageState
           borderRadius: BorderRadius.circular(8),
         ),
         onTap: () {
-          Navigator.of(context).pop();
+          cubit.createCollection().then((value) {
+            context.router.maybePop();
+          });
         });
   }
 }

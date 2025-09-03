@@ -7,9 +7,11 @@ class SearchWidget extends StatefulWidget {
     super.key,
     this.searchController,
     this.searchText,
+    this.onChanged,
   });
   final TextEditingController? searchController;
   final String? searchText;
+  final VoidCallback? onChanged;
 
   @override
   State<SearchWidget> createState() => _SearchWidgetState();
@@ -45,6 +47,11 @@ class _SearchWidgetState extends State<SearchWidget> {
         borderColor: Colors.transparent,
         fillColor: context.myTheme.colorScheme.background,
         controller: widget.searchController,
+        onChanged: (p0) {
+          if (widget.onChanged != null) {
+            widget.onChanged!();
+          }
+        },
         keyboardType: TextInputType.text,
         borderRadius: BorderRadius.circular(8),
         suffix: (widget.searchText?.isNotEmpty ?? false)

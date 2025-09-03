@@ -34,9 +34,20 @@ void main() async {
   runZonedGuarded(() async {
     HttpOverrides.global = MyHttpOverrides();
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // Khởi tạo Firebase với xử lý lỗi
+    try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+        print('Firebase initialized successfully');
+      } else {
+        print('Firebase already initialized, using existing app');
+      }
+    } catch (e) {
+      print('Firebase initialization error: $e');
+      // Tiếp tục chạy app ngay cả khi Firebase lỗi
+    }
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     await LocalStorage().init();
     configureDependencies(AppConfig.prod());

@@ -45,6 +45,16 @@ class BaseApiService {
         () => ApiClient.dio.put(path, data: data), parser, showErrorToast);
   }
 
+  Future<ApiResponse<T>> patch<T>(
+    String path, {
+    dynamic data,
+    required T Function(dynamic data) parser,
+    bool showErrorToast = true,
+  }) async {
+    return _wrap(
+        () => ApiClient.dio.patch(path, data: data), parser, showErrorToast);
+  }
+
   Future<ApiResponse<T>> delete<T>(
     String path, {
     dynamic data,

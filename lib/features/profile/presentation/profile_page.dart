@@ -50,14 +50,14 @@ class _ProfilePageState
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const CustomCircleAvatar(
+              CustomCircleAvatar(
                 isEditEnabled: false,
                 avatarSize: 120,
-                imageUrl: "assets/images/img_profile.png",
+                imageUrl: state.user?.avatarUrl,
               ),
               const SizedBox(height: 12),
               Text(
-                "User Name",
+                state.user?.name ?? "",
                 style: context.myTheme.textThemeT1.title.copyWith(
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
@@ -66,7 +66,7 @@ class _ProfilePageState
               ),
               const SizedBox(height: 8),
               Text(
-                "emailaddress@domain.com",
+                state.user?.email ?? "",
                 style: context.myTheme.textThemeT1.title.copyWith(
                   fontWeight: FontWeight.w500,
                   color: context.myTheme.colorScheme.foreground,
@@ -77,6 +77,8 @@ class _ProfilePageState
                 _buildSettingItem(
                   SettingsType.editProfile.title,
                   onTap: () {
+                    cubit.nameEditingController.text =
+                        cubit.state.user?.name ?? "";
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -233,6 +235,20 @@ class _ProfilePageState
     return CustomBottomSheet(
         title: AppLocale.send_us_your_feedback,
         titleButton: AppLocale.send_feedback,
+        onTap: () => {
+              cubit
+                  .sendFeedback(cubit.feedbackEditingController.text)
+                  .then((success) {
+                if (success && mounted) {
+                  Navigator.pop(context);
+                  showToast(AppLocale.send_feedback_successfully.tr(context));
+                } else if (mounted) {
+                  showToast(
+                    AppLocale.send_feedback_failed.tr(context),
+                  );
+                }
+              })
+            },
         child: Column(
           children: [
             Text(
@@ -298,25 +314,32 @@ class _ProfilePageState
     return CustomBottomSheet(
         title: AppLocale.edit_profile,
         titleButton: AppLocale.save_changes,
+        onTap: () {
+          cubit.updateProfile(cubit.nameEditingController.text).then((success) {
+            if (success && mounted) {
+              Navigator.pop(context);
+            }
+          });
+        },
         child: Column(
           children: [
             TextFormFieldCustom(
               hintText: "Maximus Meridias",
               borderColor: Colors.transparent,
               fillColor: context.myTheme.colorScheme.background,
-              controller: TextEditingController(),
+              controller: cubit.nameEditingController,
               keyboardType: TextInputType.text,
               borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(height: 8),
-            TextFormFieldCustom(
-              hintText: "emailaddress@domain.com",
-              borderColor: Colors.transparent,
-              fillColor: context.myTheme.colorScheme.background,
-              controller: TextEditingController(),
-              keyboardType: TextInputType.text,
-              borderRadius: BorderRadius.circular(8),
-            ),
+            // const SizedBox(height: 8),
+            // TextFormFieldCustom(
+            //   hintText: "emailaddress@domain.com",
+            //   borderColor: Colors.transparent,
+            //   fillColor: context.myTheme.colorScheme.background,
+            //   controller: TextEditingController(),
+            //   keyboardType: TextInputType.text,
+            //   borderRadius: BorderRadius.circular(8),
+            // ),
           ],
         ));
   }
@@ -380,6 +403,7 @@ class _ProfilePageState
     return CustomBottomSheet(
       title: AppLocale.logout,
       titleButton: AppLocale.logout,
+      onTap: () => cubit.logout(),
       child: Text(
         AppLocale.logout_description.tr(context),
         style: context.myTheme.textThemeT1.title.copyWith(

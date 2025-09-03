@@ -11,6 +11,7 @@ class Routes {
   static const String productSavedList = "/product-saved-list";
   static const String search = "/search";
   static const String category = "/category";
+  static const String login = "/login";
 
   static Route<T> fadeThrough<T>(RouteSettings settings, WidgetBuilder page,
       {int duration = 300}) {

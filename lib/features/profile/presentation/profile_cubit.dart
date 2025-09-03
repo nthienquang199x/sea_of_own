@@ -1,5 +1,6 @@
 import 'package:app_base/app/theme/themes.dart';
 import 'package:app_base/base/base_cubit.dart';
+import 'package:app_base/core/network/services/user_service.dart';
 import 'package:app_base/core/storage/local_storage.dart';
 import 'package:app_base/features/profile/models/app_theme.dart';
 import 'package:app_base/features/profile/presentation/profile_state.dart';
@@ -11,6 +12,8 @@ class ProfileCubit extends BaseCubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
   TextEditingController textEditingController = TextEditingController();
   TextEditingController feedbackEditingController = TextEditingController();
+  TextEditingController nameEditingController = TextEditingController();
+  final _userService = UserService();
 
   void init() {
     final themeName = LocalStorage().theme;
@@ -28,6 +31,7 @@ class ProfileCubit extends BaseCubit<ProfileState> {
       default:
         selectedTheme = AppTheme.dark;
     }
+    getUser();
     emit(state.copyWith(selectedTheme: selectedTheme));
   }
 
@@ -47,6 +51,55 @@ class ProfileCubit extends BaseCubit<ProfileState> {
         break;
       case AppTheme.dark:
         appCubit.changeTheme(AppThemeData.dark(), themeName: 'dark');
+    }
+  }
+
+  void getUser() async {
+    if (appCubit.state.user != null) {
+      emit(state.copyWith(user: appCubit.state.user));
+    }
+  }
+
+  Future<bool> updateProfile(String name) async {
+    try {
+      showLoading();
+      final updatedUser = await _userService.updateProfile(
+        name: name,
+      );
+      if (updatedUser != null) {
+        appCubit.changeUser(updatedUser);
+        emit(state.copyWith(user: updatedUser));
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  void logout() {
+    appCubit.logout();
+    if (appCubit.state.user == null) {
+      emit(state.copyWith(user: null));
+    } else {
+      emit(state.copyWith(user: appCubit.state.user));
+    }
+  }
+
+  Future<bool> sendFeedback(String feedback) async {
+    try {
+      if (state.user == null) return false;
+      showLoading();
+      final isSuccess = await _userService.sendFeedback(
+          userId: state.user!.id, message: feedback);
+      return isSuccess;
+    } catch (e) {
+      return false;
+    } finally {
+      hideLoading();
     }
   }
 
