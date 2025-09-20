@@ -172,7 +172,7 @@ class _SavedListPageState
                     Row(
                       children: [
                         Text(
-                          "12 items",
+                          '${collection.totalProducts} items',
                           style: context.myTheme.textThemeT1.body.copyWith(
                             color: context.myTheme.colorScheme.mutedForeground,
                           ),

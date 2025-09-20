@@ -197,9 +197,13 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
                           context: context,
-                          builder: (context) => ProductPage(
-                              productId:
-                                  state.productsRecentlyViewed[index].id),
+                          builder: (context) {
+                            cubit.upsertRecentlyViewed(
+                                state.productsRecentlyViewed[index].productId);
+                            return ProductPage(
+                                productId: state
+                                    .productsRecentlyViewed[index].productId);
+                          },
                         );
                       },
                       child: AspectRatio(
@@ -220,9 +224,8 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                                   ),
                                   child: CachedNetworkImage(
                                     imageUrl: state
-                                            .productsRecentlyViewed[index]
-                                            .thumbnail ??
-                                        '',
+                                        .productsRecentlyViewed[index]
+                                        .thumbnail,
                                     fit: BoxFit.cover,
                                     height: 114,
                                     width: 114,
@@ -261,7 +264,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
       onTap: () {
         context.router
             .push(
-          ProductsRoute(category: category),
+          ProductsRoute(category: category, subCategory: subCategory),
         )
             .then((value) {
           if (value != null && value is NavigationType) {
@@ -310,7 +313,12 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             context: context,
-            builder: (context) => ProductPage(productId: product.id),
+            builder: (context) {
+              cubit.upsertRecentlyViewed(
+                product.id,
+              );
+              return ProductPage(productId: product.id);
+            },
           );
         },
         child: Row(

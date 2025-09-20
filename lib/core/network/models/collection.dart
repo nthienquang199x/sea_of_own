@@ -2,8 +2,9 @@ class Collection {
   final int id;
   final String name;
   final String? thumbnail;
-  final bool isFeatured;
-  final int order;
+  final bool? isFeatured;
+  final int? order;
+  final int? totalProducts;
   final String? description;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -12,6 +13,7 @@ class Collection {
     required this.id,
     required this.name,
     this.thumbnail,
+    this.totalProducts = 0,
     required this.isFeatured,
     required this.order,
     this.description,
@@ -24,8 +26,9 @@ class Collection {
       id: json['id'] as int,
       name: json['name'] as String,
       thumbnail: json['thumbnail'] as String?,
-      isFeatured: json['isFeatured'] as bool,
-      order: json['order'] as int,
+      totalProducts: json['totalProducts'] as int? ?? 0,
+      isFeatured: json['isFeatured'] as bool?,
+      order: json['order'] as int?,
       description: json['description'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
@@ -41,6 +44,7 @@ class Collection {
       'id': id,
       'name': name,
       'thumbnail': thumbnail,
+      'totalProducts': totalProducts,
       'isFeatured': isFeatured,
       'order': order,
       'description': description,
@@ -53,6 +57,7 @@ class Collection {
     int? id,
     String? name,
     String? thumbnail,
+    int? totalProducts,
     bool? isFeatured,
     int? order,
     String? description,
@@ -63,6 +68,7 @@ class Collection {
       id: id ?? this.id,
       name: name ?? this.name,
       thumbnail: thumbnail ?? this.thumbnail,
+      totalProducts: totalProducts ?? this.totalProducts,
       isFeatured: isFeatured ?? this.isFeatured,
       order: order ?? this.order,
       description: description ?? this.description,

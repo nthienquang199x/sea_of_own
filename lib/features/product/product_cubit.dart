@@ -35,39 +35,6 @@ class ProductCubit extends BaseCubit<ProductState> {
     try {
       showLoading();
       final collections = await _collectionService.getCollections();
-      if (collectionId != null) {
-        final response =
-            await _productCollectionService.getAllProductsInCollection(
-          collectionId,
-        );
-        final collection = collections
-            .firstWhere((collection) => collection.id == collectionId);
-
-        final hasProduct = response.any((product) => product.id == productId);
-
-        if (hasProduct) {
-          return;
-        } else {
-          emit(state.copyWith(
-            selectedCollections: state.selectedCollections
-                .where((c) => c.id != collection.id)
-                .toList(),
-          ));
-        }
-      } else {
-        for (var collection in collections) {
-          final response =
-              await _productCollectionService.getAllProductsInCollection(
-            collection.id,
-          );
-          if (response.any((product) => product.id == productId)) {
-            emit(state.copyWith(
-              selectedCollections: [...state.selectedCollections, collection],
-            ));
-          }
-        }
-      }
-
       emit(state.copyWith(
         collections: collections,
       ));
@@ -116,8 +83,8 @@ class ProductCubit extends BaseCubit<ProductState> {
   Future<void> likeProduct(int productId) async {
     try {
       showLoading();
-      final response = await _productService.likeProduct(productId);
-      showToast(response);
+      await _productService.likeProduct(productId);
+      // showToast(response);
       fetchProductById(productId);
     } catch (e) {
       showToast('Failed to like product');
@@ -129,8 +96,9 @@ class ProductCubit extends BaseCubit<ProductState> {
   Future<void> dislikeProduct(int productId) async {
     try {
       showLoading();
-      final response = await _productService.dislikeProduct(productId);
-      showToast(response);
+      await _productService.dislikeProduct(productId);
+      fetchProductById(productId);
+      // showToast(response);
     } catch (e) {
       showToast('Failed to dislike product');
     } finally {

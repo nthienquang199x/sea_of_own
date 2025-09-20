@@ -3,6 +3,7 @@ import 'package:app_base/core/network/models/product.dart';
 import 'package:app_base/core/network/models/sub_category.dart';
 import 'package:app_base/features/products/models/sort_by.dart';
 import 'package:app_base/features/products/models/sort_direction.dart';
+import 'package:app_base/features/products/models/sort_option.dart';
 
 class ProductsState {
   final PageStatus pageStatus;
@@ -18,6 +19,7 @@ class ProductsState {
   final double maxPrice;
   final double priceRange;
   final bool recentlyAdded;
+  final SortOption selectedSortOption;
 
   ProductsState({
     this.pageStatus = PageStatus.idle,
@@ -33,6 +35,7 @@ class ProductsState {
     this.maxPrice = 1000,
     this.priceRange = 1000,
     this.recentlyAdded = false,
+    this.selectedSortOption = SortOption.newlyAdded,
   });
 
   ProductsState copyWith({
@@ -49,6 +52,7 @@ class ProductsState {
     double? maxPrice,
     double? priceRange,
     bool? recentlyAdded,
+    SortOption? selectedSortOption,
   }) {
     return ProductsState(
       pageStatus: pageStatus ?? this.pageStatus,
@@ -65,7 +69,7 @@ class ProductsState {
       maxPrice: maxPrice ?? this.maxPrice,
       priceRange: priceRange ?? this.priceRange,
       recentlyAdded: recentlyAdded ?? this.recentlyAdded,
+      selectedSortOption: selectedSortOption ?? this.selectedSortOption,
     );
   }
 }
-

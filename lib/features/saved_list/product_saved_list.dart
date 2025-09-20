@@ -225,7 +225,12 @@ class _ProductSavedListPageState
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             context: context,
-            builder: (context) => ProductPage(productId: product.id),
+            builder: (context) {
+              cubit.upsertRecentlyViewed(
+                product.id,
+              );
+              return ProductPage(productId: product.id);
+            },
           );
         },
         child: Row(
@@ -285,6 +290,10 @@ class _ProductSavedListPageState
       return CustomBottomSheet(
           title: AppLocale.sort_by,
           titleButton: AppLocale.sort,
+          onTap: () {
+            cubit.getAllProductsInCollection(widget.id);
+            Navigator.of(context).pop();
+          },
           child: Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -297,7 +306,7 @@ class _ProductSavedListPageState
               itemLabelBuilder: (option) => option.displayName.tr(context),
               onChanged: (value) {
                 setStateBuilder(() {
-                  cubit.updateSortBy(value ?? SortBy.createdAt, widget.id);
+                  cubit.updateSortBy(value ?? SortBy.createdAt);
                 });
               },
             ),

@@ -1,10 +1,15 @@
 import 'package:app_base/base/base_state.dart';
+import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/core/network/models/category.dart';
+import 'package:app_base/core/network/models/sub_category.dart';
 import 'package:app_base/features/product/product_page.dart';
 import 'package:app_base/features/products/components/filter_widget.dart';
+import 'package:app_base/features/products/models/sort_option.dart';
 import 'package:app_base/features/products/products_cubit.dart';
 import 'package:app_base/features/products/products_state.dart';
+import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,8 +20,9 @@ import '../home/models/navigation_type.dart';
 
 @RoutePage()
 class ProductsPage extends StatefulWidget {
-  const ProductsPage({super.key, required this.category});
+  const ProductsPage({super.key, required this.category, this.subCategory});
   final Category category;
+  final SubCategory? subCategory;
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -26,7 +32,7 @@ class _ProductsPageState
     extends BaseState<ProductsState, ProductsCubit, ProductsPage> {
   @override
   void initState() {
-    cubit.init(widget.category.id);
+    cubit.init(widget.category.id, widget.subCategory?.id);
     super.initState();
   }
 
@@ -88,12 +94,13 @@ class _ProductsPageState
                           if (value == true) {
                             cubit.fetchProducts(
                                 categoryId: widget.category.id,
-                                sortDirection: state.sortDirection.name);
+                                sortDirection: state.sortDirection.name,
+                                subCategoryId: widget.subCategory?.id);
                           } else if (value == false) {
                             cubit.onResetFilters();
                             cubit.fetchProducts(
-                              categoryId: widget.category.id,
-                            );
+                                categoryId: widget.category.id,
+                                subCategoryId: widget.subCategory?.id);
                           }
                         });
                       },
@@ -115,22 +122,18 @@ class _ProductsPageState
                     const SizedBox(width: 12),
                     GestureDetector(
                       onTap: () {
-                        cubit.onChangeSortDirection(widget.category.id);
-                        // showModalBottomSheet(
-                        //   context: context,
-                        //   builder: (context) => buildFilter(),
-                        // );
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => buildSortFilter(),
+                        );
                       },
                       child: Container(
-                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: context.myTheme.colorScheme.menuIconBg,
                             shape: BoxShape.circle,
                           ),
                           child: SvgPicture.asset(
-                            state.sortDirection.icon,
-                            height: 16,
-                            width: 16,
+                            "assets/icons/ic_products_sort.svg",
                             colorFilter: ColorFilter.mode(
                               context.myTheme.colorScheme.foreground,
                               BlendMode.srcIn,
@@ -176,8 +179,12 @@ class _ProductsPageState
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
                               context: context,
-                              builder: (context) =>
-                                  ProductPage(productId: product.id),
+                              builder: (context) {
+                                cubit.upsertRecentlyViewed(
+                                  product.id,
+                                );
+                                return ProductPage(productId: product.id);
+                              },
                             );
                           },
                           child: Container(
@@ -248,30 +255,37 @@ class _ProductsPageState
     );
   }
 
-  // Widget buildFilter() {
-  //   return StatefulBuilder(builder: (context, setStateBuilder) {
-  //     return CustomBottomSheet(
-  //         title: AppLocale.sort_by,
-  //         titleButton: AppLocale.sort,
-  //         child: Container(
-  //           padding: const EdgeInsets.all(16.0),
-  //           decoration: BoxDecoration(
-  //             color: context.myTheme.colorScheme.background,
-  //             borderRadius: BorderRadius.circular(12),
-  //           ),
-  //           child: CustomRadioGroup<FilterList>(
-  //             selected: selectedFilter,
-  //             options: FilterList.values,
-  //             itemLabelBuilder: (option) => option.title.tr(context),
-  //             onChanged: (value) {
-  //               setStateBuilder(() {
-  //                 selectedFilter = value;
-  //               });
-  //             },
-  //           ),
-  //         ));
-  //   });
-  // }
+  Widget buildSortFilter() {
+    return StatefulBuilder(builder: (context, setStateBuilder) {
+      return CustomBottomSheet(
+          title: AppLocale.sort_by,
+          titleButton: AppLocale.sort,
+          onTap: () {
+            cubit.fetchProducts(
+                categoryId: widget.category.id,
+                sortDirection: state.sortDirection.name,
+                subCategoryId: widget.subCategory?.id);
+            Navigator.of(context).pop();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: context.myTheme.colorScheme.background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: CustomRadioGroup<SortOption>(
+              selected: state.selectedSortOption,
+              options: SortOption.values,
+              itemLabelBuilder: (option) => option.displayName.tr(context),
+              onChanged: (value) {
+                setStateBuilder(() {
+                  cubit.onChangeSortOption(value ?? SortOption.newlyAdded);
+                });
+              },
+            ),
+          ));
+    });
+  }
 
   // AppBar _buildAppBar(BuildContext context) {
   //   return AppBar(

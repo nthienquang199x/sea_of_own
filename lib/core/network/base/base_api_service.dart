@@ -72,6 +72,13 @@ class BaseApiService {
   ) async {
     try {
       final response = await request();
+      if (response.data == null ||
+          (response.data is String && response.data.isEmpty)) {
+        return ApiResponse<T>(
+          data: null,
+          message: 'Success with no content',
+        );
+      }
       return ApiResponse.fromJson(response.data, parser);
     } on DioException catch (e) {
       final msg = e.response?.data['message'] ?? 'Something went wrong';

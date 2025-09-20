@@ -124,12 +124,14 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
   ProductsRoute({
     Key? key,
     required Category category,
+    SubCategory? subCategory,
     List<PageRouteInfo>? children,
   }) : super(
           ProductsRoute.name,
           args: ProductsRouteArgs(
             key: key,
             category: category,
+            subCategory: subCategory,
           ),
           initialChildren: children,
         );
@@ -143,6 +145,7 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
       return ProductsPage(
         key: args.key,
         category: args.category,
+        subCategory: args.subCategory,
       );
     },
   );
@@ -152,15 +155,18 @@ class ProductsRouteArgs {
   const ProductsRouteArgs({
     this.key,
     required this.category,
+    this.subCategory,
   });
 
   final Key? key;
 
   final Category category;
 
+  final SubCategory? subCategory;
+
   @override
   String toString() {
-    return 'ProductsRouteArgs{key: $key, category: $category}';
+    return 'ProductsRouteArgs{key: $key, category: $category, subCategory: $subCategory}';
   }
 }
 

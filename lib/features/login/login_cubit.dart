@@ -11,8 +11,54 @@ class LoginCubit extends BaseCubit<LoginState> {
 
   LoginCubit(this._authService) : super(const LoginState());
 
-  void loginWithApple() {
-    // Implement Apple login logic
+  Future<void> loginWithApple() async {
+    try {
+      emit(state.copyWith(isLoading: true));
+
+      final userCredential = await _authService.signInWithApple();
+
+      if (userCredential != null) {
+        final appleId = userCredential.user?.uid;
+        if (appleId == null) {
+          emit(state.copyWith(
+            isLoading: false,
+            isError: true,
+            errorMessage: 'Cannot retrieve Apple ID',
+          ));
+          return;
+        }
+        final loginResult = await _authService.loginAppWithApple(
+          email: userCredential.user?.email ?? '',
+          name: userCredential.user?.displayName ?? '',
+          appleId: appleId,
+          avatar: userCredential.user?.photoURL,
+        );
+
+        if (loginResult != null) {
+          final user = await userService.getProfile();
+          emit(state.copyWith(
+            isLoading: false,
+            isSuccess: true,
+            user: userCredential.user,
+          ));
+          if (user != null) {
+            appCubit.changeUser(user);
+          }
+        }
+      } else {
+        emit(state.copyWith(
+          isLoading: false,
+          isError: true,
+          errorMessage: 'Apple sign-in was cancelled or failed',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        isError: true,
+        errorMessage: 'Apple sign-in error',
+      ));
+    }
   }
 
   Future<void> loginWithGoogle() async {
@@ -31,14 +77,14 @@ class LoginCubit extends BaseCubit<LoginState> {
           ));
           return;
         }
-        final loginResult = await _authService.loginAppNew(
+        final loginResult = await _authService.loginApp(
           email: userCredential.user?.email ?? '',
           name: userCredential.user?.displayName ?? '',
           googleId: googleId,
           avatar: userCredential.user?.photoURL,
         );
 
-        if (loginResult) {
+        if (loginResult != null) {
           final user = await userService.getProfile();
           emit(state.copyWith(
             isLoading: false,

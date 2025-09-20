@@ -12,12 +12,12 @@ class CustomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 12,
-          // bottom: math.max(0, MediaQuery.of(context).padding.bottom - 4),
-          bottom: 12),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 12,
+        bottom: Theme.of(context).platform == TargetPlatform.iOS ? 24 : 12,
+      ),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.tab,
         border: Border(

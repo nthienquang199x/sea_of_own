@@ -1,5 +1,6 @@
 import 'package:app_base/app/config/routes.dart';
 import 'package:app_base/core/network/models/category.dart';
+import 'package:app_base/core/network/models/sub_category.dart';
 import 'package:app_base/features/home/presentation/home_page.dart';
 import 'package:app_base/features/login/login_page.dart';
 import 'package:app_base/features/products/products_page.dart';

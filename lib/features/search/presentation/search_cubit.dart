@@ -4,8 +4,8 @@ import 'package:app_base/base/base_cubit.dart';
 import 'package:app_base/core/network/models/category.dart';
 import 'package:app_base/core/network/services/category_service.dart';
 import 'package:app_base/core/network/services/product_service.dart';
+import 'package:app_base/core/network/services/recently_service.dart';
 import 'package:app_base/core/network/services/sub_category_service.dart';
-import 'package:app_base/features/products/models/sort_by.dart';
 import 'package:app_base/features/search/presentation/search_state.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -17,6 +17,7 @@ class SearchCubit extends BaseCubit<SearchState> {
   final _categoryService = CategoryService();
   final _subCregoryService = SubCategoryService();
   final _productService = ProductService();
+  final _recentlyViewedProductService = RecentlyService();
   Timer? _debounceTimer;
 
   Future<void> init() async {
@@ -36,8 +37,7 @@ class SearchCubit extends BaseCubit<SearchState> {
         sortDirection: sortDirection,
         searchKeyword: searchController.text,
       );
-      emit(
-          state.copyWith(products: products, productsRecentlyViewed: products));
+      emit(state.copyWith(products: products));
     } catch (e) {
       return;
     } finally {
@@ -45,21 +45,21 @@ class SearchCubit extends BaseCubit<SearchState> {
     }
   }
 
-  Future<void> fetchProductsRecentlyViewed() async {
-    try {
-      showLoading();
-      final products = await _productService.getAllProducts(
-        page: state.page,
-        perPage: state.perPage,
-        sortBy: SortBy.createdAt.name,
-      );
-      emit(state.copyWith(productsRecentlyViewed: products));
-    } catch (e) {
-      return;
-    } finally {
-      hideLoading();
-    }
-  }
+  // Future<void> fetchProductsRecentlyViewed() async {
+  //   try {
+  //     showLoading();
+  //     final products = await _productService.getAllProducts(
+  //       page: state.page,
+  //       perPage: state.perPage,
+  //       sortBy: SortBy.createdAt.name,
+  //     );
+  //     emit(state.copyWith(productsRecentlyViewed: products));
+  //   } catch (e) {
+  //     return;
+  //   } finally {
+  //     hideLoading();
+  //   }
+  // }
 
   Future<void> fetchCategories() async {
     try {
@@ -85,6 +85,27 @@ class SearchCubit extends BaseCubit<SearchState> {
               .toList()));
     } finally {
       hideLoading();
+    }
+  }
+
+  Future<void> fetchProductsRecentlyViewed() async {
+    try {
+      showLoading();
+      final products = await _recentlyViewedProductService.getRecentlyViewed();
+      emit(state.copyWith(productsRecentlyViewed: products));
+    } catch (e) {
+      return;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  Future<void> upsertRecentlyViewed(int productId) async {
+    try {
+      await _recentlyViewedProductService.upsertRecentlyViewed(productId);
+      fetchProductsRecentlyViewed();
+    } catch (e) {
+      return;
     }
   }
 

@@ -47,12 +47,10 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
 
   @override
   Widget buildByState(BuildContext context, HomeState state) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: context.myTheme.colorScheme.muted,
-        body: _buildBody(),
-        bottomNavigationBar: _buildBottomNavigationBar(),
-      ),
+    return Scaffold(
+      backgroundColor: context.myTheme.colorScheme.muted,
+      body: SafeArea(child: _buildBody()),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -118,8 +116,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         context: context,
-                        builder: (context) =>
-                            ProductPage(productId: product.id),
+                        builder: (context) {
+                          cubit.upsertRecentlyViewed(
+                            product.id,
+                          );
+                          return ProductPage(productId: product.id);
+                        },
                       );
                     },
                     child: ClipRRect(
@@ -225,8 +227,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         context: context,
-                        builder: (context) =>
-                            ProductPage(productId: product.id),
+                        builder: (context) {
+                          cubit.upsertRecentlyViewed(
+                            product.id,
+                          );
+                          return ProductPage(productId: product.id);
+                        },
                       );
                     },
                     child: AspectRatio(
@@ -335,7 +341,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                         onTap: () {
                           context.router
                               .push(
-                            ProductsRoute(category: category),
+                            ProductsRoute(
+                              category: category,
+                            ),
                           )
                               .then((value) {
                             if (value != null && value is NavigationType) {
@@ -460,15 +468,17 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                     const EdgeInsets.symmetric(horizontal: 16),
                                 child: Row(
                                   children: [
-                                    Text(
-                                      space.name,
-                                      style: context.myTheme.textThemeT1.title
-                                          .copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: context
-                                            .myTheme.colorScheme.foreground,
-                                        overflow: TextOverflow.ellipsis,
+                                    Expanded(
+                                      child: Text(
+                                        space.name,
+                                        style: context.myTheme.textThemeT1.title
+                                            .copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: context
+                                              .myTheme.colorScheme.foreground,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     )
                                   ],

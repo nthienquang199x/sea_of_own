@@ -1,5 +1,6 @@
 import 'package:app_base/core/network/models/category.dart';
 import 'package:app_base/core/network/models/product.dart';
+import 'package:app_base/core/network/models/recently_product.dart';
 import 'package:app_base/core/network/models/sub_category.dart';
 
 class SearchState {
@@ -7,7 +8,7 @@ class SearchState {
   final List<SubCategory> subCategories;
   final List<SubCategory> subCategoriesCategory;
   final List<Product> products;
-  final List<Product> productsRecentlyViewed;
+  final List<RecentlyProduct> productsRecentlyViewed;
   final Category? categorySelected;
   final String searchText;
   final int page;
@@ -30,7 +31,7 @@ class SearchState {
     List<SubCategory>? subCategories,
     List<SubCategory>? subCategoriesCategory,
     List<Product>? products,
-    List<Product>? productsRecentlyViewed,
+    List<RecentlyProduct>? productsRecentlyViewed,
     Category? categorySelected,
     String? searchText,
     int? page,

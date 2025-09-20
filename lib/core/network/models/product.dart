@@ -1,5 +1,6 @@
 import 'package:app_base/core/network/models/brand.dart';
 import 'package:app_base/core/network/models/category.dart';
+import 'package:app_base/core/network/models/collection.dart';
 import 'package:app_base/core/network/models/color.dart';
 import 'package:app_base/core/network/models/currency.dart';
 import 'package:app_base/core/network/models/image_model.dart';
@@ -18,6 +19,8 @@ class Product {
   final String? pros;
   final String? cons;
   final int? totalLikes;
+  final bool isLiked;
+  final bool isCollected;
   final String? description;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -29,6 +32,7 @@ class Product {
   final List<ImageModel>? images;
   final List<Specification>? specifications;
   final List<ColorModel>? colors;
+  final List<Collection>? collections;
 
   Product({
     required this.id,
@@ -40,6 +44,8 @@ class Product {
     this.thumbnail,
     this.pros,
     this.cons,
+    this.isLiked = false,
+    this.isCollected = false,
     this.totalLikes,
     this.description,
     this.createdAt,
@@ -52,6 +58,7 @@ class Product {
     this.images,
     this.specifications,
     this.colors,
+    this.collections,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -65,6 +72,8 @@ class Product {
       thumbnail: json['thumbnail'] as String?,
       pros: json['pros'] as String?,
       cons: json['cons'] as String?,
+      isLiked: json['isLiked'] as bool? ?? false,
+      isCollected: json['isCollected'] as bool? ?? false,
       totalLikes: json['totalLikes'] as int?,
       description: json['description'] as String?,
       createdAt: json['createdAt'] != null
@@ -100,6 +109,11 @@ class Product {
               .map((color) => ColorModel.fromJson(color))
               .toList()
           : null,
+      collections: json['collections'] != null
+          ? (json['collections'] as List)
+              .map((col) => Collection.fromJson(col))
+              .toList()
+          : null,
     );
   }
 
@@ -126,6 +140,7 @@ class Product {
       'images': images?.map((image) => image.toJson()).toList(),
       'specifications': specifications?.map((spec) => spec.toJson()).toList(),
       'colors': colors?.map((color) => color.toJson()).toList(),
+      'collections': collections?.map((col) => col.toJson()).toList(),
     };
   }
 
@@ -151,6 +166,7 @@ class Product {
     List<ImageModel>? images,
     List<Specification>? specifications,
     List<ColorModel>? colors,
+    List<Collection>? collections,
   }) {
     return Product(
       id: id ?? this.id,
@@ -174,6 +190,7 @@ class Product {
       images: images ?? this.images,
       specifications: specifications ?? this.specifications,
       colors: colors ?? this.colors,
+      collections: collections ?? this.collections,
     );
   }
 }

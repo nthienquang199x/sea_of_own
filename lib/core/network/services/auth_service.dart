@@ -1,10 +1,10 @@
 import 'package:app_base/core/network/base/api_client.dart';
-import 'package:app_base/core/network/base/api_constants.dart';
 import 'package:app_base/core/network/base/base_api_service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 @injectable
 class AuthService {
@@ -34,27 +34,43 @@ class AuthService {
     }
   }
 
-  Future<void> signOut() async {
+  Future<UserCredential?> signInWithApple() async {
     try {
-      await _googleSignIn.signOut();
-      await _auth.signOut();
+      final isAvailable = await SignInWithApple.isAvailable();
+      if (!isAvailable) {
+        return null;
+      }
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+      final userCredential = await _auth.signInWithCredential(oauthCredential);
+
+      return userCredential;
     } catch (e) {
-      print('Error signing out: $e');
+      return null;
     }
   }
 
-  Future<Map<String, dynamic>?> loginApp({
+  Future<Map<String, dynamic>?> loginAppWithApple({
     required String email,
     required String name,
-    required String googleId,
+    required String appleId,
     String? avatar,
   }) async {
     try {
       final response = await _api.post(
         '/v1/app/login',
         data: {
-          'googleId': googleId,
-          'email;': email,
+          'appleId': appleId,
+          'email': email,
           'name': name,
           'avatar': avatar,
         },
@@ -79,16 +95,24 @@ class AuthService {
     }
   }
 
-  Future<bool> loginAppNew({
+  Future<void> signOut() async {
+    try {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> loginApp({
     required String email,
     required String name,
     required String googleId,
     String? avatar,
   }) async {
     try {
-      final dio = Dio();
-      final response = await dio.post(
-        '${ApiConstants.baseUrl}/v1/app/login',
+      final response = await _api.post(
+        '/v1/app/login',
         data: {
           'googleId': googleId,
           'email': email,
@@ -100,18 +124,19 @@ class AuthService {
             'Accept': 'application/json',
           },
         ),
+        parser: (data) => data,
       );
 
       if (response.data != null) {
         await ApiClient.storage
             .write(key: "access_token", value: response.data!['accessToken']);
-
-        return true;
+        return response.data!['user'] ??
+            {'accessToken': response.data!['accessToken']};
       } else {
-        return false;
+        return null;
       }
     } catch (e) {
-      return false;
+      return null;
     }
   }
 

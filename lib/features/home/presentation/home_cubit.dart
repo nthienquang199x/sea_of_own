@@ -1,6 +1,7 @@
 import 'package:app_base/base/base_cubit.dart';
 import 'package:app_base/core/network/services/category_service.dart';
 import 'package:app_base/core/network/services/product_service.dart';
+import 'package:app_base/core/network/services/recently_service.dart';
 import 'package:app_base/core/network/services/space_service.dart';
 import 'package:app_base/features/home/presentation/home_state.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class HomeCubit extends BaseCubit<HomeState> {
   final _categoryService = CategoryService();
   final _productService = ProductService();
   final _spaceService = SpaceService();
+  final _recentlyViewedProductService = RecentlyService();
   final TextEditingController searchController = TextEditingController();
 
   Future<void> fetchCategories() async {
@@ -53,6 +55,14 @@ class HomeCubit extends BaseCubit<HomeState> {
       print('Error fetching spaces: $e');
     } finally {
       hideLoading();
+    }
+  }
+
+  Future<void> upsertRecentlyViewed(int productId) async {
+    try {
+      await _recentlyViewedProductService.upsertRecentlyViewed(productId);
+    } catch (e) {
+      return;
     }
   }
 }

@@ -51,19 +51,18 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAqjhU6WbPL3SvWNk3j1X8hhtpKY684F-c',
-    appId: '1:991006133524:android:ee101337df3cfe47b54601',
-    messagingSenderId: '991006133524',
-    projectId: 'seaofown-35412',
-    storageBucket: 'seaofown-35412.firebasestorage.app',
+    appId: '1:574777846035:android:558197b80a104aca1a52e6',
+    messagingSenderId: '574777846035',
+    projectId: 'soo-auth',
+    storageBucket: 'soo-auth.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAqjhU6WbPL3SvWNk3j1X8hhtpKY684F-c',
-    appId: '1:991006133524:ios:ee101337df3cfe47b54601',
-    messagingSenderId: '991006133524',
-    projectId: 'seaofown-35412',
-    storageBucket: 'seaofown-35412.firebasestorage.app',
-    iosBundleId: 'com.example.seaofown',
+    appId: '1:574777846035:ios:268cd6dcad44425d1a52e6',
+    messagingSenderId: '574777846035',
+    projectId: 'soo-auth',
+    storageBucket: 'soo-auth.firebasestorage.app',
+    iosBundleId: 'com.seaofown.app',
   );
-
 }

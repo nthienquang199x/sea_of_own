@@ -1,6 +1,7 @@
 import 'package:app_base/base/base_cubit.dart';
 import 'package:app_base/core/network/services/collection_service.dart';
 import 'package:app_base/core/network/services/product_collection_service.dart';
+import 'package:app_base/core/network/services/recently_service.dart';
 import 'package:app_base/features/products/models/sort_by.dart';
 import 'package:app_base/features/products/models/sort_direction.dart';
 import 'package:app_base/features/saved_list/saved_list_state.dart';
@@ -14,6 +15,7 @@ class SavedListCubit extends BaseCubit<SavedListState> {
   final TextEditingController createNameController = TextEditingController();
   final _collectionService = CollectionService();
   final _productCollectionService = ProductCollectionService();
+  final _recentlyViewedProductService = RecentlyService();
 
   void init() {
     addSearchListener();
@@ -76,6 +78,14 @@ class SavedListCubit extends BaseCubit<SavedListState> {
     }
   }
 
+  Future<void> upsertRecentlyViewed(int productId) async {
+    try {
+      await _recentlyViewedProductService.upsertRecentlyViewed(productId);
+    } catch (e) {
+      return;
+    }
+  }
+
   Future<void> getAllProductsInCollection(int collectionId) async {
     try {
       showLoading();
@@ -91,8 +101,8 @@ class SavedListCubit extends BaseCubit<SavedListState> {
     emit(state.copyWith(sortDirection: newDirection));
   }
 
-  void updateSortBy(SortBy newSortBy, int collectionId) {
+  void updateSortBy(SortBy newSortBy) {
     emit(state.copyWith(sortBy: newSortBy));
-    getAllProductsInCollection(collectionId);
+    // getAllProductsInCollection(collectionId);
   }
 }

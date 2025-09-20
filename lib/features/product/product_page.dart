@@ -126,10 +126,18 @@ class _ProductPageState
                         children: [
                           GestureDetector(
                             onTap: () {
+                              if (state.product?.isLiked == true) {
+                                cubit.dislikeProduct(widget.productId);
+                                return;
+                              }
                               cubit.likeProduct(widget.productId);
                             },
                             child: SvgPicture.asset(
-                                "assets/icons/ic_product_heart.svg",
+                                state.product?.isLiked == true
+                                    ? "assets/icons/ic_product_heart_fill.svg"
+                                    : "assets/icons/ic_product_heart.svg",
+                                height: 20,
+                                width: 20,
                                 colorFilter: ColorFilter.mode(
                                   context.myTheme.colorScheme.foreground,
                                   BlendMode.srcIn,
@@ -155,7 +163,9 @@ class _ProductPageState
                               );
                             },
                             child: SvgPicture.asset(
-                                "assets/icons/ic_product_bookmark.svg",
+                                state.product?.isCollected == true
+                                    ? "assets/icons/ic_product_bookmark_fill.svg"
+                                    : "assets/icons/ic_product_bookmark.svg",
                                 colorFilter: ColorFilter.mode(
                                   context.myTheme.colorScheme.foreground,
                                   BlendMode.srcIn,
@@ -300,11 +310,11 @@ class _ProductPageState
                 ListView.separated(
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      final isSelected = state.selectedCollections
-                          .contains(state.collections[index]);
+                      final isSelected = state.product?.collections
+                          ?.any((col) => col.id == state.collections[index].id);
                       return InkWell(
                         onTap: () {
-                          if (isSelected) {
+                          if (isSelected == true) {
                             cubit.deleteProductFromCollections(
                                 state.collections[index].id, widget.productId);
                           } else {
@@ -328,7 +338,7 @@ class _ProductPageState
                                 ),
                               ),
                             ),
-                            isSelected
+                            isSelected == true
                                 ? SvgPicture.asset(
                                     "assets/icons/ic_check.svg",
                                     colorFilter: ColorFilter.mode(

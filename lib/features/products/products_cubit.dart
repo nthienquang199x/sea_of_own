@@ -1,9 +1,11 @@
 import 'package:app_base/base/base_cubit.dart';
 import 'package:app_base/core/network/models/sub_category.dart';
 import 'package:app_base/core/network/services/product_service.dart';
+import 'package:app_base/core/network/services/recently_service.dart';
 import 'package:app_base/core/network/services/sub_category_service.dart';
 import 'package:app_base/features/products/models/sort_by.dart';
 import 'package:app_base/features/products/models/sort_direction.dart';
+import 'package:app_base/features/products/models/sort_option.dart';
 import 'package:app_base/features/products/products_state.dart';
 import 'package:injectable/injectable.dart';
 
@@ -13,18 +15,34 @@ class ProductsCubit extends BaseCubit<ProductsState> {
 
   final _subCregoryService = SubCategoryService();
   final _productService = ProductService();
+  final _recentlyViewedProductService = RecentlyService();
 
-  void init(int categoryId) {
+  void init(int categoryId, int? subCategoryId) {
     fetchSubCategories(categoryId);
-    fetchProducts(categoryId: categoryId);
+    fetchProducts(categoryId: categoryId, subCategoryId: subCategoryId);
   }
 
-  void onChangeSortDirection(int categoryId) {
+  void onChangeSortDirection(int categoryId, int? subCategoryId) {
     final newDirection = state.sortDirection == SortDirection.asc
         ? SortDirection.desc
         : SortDirection.asc;
-    fetchProducts(categoryId: categoryId, sortDirection: newDirection.name);
     emit(state.copyWith(sortDirection: newDirection));
+  }
+
+  void onChangeSortBy(SortBy newSortBy) {
+    emit(state.copyWith(sortBy: newSortBy));
+  }
+
+  void onChangeSortDirectionOnly(SortDirection newSortDirection) {
+    emit(state.copyWith(sortDirection: newSortDirection));
+  }
+
+  void onChangeSortOption(SortOption sortOption) {
+    emit(state.copyWith(
+      selectedSortOption: sortOption,
+      sortBy: sortOption.sortBy,
+      sortDirection: sortOption.sortDirection,
+    ));
   }
 
   void onChangePage(int newPage) {
@@ -38,6 +56,7 @@ class ProductsCubit extends BaseCubit<ProductsState> {
   void onResetFilters() {
     emit(state.copyWith(
       sortDirection: SortDirection.asc,
+      sortBy: SortBy.createdAt,
       page: 1,
       perPage: 10,
       selectedSubCategories: [],
@@ -62,7 +81,9 @@ class ProductsCubit extends BaseCubit<ProductsState> {
   }
 
   Future<void> fetchProducts(
-      {required int categoryId, String? sortDirection}) async {
+      {required int categoryId,
+      String? sortDirection,
+      int? subCategoryId}) async {
     try {
       showLoading();
       final products = await _productService.getAllProducts(
@@ -71,12 +92,15 @@ class ProductsCubit extends BaseCubit<ProductsState> {
         sortDirection: sortDirection,
         categoryIds: [
           categoryId,
-          ...state.selectedSubCategories.map((e) => e.id)
         ],
+        subCategoryIds: subCategoryId != null
+            ? [subCategoryId, ...state.selectedSubCategories.map((e) => e.id)]
+            : state.selectedSubCategories.map((e) => e.id).toList(),
         onSale: state.onSale,
         minPrice: state.minPrice,
         maxPrice: state.priceRange,
-        sortBy: state.recentlyAdded ? SortBy.createdAt.params : null,
+        sortBy:
+            state.recentlyAdded ? SortBy.createdAt.params : state.sortBy.params,
       );
       emit(state.copyWith(products: products));
     } catch (e) {
@@ -109,5 +133,13 @@ class ProductsCubit extends BaseCubit<ProductsState> {
 
   void toogleViewAll() {
     emit(state.copyWith(selectedSubCategories: []));
+  }
+
+  Future<void> upsertRecentlyViewed(int productId) async {
+    try {
+      await _recentlyViewedProductService.upsertRecentlyViewed(productId);
+    } catch (e) {
+      return;
+    }
   }
 }

@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "991006133524",
-    "project_id": "seaofown-35412",
-    "storage_bucket": "seaofown-35412.firebasestorage.app"
+    "project_number": "574777846035",
+    "project_id": "soo-auth",
+    "storage_bucket": "soo-auth.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:991006133524:android:ee101337df3cfe47b54601",
+        "mobilesdk_app_id": "1:574777846035:android:558197b80a104aca1a52e6",
         "android_client_info": {
-          "package_name": "com.example.seaofown"
+          "package_name": "com.seaofown.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "991006133524-vgk0jlsc7qtnogv7jso4og63qcnre5nl.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.seaofown",
-            "certificate_hash": "6ec62475f5f7dd26001661dc73ac7c7fdb319b93"
-          }
-        },
-        {
-          "client_id": "991006133524-f0tial562u5heedc10neer3n1e9cshdr.apps.googleusercontent.com",
+          "client_id": "574777846035-pckdp3r6kgknabrabm3emsf04amciv45.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAqjhU6WbPL3SvWNk3j1X8hhtpKY684F-c"
+          "current_key": "AIzaSyDEKjK1ww5glOQIcEECr42ZDI5AuhKI-SE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "991006133524-f0tial562u5heedc10neer3n1e9cshdr.apps.googleusercontent.com",
+              "client_id": "574777846035-pckdp3r6kgknabrabm3emsf04amciv45.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

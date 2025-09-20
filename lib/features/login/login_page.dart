@@ -66,40 +66,41 @@ class _LoginPageState extends BaseState<LoginState, LoginCubit, LoginPage> {
               ),
 
               const Spacer(flex: 3),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.router.replaceNamed(Routes.home);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.myTheme.colorScheme.foreground,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              if (Theme.of(context).platform == TargetPlatform.iOS)
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context.router.replaceNamed(Routes.home);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.myTheme.colorScheme.foreground,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocale.continue_with_apple.tr(context),
+                          style: context.myTheme.textThemeT1.title.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: context.myTheme.colorScheme.background,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        SvgPicture.asset(
+                          "assets/icons/ic_login_apple.svg",
+                          colorFilter: ColorFilter.mode(
+                              context.myTheme.colorScheme.background,
+                              BlendMode.srcIn),
+                        )
+                      ],
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        AppLocale.continue_with_apple.tr(context),
-                        style: context.myTheme.textThemeT1.title.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: context.myTheme.colorScheme.background,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      SvgPicture.asset(
-                        "assets/icons/ic_login_apple.svg",
-                        colorFilter: ColorFilter.mode(
-                            context.myTheme.colorScheme.background,
-                            BlendMode.srcIn),
-                      )
-                    ],
-                  ),
                 ),
-              ),
 
               const SizedBox(height: 16),
               SizedBox(
