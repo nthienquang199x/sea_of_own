@@ -7,7 +7,7 @@ class CollectionService {
   Future<List<Collection>> getCollections() async {
     try {
       final response = await _api.get(
-        '/v1/collections',
+        '/v1/collections/me',
         parser: (data) =>
             (data as List).map((item) => Collection.fromJson(item)).toList(),
       );
@@ -38,12 +38,11 @@ class CollectionService {
     }
   }
 
-  Future<Collection?> updateCollection(
-      int collectionId, String name, String thumbnail) async {
+  Future<Collection?> updateCollection(int collectionId, String name) async {
     try {
-      final response = await _api.put(
+      final response = await _api.patch(
         '/v1/collections/$collectionId',
-        data: {'name': name, 'thumbnail': thumbnail},
+        data: {'name': name},
         parser: (data) => Collection.fromJson(data),
       );
       if (response.message == "Success" && response.data != null) {

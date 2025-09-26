@@ -49,7 +49,7 @@ class ProductCubit extends BaseCubit<ProductState> {
       showLoading();
       final response = await _productService.addProductToCollections(
           productId, collectionIds);
-      fetchCollections(productId);
+      fetchProductById(productId);
       showToast(response);
     } catch (e) {
       showToast('Failed to add product to collection');
@@ -65,7 +65,7 @@ class ProductCubit extends BaseCubit<ProductState> {
       final response = await _productCollectionService
           .deleteProductFromCollection(productId, collectionId);
       showToast(response);
-      fetchCollections(productId, collectionId: collectionId);
+      fetchProductById(productId);
     } catch (e) {
       showToast('Failed to remove product from collection');
     } finally {

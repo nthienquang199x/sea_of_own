@@ -9,12 +9,14 @@ class SavedListState {
   final List<Product> products;
   final SortDirection sortDirection;
   final SortBy sortBy;
+  final bool isRename;
 
   SavedListState(
       {this.searchText = '',
       this.savedCollections = const [],
       this.sortDirection = SortDirection.asc,
       this.sortBy = SortBy.createdAt,
+      this.isRename = false,
       this.products = const []});
 
   SavedListState copyWith(
@@ -22,6 +24,7 @@ class SavedListState {
       List<Collection>? savedCollections,
       SortDirection? sortDirection,
       SortBy? sortBy,
+      bool? isRename,
       List<Product>? products}) {
     return SavedListState(
       searchText: searchText ?? this.searchText,
@@ -29,6 +32,7 @@ class SavedListState {
       sortBy: sortBy ?? this.sortBy,
       sortDirection: sortDirection ?? this.sortDirection,
       products: products ?? this.products,
+      isRename: isRename ?? this.isRename,
     );
   }
 }

@@ -166,6 +166,8 @@ class _ProductPageState
                                 state.product?.isCollected == true
                                     ? "assets/icons/ic_product_bookmark_fill.svg"
                                     : "assets/icons/ic_product_bookmark.svg",
+                                height: 20,
+                                width: 20,
                                 colorFilter: ColorFilter.mode(
                                   context.myTheme.colorScheme.foreground,
                                   BlendMode.srcIn,
@@ -300,7 +302,7 @@ class _ProductPageState
           title: AppLocale.choose_a_collection,
           textColor: context.myTheme.colorScheme.muted,
           child: Container(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(state.collections.isEmpty ? 0 : 24.0),
             decoration: BoxDecoration(
               color: context.myTheme.colorScheme.background,
               borderRadius: BorderRadius.circular(12),
@@ -309,6 +311,7 @@ class _ProductPageState
               children: [
                 ListView.separated(
                     shrinkWrap: true,
+                    padding: EdgeInsets.zero,
                     itemBuilder: (context, index) {
                       final isSelected = state.product?.collections
                           ?.any((col) => col.id == state.collections[index].id);

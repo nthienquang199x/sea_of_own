@@ -137,7 +137,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AspectRatio(
-                                aspectRatio: 396 / 304,
+                                aspectRatio: 396 / 295,
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
@@ -170,9 +170,10 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                 ),
                               ),
                               Expanded(
-                                child: Padding(
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
+                                    horizontal: 16,
+                                  ),
                                   child: Row(
                                     children: [
                                       Text(

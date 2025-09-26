@@ -71,9 +71,11 @@ class _LoginPageState extends BaseState<LoginState, LoginCubit, LoginPage> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.router.replaceNamed(Routes.home);
-                    },
+                    onPressed: state.isLoading
+                        ? null
+                        : () async {
+                            await cubit.loginWithApple();
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.myTheme.colorScheme.foreground,
                       shape: RoundedRectangleBorder(

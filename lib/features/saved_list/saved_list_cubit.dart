@@ -13,6 +13,7 @@ class SavedListCubit extends BaseCubit<SavedListState> {
   SavedListCubit() : super(SavedListState());
   final TextEditingController searchController = TextEditingController();
   final TextEditingController createNameController = TextEditingController();
+  final TextEditingController nameEditingController = TextEditingController();
   final _collectionService = CollectionService();
   final _productCollectionService = ProductCollectionService();
   final _recentlyViewedProductService = RecentlyService();
@@ -67,12 +68,11 @@ class SavedListCubit extends BaseCubit<SavedListState> {
     }
   }
 
-  Future<void> updateCollection(
-      int collectionId, String name, String thumbnail) async {
+  Future<bool> updateCollection(int collectionId, String name) async {
     try {
       showLoading();
-      await _collectionService.updateCollection(collectionId, name, thumbnail);
-      fetchSavedCollections();
+      await _collectionService.updateCollection(collectionId, name);
+      return true;
     } finally {
       hideLoading();
     }
@@ -104,5 +104,9 @@ class SavedListCubit extends BaseCubit<SavedListState> {
   void updateSortBy(SortBy newSortBy) {
     emit(state.copyWith(sortBy: newSortBy));
     // getAllProductsInCollection(collectionId);
+  }
+
+  void toggleRename() {
+    emit(state.copyWith(isRename: true));
   }
 }

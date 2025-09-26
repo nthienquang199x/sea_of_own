@@ -10,6 +10,7 @@ import 'package:app_base/features/saved_list/saved_list_state.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/custom_extended_image.dart';
 import 'package:app_base/utils/widget/custom_radio_group.dart';
+import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,8 +32,11 @@ class _ProductSavedListPageState
     extends BaseState<SavedListState, SavedListCubit, ProductSavedListPage> {
   @override
   void initState() {
-    cubit.getAllProductsInCollection(widget.id);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      cubit.nameEditingController.text = widget.title;
+      cubit.getAllProductsInCollection(widget.id);
+    });
   }
 
   @override
@@ -54,72 +58,82 @@ class _ProductSavedListPageState
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                      onTap: () => context.router.maybePop(),
-                      child: SvgPicture.asset(
-                        "assets/icons/ic_chevron_left.svg",
-                        colorFilter: ColorFilter.mode(
-                          context.myTheme.colorScheme.foreground,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.title,
-                        style: context.myTheme.textThemeT1.title.copyWith(
-                            color: context.myTheme.colorScheme.foreground,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => buildFilter(),
-                        );
+                        context.router.maybePop(state.isRename);
                       },
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: context.myTheme.colorScheme.menuIconBg,
-                            shape: BoxShape.circle,
-                          ),
-                          child: SvgPicture.asset(
-                            "assets/icons/ic_products_sort.svg",
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/icons/ic_chevron_left.svg",
                             colorFilter: ColorFilter.mode(
                               context.myTheme.colorScheme.foreground,
                               BlendMode.srcIn,
                             ),
-                          )),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => buildOptionDialog(),
-                        ).then((value) {
-                          if (value != null && value is Map<String, dynamic>) {
-                            if (value['deleted'] == true) {
-                              context.router.maybePop(true);
-                            }
-                          }
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: context.myTheme.colorScheme.menuIconBg,
-                          shape: BoxShape.circle,
-                        ),
-                        child: SvgPicture.asset("assets/icons/ic_menu.svg",
-                            colorFilter: ColorFilter.mode(
-                              context.myTheme.colorScheme.foreground,
-                              BlendMode.srcIn,
-                            )),
+                          ),
+                          Text(
+                            cubit.nameEditingController.text,
+                            style: context.myTheme.textThemeT1.title.copyWith(
+                                color: context.myTheme.colorScheme.foreground,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => buildFilter(),
+                            );
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: context.myTheme.colorScheme.menuIconBg,
+                                shape: BoxShape.circle,
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/icons/ic_products_sort.svg",
+                                colorFilter: ColorFilter.mode(
+                                  context.myTheme.colorScheme.foreground,
+                                  BlendMode.srcIn,
+                                ),
+                              )),
+                        ),
+                        const SizedBox(width: 12),
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => buildOptionDialog(),
+                            ).then((value) {
+                              if (value != null &&
+                                  value is Map<String, dynamic>) {
+                                if (value['deleted'] == true) {
+                                  context.router.maybePop(true);
+                                }
+                              }
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: context.myTheme.colorScheme.menuIconBg,
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.asset("assets/icons/ic_menu.svg",
+                                colorFilter: ColorFilter.mode(
+                                  context.myTheme.colorScheme.foreground,
+                                  BlendMode.srcIn,
+                                )),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -323,7 +337,39 @@ class _ProductSavedListPageState
         _buildGroup([
           _buildItem(
             AppLocale.rename,
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              cubit.toggleRename();
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => CustomBottomSheet(
+                    title: AppLocale.rename,
+                    titleButton: AppLocale.save_changes,
+                    onTap: () {
+                      cubit
+                          .updateCollection(
+                              widget.id, cubit.nameEditingController.text)
+                          .then((success) {
+                        if (success && mounted) {
+                          setState(() {});
+                          Navigator.pop(context);
+                        }
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        TextFormFieldCustom(
+                          hintText: widget.title,
+                          borderColor: Colors.transparent,
+                          fillColor: context.myTheme.colorScheme.background,
+                          controller: cubit.nameEditingController,
+                          keyboardType: TextInputType.text,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ],
+                    )),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),

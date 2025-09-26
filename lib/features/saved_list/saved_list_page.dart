@@ -27,9 +27,11 @@ class _SavedListPageState
     extends BaseState<SavedListState, SavedListCubit, SavedListPage> {
   @override
   void initState() {
-    cubit.init();
-    cubit.addSearchListener();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      cubit.init();
+      cubit.addSearchListener();
+    });
   }
 
   @override
