@@ -94,12 +94,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           ),
           if (widget.showCloseButton)
             Positioned(
-              top: -30,
-              right: 6,
+              top: -40,
+              right: 5,
               child: GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
-                child:
-                    SvgPicture.asset(AppIcons.ic_close, width: 24, height: 24),
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.asset(AppIcons.ic_close,
+                        width: 24, height: 24)),
               ),
             ),
         ],

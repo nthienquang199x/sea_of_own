@@ -112,14 +112,14 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   child: InkWell(
                     onTap: () {
+                      cubit.upsertRecentlyViewed(
+                        product.id,
+                      );
                       showModalBottomSheet(
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         context: context,
                         builder: (context) {
-                          cubit.upsertRecentlyViewed(
-                            product.id,
-                          );
                           return ProductPage(productId: product.id);
                         },
                       );
@@ -143,9 +143,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                     top: Radius.circular(12),
                                   ),
                                   child: CachedNetworkImage(
-                                    imageUrl: product.images != null &&
-                                            product.images!.isNotEmpty
-                                        ? product.images!.first.url
+                                    imageUrl: product.thumbnail != null &&
+                                            product.thumbnail!.isNotEmpty
+                                        ? product.thumbnail!
                                         : 'https://via.placeholder.com/150',
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => const Center(
@@ -224,14 +224,14 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                   final product = state.products[index];
                   return GestureDetector(
                     onTap: () {
+                      cubit.upsertRecentlyViewed(
+                        product.id,
+                      );
                       showModalBottomSheet(
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         context: context,
                         builder: (context) {
-                          cubit.upsertRecentlyViewed(
-                            product.id,
-                          );
                           return ProductPage(productId: product.id);
                         },
                       );
@@ -253,9 +253,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                   top: Radius.circular(12),
                                 ),
                                 child: CachedNetworkImage(
-                                  imageUrl: product.images != null &&
-                                          product.images!.isNotEmpty
-                                      ? product.images!.first.url
+                                  imageUrl: product.thumbnail != null &&
+                                          product.thumbnail!.isNotEmpty
+                                      ? product.thumbnail!
                                       : 'https://via.placeholder.com/150',
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => const Center(
@@ -415,78 +415,82 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                       //   builder: (context) => ProductPage(product: product),
                       // );
                     },
-                    child: AspectRatio(
-                      aspectRatio: 194 / 239,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: context.myTheme.colorScheme.background,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 194 / 188,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(12),
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: space.thumnail ??
-                                      'https://via.placeholder.com/150',
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    child: Ink(
+                      child: AspectRatio(
+                        aspectRatio: 194 / 239,
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            color: context.myTheme.colorScheme.background,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 194 / 188,
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(12),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
+                                  child: CachedNetworkImage(
+                                    imageUrl: space.thumnail ??
+                                        'https://via.placeholder.com/150',
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     ),
-                                    child: const Center(
-                                      child: Icon(Icons.error),
-                                    ),
-                                  ),
-                                ),
-                                // child: Container(
-                                //   decoration: BoxDecoration(
-                                //     color: Colors.grey[200],
-                                //   ),
-                                //   child: Center(
-                                //     child: Icon(
-                                //       Icons.build,
-                                //       size: 60,
-                                //       color: Colors.grey[400],
-                                //     ),
-                                //   ),
-                                // ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        space.name,
-                                        style: context.myTheme.textThemeT1.title
-                                            .copyWith(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: context
-                                              .myTheme.colorScheme.foreground,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
                                       ),
-                                    )
-                                  ],
+                                      child: const Center(
+                                        child: Icon(Icons.error),
+                                      ),
+                                    ),
+                                  ),
+                                  // child: Container(
+                                  //   decoration: BoxDecoration(
+                                  //     color: Colors.grey[200],
+                                  //   ),
+                                  //   child: Center(
+                                  //     child: Icon(
+                                  //       Icons.build,
+                                  //       size: 60,
+                                  //       color: Colors.grey[400],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ),
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          space.name,
+                                          style: context
+                                              .myTheme.textThemeT1.title
+                                              .copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: context
+                                                .myTheme.colorScheme.foreground,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

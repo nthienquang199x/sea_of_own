@@ -30,14 +30,7 @@ class _SavedListPageState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       cubit.init();
-      cubit.addSearchListener();
     });
-  }
-
-  @override
-  void dispose() {
-    cubit.removeSearchListener();
-    super.dispose();
   }
 
   @override
@@ -48,6 +41,7 @@ class _SavedListPageState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -95,6 +89,8 @@ class _SavedListPageState
             SearchWidget(
               searchController: cubit.searchController,
               searchText: state.searchText,
+              onChanged: () => cubit.onSearchChanged(),
+              onClear: () => cubit.onSearchChanged(fromClear: true),
             ),
             const SizedBox(height: 24),
             ListView.separated(

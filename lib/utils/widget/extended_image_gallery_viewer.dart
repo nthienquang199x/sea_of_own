@@ -39,6 +39,7 @@ class _ExtendedImageGalleryViewerState
   late ExtendedPageController _pageController;
   late int currentIndex;
   final bool _showOverlay = true;
+  double _dragDistance = 0;
 
   @override
   void initState() {
@@ -62,6 +63,21 @@ class _ExtendedImageGalleryViewerState
           Positioned.fill(
             child: GestureDetector(
               onTap: _closeDialog,
+              onVerticalDragStart: (_) {
+                _dragDistance = 0;
+              },
+              onVerticalDragUpdate: (details) {
+                if (details.delta.dy > 0) {
+                  _dragDistance += details.delta.dy;
+                }
+              },
+              onVerticalDragEnd: (details) {
+                final velocity = details.primaryVelocity ?? 0;
+                if (_dragDistance > 100 || velocity > 800) {
+                  _closeDialog();
+                }
+                _dragDistance = 0;
+              },
               behavior: HitTestBehavior.opaque,
               child: ExtendedImageGesturePageView.builder(
                 itemBuilder: (BuildContext context, int index) {
@@ -106,11 +122,7 @@ class _ExtendedImageGalleryViewerState
                 child: SafeArea(
                   child: Row(
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.close,
-                            color: Colors.white, size: 28),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+                      const SizedBox(width: 48),
                       Expanded(
                         child: Text(
                           '${currentIndex + 1} / ${widget.images.length}',
@@ -122,7 +134,12 @@ class _ExtendedImageGalleryViewerState
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(width: 48),
+
+                      IconButton(
+                        icon: const Icon(Icons.close,
+                            color: Colors.white, size: 28),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
                       // IconButton(
                       //   icon: const Icon(Icons.share,
                       //       color: Colors.white, size: 28),

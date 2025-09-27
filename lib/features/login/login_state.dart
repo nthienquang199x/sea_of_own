@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginState {
   final bool isLoading;
+  final bool isLoadingApple;
   final bool isSuccess;
   final bool isError;
   final String? errorMessage;
@@ -9,6 +10,7 @@ class LoginState {
 
   const LoginState({
     this.isLoading = false,
+    this.isLoadingApple = false,
     this.isSuccess = false,
     this.isError = false,
     this.errorMessage,
@@ -17,6 +19,7 @@ class LoginState {
 
   LoginState copyWith({
     bool? isLoading,
+    bool? isLoadingApple,
     bool? isSuccess,
     bool? isError,
     String? errorMessage,
@@ -24,6 +27,7 @@ class LoginState {
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
+      isLoadingApple: isLoadingApple ?? this.isLoadingApple,
       isSuccess: isSuccess ?? this.isSuccess,
       isError: isError ?? this.isError,
       errorMessage: errorMessage ?? this.errorMessage,

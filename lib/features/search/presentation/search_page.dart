@@ -26,17 +26,11 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
   @override
   void initState() {
-    cubit.addSearchListener();
+    // cubit.addSearchListener();
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       cubit.init();
     });
-  }
-
-  @override
-  void dispose() {
-    cubit.removeSearchListener();
-    super.dispose();
   }
 
   @override
@@ -65,7 +59,10 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
               searchController: cubit.searchController,
               searchText: state.searchText,
               onChanged: () {
-                cubit.fetchProducts();
+                cubit.onSearchChanged();
+              },
+              onClear: () {
+                cubit.onSearchChanged(fromClear: true);
               },
             ),
             const SizedBox(height: 16),
@@ -128,7 +125,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                   ),
                   child: Text(
                     category.name,
-                    style: context.myTheme.textThemeT1.body.copyWith(
+                    style: context.myTheme.textThemeT1.title.copyWith(
                       color: isSelected
                           ? context.myTheme.colorScheme.background
                           : context.myTheme.colorScheme.foreground,
@@ -193,13 +190,13 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
+                        cubit.upsertRecentlyViewed(
+                            state.productsRecentlyViewed[index].productId);
                         showModalBottomSheet(
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
                           context: context,
                           builder: (context) {
-                            cubit.upsertRecentlyViewed(
-                                state.productsRecentlyViewed[index].productId);
                             return ProductPage(
                                 productId: state
                                     .productsRecentlyViewed[index].productId);
@@ -278,8 +275,9 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
           children: [
             Text(
               subCategory.name,
-              style: context.myTheme.textThemeT1.body.copyWith(
+              style: context.myTheme.textThemeT1.title.copyWith(
                 color: context.myTheme.colorScheme.foreground,
+                fontWeight: FontWeight.w500,
               ),
             ),
             SvgPicture.asset(
@@ -309,14 +307,14 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(4)),
         onTap: () {
+          cubit.upsertRecentlyViewed(
+            product.id,
+          );
           showModalBottomSheet(
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             context: context,
             builder: (context) {
-              cubit.upsertRecentlyViewed(
-                product.id,
-              );
               return ProductPage(productId: product.id);
             },
           );

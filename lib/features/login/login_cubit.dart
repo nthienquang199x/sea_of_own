@@ -13,7 +13,7 @@ class LoginCubit extends BaseCubit<LoginState> {
 
   Future<void> loginWithApple() async {
     try {
-      emit(state.copyWith(isLoading: true));
+      emit(state.copyWith(isLoadingApple: true));
 
       final userCredential = await _authService.signInWithApple();
 
@@ -21,7 +21,7 @@ class LoginCubit extends BaseCubit<LoginState> {
         final appleId = userCredential.user?.uid;
         if (appleId == null) {
           emit(state.copyWith(
-            isLoading: false,
+            isLoadingApple: false,
             isError: true,
             errorMessage: 'Cannot retrieve Apple ID',
           ));
@@ -37,7 +37,7 @@ class LoginCubit extends BaseCubit<LoginState> {
         if (loginResult != null) {
           final user = await userService.getProfile();
           emit(state.copyWith(
-            isLoading: false,
+            isLoadingApple: false,
             isSuccess: true,
             user: userCredential.user,
           ));
@@ -47,14 +47,14 @@ class LoginCubit extends BaseCubit<LoginState> {
         }
       } else {
         emit(state.copyWith(
-          isLoading: false,
+          isLoadingApple: false,
           isError: true,
           errorMessage: 'Apple sign-in was cancelled or failed',
         ));
       }
     } catch (e) {
       emit(state.copyWith(
-        isLoading: false,
+        isLoadingApple: false,
         isError: true,
         errorMessage: 'Apple sign-in error',
       ));

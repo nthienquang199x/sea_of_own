@@ -14,8 +14,8 @@ import '../utils/widget/loading_widget.dart';
 import 'base_cubit.dart';
 import 'base_event.dart';
 
-abstract class BaseState<S, C extends BaseCubit<S>, W extends StatefulWidget> extends State<W>
-    with AutomaticKeepAliveClientMixin {
+abstract class BaseState<S, C extends BaseCubit<S>, W extends StatefulWidget>
+    extends State<W> with AutomaticKeepAliveClientMixin {
   final C cubit = getIt<C>();
   final loadingController = AppLoadingController();
   late S _state;
@@ -59,7 +59,9 @@ abstract class BaseState<S, C extends BaseCubit<S>, W extends StatefulWidget> ex
             return shouldRebuild(previous, current);
           },
           listener: (context, state) => setState(() => _state = state),
-          child: AppLoadingHUD(controller: loadingController, child: buildByState(context, _state)),
+          child: AppLoadingHUD(
+              controller: loadingController,
+              child: buildByState(context, _state)),
         ));
   }
 
@@ -78,7 +80,8 @@ abstract class BaseState<S, C extends BaseCubit<S>, W extends StatefulWidget> ex
   onNewEvent(BaseEvent event) {
     if (event is LoadingEvent) {
       event.isLoading
-          ? loadingController.showLoading(blurBG: event.hasBlurBackground, msg: getMessage(event.message))
+          ? loadingController.showLoading(
+              blurBG: event.hasBlurBackground, msg: getMessage(event.message))
           : loadingController.hideLoading();
     }
     if (event is MessageEvent) {
@@ -109,7 +112,10 @@ abstract class BaseState<S, C extends BaseCubit<S>, W extends StatefulWidget> ex
             text: TextSpan(children: [
           TextSpan(text: message, style: context.myTheme.textThemeT1.body),
           TextSpan(text: "\n", style: context.myTheme.textThemeT1.body),
-          TextSpan(text: message, style: context.myTheme.textThemeT1.body.copyWith(color: Colors.grey, fontSize: 12))
+          TextSpan(
+              text: message,
+              style: context.myTheme.textThemeT1.body
+                  .copyWith(color: Colors.grey, fontSize: 12))
         ])),
         autoCloseDuration: const Duration(seconds: 2),
         style: ToastificationStyle.flat,
@@ -127,7 +133,10 @@ abstract class BaseState<S, C extends BaseCubit<S>, W extends StatefulWidget> ex
     showDialog(
       context: context,
       builder: (context) {
-        return AppOptionalDialog(message: message, onPressedAltBtn: onPressedAltBtn, onPressedBtn: onPressedBtn);
+        return AppOptionalDialog(
+            message: message,
+            onPressedAltBtn: onPressedAltBtn,
+            onPressedBtn: onPressedBtn);
       },
     );
   }

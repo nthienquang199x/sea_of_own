@@ -6,6 +6,7 @@ import 'package:app_base/features/profile/models/app_theme.dart';
 import 'package:app_base/features/profile/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @injectable
 class ProfileCubit extends BaseCubit<ProfileState> {
@@ -87,6 +88,35 @@ class ProfileCubit extends BaseCubit<ProfileState> {
     } else {
       emit(state.copyWith(user: appCubit.state.user));
     }
+  }
+
+  Future<bool> deleteAccount() async {
+    try {
+      showLoading();
+      final isSuccess = await _userService.deleteAccount();
+      if (isSuccess) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  void sendFeedbackEmail(
+      {required String body, required BuildContext context}) async {
+    const email = 'hello@seaofown.com';
+    const subject = 'Feedback';
+    final encodedSubject = Uri.encodeComponent(subject);
+    final encodedBody = Uri.encodeComponent(body);
+    final Uri emailUri = Uri.parse(
+      'mailto:$email?subject=$encodedSubject&body=$encodedBody',
+    );
+    Navigator.pop(context);
+    await launchUrl(emailUri, mode: LaunchMode.externalApplication);
   }
 
   Future<bool> sendFeedback(String feedback) async {

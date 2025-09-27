@@ -11,13 +11,15 @@ class PrivacyPolicyCookies extends StatefulWidget {
 class _PrivacyPolicyCookiesState extends State<PrivacyPolicyCookies> {
   ScrollController scrollController = ScrollController();
   double maxHeightFactor = 0.6;
+  bool hasExpanded = false;
 
   @override
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      if (!scrollController.position.atEdge) {
+      if (!scrollController.position.atEdge && !hasExpanded) {
         setState(() {
+          hasExpanded = true;
           maxHeightFactor = 0.8;
         });
       }
@@ -31,7 +33,9 @@ class _PrivacyPolicyCookiesState extends State<PrivacyPolicyCookies> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.ease,
             padding: const EdgeInsets.all(24),
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
@@ -52,23 +56,20 @@ class _PrivacyPolicyCookiesState extends State<PrivacyPolicyCookies> {
                             style: context.myTheme.textThemeT1.title.copyWith(
                               fontSize: 24,
                               fontWeight: FontWeight.w500,
-                              color:
-                                  context.myTheme.colorScheme.mutedForeground,
+                              color: context.myTheme.colorScheme.foreground,
                             )),
                         const SizedBox(height: 8),
                         Text('Last updated: June 29, 2025',
                             style: context.myTheme.textThemeT1.title.copyWith(
                               fontWeight: FontWeight.w500,
-                              color:
-                                  context.myTheme.colorScheme.mutedForeground,
+                              color: context.myTheme.colorScheme.foreground,
                             )),
                         const SizedBox(height: 16),
                         Text(
                             'We use minimal data collection to make SeaOfOwn work better for you.',
                             style: context.myTheme.textThemeT1.title.copyWith(
                               fontWeight: FontWeight.w500,
-                              color:
-                                  context.myTheme.colorScheme.mutedForeground,
+                              color: context.myTheme.colorScheme.foreground,
                             )),
                         const SizedBox(height: 24),
                         _buildSectionTitle('What we track?', context),
@@ -114,12 +115,12 @@ class _PrivacyPolicyCookiesState extends State<PrivacyPolicyCookies> {
             ),
           ),
           Positioned(
-            top: -40,
+            top: -50,
             right: 0,
             child: GestureDetector(
               onTap: () => Navigator.of(context).pop(),
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(16),
                 decoration: const BoxDecoration(
                   color: Colors.transparent,
                   shape: BoxShape.circle,
@@ -145,7 +146,7 @@ Widget _buildSectionTitle(String text, BuildContext context) {
       text,
       style: context.myTheme.textThemeT1.title.copyWith(
         fontWeight: FontWeight.w500,
-        color: context.myTheme.colorScheme.mutedForeground,
+        color: context.myTheme.colorScheme.foreground,
       ),
     ),
   );
@@ -160,7 +161,7 @@ Widget _buildSubSection(
         title,
         style: context.myTheme.textThemeT1.title.copyWith(
           fontWeight: FontWeight.w500,
-          color: context.myTheme.colorScheme.mutedForeground,
+          color: context.myTheme.colorScheme.foreground,
         ),
       ),
       const SizedBox(height: 6),
@@ -175,7 +176,7 @@ Widget _buildSubSection(
                     e,
                     style: context.myTheme.textThemeT1.title.copyWith(
                       fontWeight: FontWeight.w500,
-                      color: context.myTheme.colorScheme.mutedForeground,
+                      color: context.myTheme.colorScheme.foreground,
                     ),
                   ),
                 ),

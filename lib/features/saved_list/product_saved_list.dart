@@ -54,6 +54,7 @@ class _ProductSavedListPageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 53),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
@@ -235,14 +236,14 @@ class _ProductSavedListPageState
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         onTap: () {
+          cubit.upsertRecentlyViewed(
+            product.id,
+          );
           showModalBottomSheet(
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             context: context,
             builder: (context) {
-              cubit.upsertRecentlyViewed(
-                product.id,
-              );
               return ProductPage(productId: product.id);
             },
           );

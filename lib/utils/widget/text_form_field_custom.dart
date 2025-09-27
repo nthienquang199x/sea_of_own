@@ -97,6 +97,8 @@ class _TextFormFieldCustomState extends State<TextFormFieldCustom> {
               : widget.minLines,
           maxLines: widget.maxlines,
           enabled: widget.enabled ?? true,
+          style: context.myTheme.textThemeT1.title
+              .copyWith(fontWeight: FontWeight.w500),
           decoration: InputDecoration(
             hintText: widget.hintText,
             fillColor: widget.fillColor,

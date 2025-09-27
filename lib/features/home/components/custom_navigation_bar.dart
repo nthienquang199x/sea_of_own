@@ -32,22 +32,20 @@ class CustomNavigationBar extends StatelessWidget {
         children: NavigationType.values.map((e) {
           final isSelected = type == e;
 
-          return GestureDetector(
+          return InkWell(
             onTap: onTap != null ? () => onTap!(e) : null,
-            behavior: HitTestBehavior.translucent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(
-                  e.icon,
-                  colorFilter: ColorFilter.mode(
-                    isSelected
-                        ? context.myTheme.colorScheme.iconActive
-                        : context.myTheme.colorScheme.iconInactive,
-                    BlendMode.srcIn,
-                  ),
+            // behavior: HitTestBehavior.translucent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              child: SvgPicture.asset(
+                e.icon,
+                colorFilter: ColorFilter.mode(
+                  isSelected
+                      ? context.myTheme.colorScheme.iconActive
+                      : context.myTheme.colorScheme.iconInactive,
+                  BlendMode.srcIn,
                 ),
-              ],
+              ),
             ),
           );
         }).toList(),

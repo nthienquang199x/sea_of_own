@@ -40,14 +40,8 @@ void main() async {
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
-        print('Firebase initialized successfully');
-      } else {
-        print('Firebase already initialized, using existing app');
       }
-    } catch (e) {
-      print('Firebase initialization error: $e');
-      // Tiếp tục chạy app ngay cả khi Firebase lỗi
-    }
+    } catch (e) {}
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     await LocalStorage().init();
     configureDependencies(AppConfig.prod());

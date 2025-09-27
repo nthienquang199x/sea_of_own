@@ -8,6 +8,7 @@ import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/custom_extended_image.dart';
 import 'package:app_base/utils/widget/extended_image_gallery_viewer.dart';
 import 'package:app_base/utils/widget/spacer_widget.dart';
+import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,8 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState
     extends BaseState<ProductState, ProductCubit, ProductPage> {
+  bool _isDismissing = false;
+
   @override
   void initState() {
     cubit.init(widget.productId);
@@ -34,208 +37,230 @@ class _ProductPageState
     return Stack(
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 70),
+          margin: const EdgeInsets.only(top: 100),
           decoration: BoxDecoration(
             color: context.myTheme.colorScheme.background,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildMainProductImage(),
-                // ClipRRect(
-                //   child: AspectRatio(
-                //     aspectRatio: 1,
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //         color: context.myTheme.colorScheme.primary,
-                //         image: product.images.isNotEmpty
-                //             ? DecorationImage(
-                //                 image: NetworkImage(product.images.first),
-                //                 fit: BoxFit.cover,
-                //               )
-                //             : null,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(state.product?.category?.name ?? '',
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is OverscrollNotification) {
+                final bool atTop = notification.metrics.pixels <= 0;
+                final bool pullingDown = notification.overscroll < 0;
+                if (atTop && pullingDown && !_isDismissing) {
+                  _isDismissing = true;
+                  context.router.maybePop();
+                }
+              } else if (notification is ScrollEndNotification) {
+                _isDismissing = false;
+              }
+              return false;
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildMainProductImage(),
+                  // ClipRRect(
+                  //   child: AspectRatio(
+                  //     aspectRatio: 1,
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //         color: context.myTheme.colorScheme.primary,
+                  //         image: product.images.isNotEmpty
+                  //             ? DecorationImage(
+                  //                 image: NetworkImage(product.images.first),
+                  //                 fit: BoxFit.cover,
+                  //               )
+                  //             : null,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(state.product?.category?.name ?? '',
+                                  style: context.myTheme.textThemeT1.title
+                                      .copyWith(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400,
+                                    color:
+                                        context.myTheme.colorScheme.foreground,
+                                  )),
+                            ),
+                            SvgPicture.asset(
+                              "assets/icons/ic_product_share.svg",
+                              colorFilter: ColorFilter.mode(
+                                context.myTheme.colorScheme.foreground,
+                                BlendMode.srcIn,
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          state.product?.name ?? '',
+                          style: context.myTheme.textThemeT1.title.copyWith(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w500,
+                              color: context.myTheme.colorScheme.foreground),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Text(
+                              '${state.product?.currency.symbol ?? '\$'} ${state.product?.salePrice ?? '0'}',
+                              style: context.myTheme.textThemeT1.title.copyWith(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color:
+                                      context.myTheme.colorScheme.foreground),
+                            ),
+                            if (state.product?.isOnSale == true) ...[
+                              const HSpacing(
+                                spacing: 16,
+                              ),
+                              Text(
+                                '${state.product?.currency.symbol ?? '\$'} ${state.product?.price ?? '0'}',
+                                style: context.myTheme.textThemeT1.title
+                                    .copyWith(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 18,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: context
+                                            .myTheme.colorScheme.destructive,
+                                        color: context
+                                            .myTheme.colorScheme.destructive),
+                              ),
+                            ]
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (state.product?.isLiked == true) {
+                                  cubit.dislikeProduct(widget.productId);
+                                  return;
+                                }
+                                cubit.likeProduct(widget.productId);
+                              },
+                              child: SvgPicture.asset(
+                                  state.product?.isLiked == true
+                                      ? "assets/icons/ic_product_heart_fill.svg"
+                                      : "assets/icons/ic_product_heart.svg",
+                                  height: 20,
+                                  width: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    context.myTheme.colorScheme.foreground,
+                                    BlendMode.srcIn,
+                                  )),
+                            ),
+                            const SizedBox(width: 8),
+                            Text('${state.product?.totalLikes ?? 0}',
                                 style:
                                     context.myTheme.textThemeT1.title.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
                                   color: context.myTheme.colorScheme.foreground,
                                 )),
-                          ),
-                          SvgPicture.asset(
-                            "assets/icons/ic_product_share.svg",
-                            colorFilter: ColorFilter.mode(
-                              context.myTheme.colorScheme.foreground,
-                              BlendMode.srcIn,
+                            const SizedBox(width: 24),
+                            InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) => BlocProvider.value(
+                                    value: cubit,
+                                    child: state.collections.isEmpty
+                                        ? buildAddNewListDialog()
+                                        : _buildChooseACollection(),
+                                  ),
+                                );
+                              },
+                              child: SvgPicture.asset(
+                                  state.product?.isCollected == true
+                                      ? "assets/icons/ic_product_bookmark_fill.svg"
+                                      : "assets/icons/ic_product_bookmark.svg",
+                                  height: 20,
+                                  width: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    context.myTheme.colorScheme.foreground,
+                                    BlendMode.srcIn,
+                                  )),
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        state.product?.name ?? '',
-                        style: context.myTheme.textThemeT1.title.copyWith(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w500,
-                            color: context.myTheme.colorScheme.foreground),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Text(
-                            '${state.product?.currency.symbol ?? '\$'} ${state.product?.salePrice ?? '0'}',
-                            style: context.myTheme.textThemeT1.title.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: context.myTheme.colorScheme.foreground),
-                          ),
-                          if (state.product?.isOnSale == true) ...[
-                            const HSpacing(
-                              spacing: 16,
-                            ),
-                            Text(
-                              '${state.product?.currency.symbol ?? '\$'} ${state.product?.price ?? '0'}',
-                              style: context.myTheme.textThemeT1.title.copyWith(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 18,
-                                  decoration: TextDecoration.lineThrough,
-                                  decorationColor:
-                                      context.myTheme.colorScheme.destructive,
-                                  color:
-                                      context.myTheme.colorScheme.destructive),
-                            ),
-                          ]
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (state.product?.isLiked == true) {
-                                cubit.dislikeProduct(widget.productId);
-                                return;
-                              }
-                              cubit.likeProduct(widget.productId);
-                            },
-                            child: SvgPicture.asset(
-                                state.product?.isLiked == true
-                                    ? "assets/icons/ic_product_heart_fill.svg"
-                                    : "assets/icons/ic_product_heart.svg",
-                                height: 20,
-                                width: 20,
-                                colorFilter: ColorFilter.mode(
-                                  context.myTheme.colorScheme.foreground,
-                                  BlendMode.srcIn,
-                                )),
-                          ),
-                          const SizedBox(width: 8),
-                          Text('${state.product?.totalLikes ?? 0}',
-                              style: context.myTheme.textThemeT1.title.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: context.myTheme.colorScheme.foreground,
-                              )),
-                          const SizedBox(width: 24),
-                          InkWell(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (context) => BlocProvider.value(
-                                  value: cubit,
-                                  child: _buildChooseACollection(),
-                                ),
-                              );
-                            },
-                            child: SvgPicture.asset(
-                                state.product?.isCollected == true
-                                    ? "assets/icons/ic_product_bookmark_fill.svg"
-                                    : "assets/icons/ic_product_bookmark.svg",
-                                height: 20,
-                                width: 20,
-                                colorFilter: ColorFilter.mode(
-                                  context.myTheme.colorScheme.foreground,
-                                  BlendMode.srcIn,
-                                )),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
-                      Text(
-                        state.product?.description ?? '',
-                        style: context.myTheme.textThemeT1.body.copyWith(
-                          fontSize: 18,
-                          color: context.myTheme.colorScheme.foreground,
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 40),
-                      ExpandableWidget(
-                        title: AppLocale.specs.tr(context),
-                        body: state.product?.spaces != null &&
-                                state.product!.spaces!.isNotEmpty
-                            ? state.product!.spaces!
-                                .map((spec) => '${spec.name}: ${spec.name}')
-                                .join('\n')
-                            : AppLocale.no_specifications_available.tr(context),
-                      ),
-                      ExpandableWidget(
-                        title: AppLocale.buy_here.tr(context),
-                        body: state.product?.description ?? '',
-                      ),
-                      ExpandableWidget(
-                        title: AppLocale.what_we_like.tr(context),
-                        body: state.product?.description ?? '',
-                      ),
-                      ExpandableWidget(
-                        title: AppLocale.what_we_dont_like.tr(context),
-                        body: state.product?.description ?? '',
-                      ),
-                      const SizedBox(height: 24),
-                      _buildImageGallery(),
-                      // ListView.separated(
-                      //     shrinkWrap: true,
-                      //     padding: const EdgeInsets.only(top: 16),
-                      //     physics: const NeverScrollableScrollPhysics(),
-                      //     itemBuilder: (context, index) {
-                      //       return ClipRRect(
-                      //         borderRadius: BorderRadius.circular(4),
-                      //         child: AspectRatio(
-                      //           aspectRatio: 1,
-                      //           child: Container(
-                      //             width: double.infinity,
-                      //             color: context.myTheme.colorScheme.primary,
-                      //           ),
-                      //         ),
-                      //       );
-                      //     },
-                      //     separatorBuilder: (context, index) {
-                      //       return const SizedBox(height: 8);
-                      //     },
-                      //     itemCount: 5)
-                    ],
+                        const SizedBox(height: 40),
+                        Text(
+                          state.product?.description ?? '',
+                          style: context.myTheme.textThemeT1.body.copyWith(
+                            fontSize: 18,
+                            color: context.myTheme.colorScheme.foreground,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        ExpandableWidget(
+                          title: AppLocale.specs.tr(context),
+                          body: state.product?.spaces != null &&
+                                  state.product!.spaces!.isNotEmpty
+                              ? state.product!.spaces!
+                                  .map((spec) => '${spec.name}: ${spec.name}')
+                                  .join('\n')
+                              : AppLocale.no_specifications_available
+                                  .tr(context),
+                        ),
+                        ExpandableWidget(
+                          title: AppLocale.buy_here.tr(context),
+                          body: state.product?.description ?? '',
+                        ),
+                        ExpandableWidget(
+                          title: AppLocale.what_we_like.tr(context),
+                          body: state.product?.description ?? '',
+                        ),
+                        ExpandableWidget(
+                          title: AppLocale.what_we_dont_like.tr(context),
+                          body: state.product?.description ?? '',
+                        ),
+                        const SizedBox(height: 24),
+                        _buildImageGallery(),
+                        // ListView.separated(
+                        //     shrinkWrap: true,
+                        //     padding: const EdgeInsets.only(top: 16),
+                        //     physics: const NeverScrollableScrollPhysics(),
+                        //     itemBuilder: (context, index) {
+                        //       return ClipRRect(
+                        //         borderRadius: BorderRadius.circular(4),
+                        //         child: AspectRatio(
+                        //           aspectRatio: 1,
+                        //           child: Container(
+                        //             width: double.infinity,
+                        //             color: context.myTheme.colorScheme.primary,
+                        //           ),
+                        //         ),
+                        //       );
+                        //     },
+                        //     separatorBuilder: (context, index) {
+                        //       return const SizedBox(height: 8);
+                        //     },
+                        //     itemCount: 5)
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
         Positioned(
-          top: 40,
+          top: 60,
           right: 10,
           child: GestureDetector(
             onTap: () => context.router.maybePop(),
@@ -274,12 +299,15 @@ class _ProductPageState
               child: state.product?.images != null &&
                       state.product!.images!.isNotEmpty
                   ? ProductExtendedImage(
-                      imageUrl: state.product!.images![index].url,
+                      imageUrl:
+                          'https://www.shutterstock.com/image-photo/boat-tree-sunset-600nw-1770893537.jpg',
                       width: double.infinity,
                       onTap: () => ExtendedImageGalleryViewer.showAsDialog(
                           context,
-                          images:
-                              state.product!.images!.map((e) => e.url).toList(),
+                          images: state.product!.images!
+                              .map((e) =>
+                                  'https://www.shutterstock.com/image-photo/boat-tree-sunset-600nw-1770893537.jpg')
+                              .toList(),
                           initialIndex: index),
                       borderRadius: BorderRadius.circular(4),
                     )
@@ -325,6 +353,7 @@ class _ProductPageState
                                 [state.collections[index].id],
                                 widget.productId);
                           }
+                          context.router.maybePop();
                           // cubit.chooseCollections(state.collections[index]);
                         },
                         child: Row(
@@ -369,6 +398,33 @@ class _ProductPageState
         );
       },
     );
+  }
+
+  Widget buildAddNewListDialog() {
+    return CustomBottomSheet(
+        title: AppLocale.create_new_list,
+        titleButton: AppLocale.create,
+        child: TextFormFieldCustom(
+          hintText: AppLocale.add_a_name.tr(context),
+          borderColor: Colors.transparent,
+          fillColor: context.myTheme.colorScheme.background,
+          controller: cubit.createNameController,
+          keyboardType: TextInputType.text,
+          borderRadius: BorderRadius.circular(8),
+          validators: [
+            (value) {
+              if (value == null || value.isEmpty) {
+                return AppLocale.please_enter_a_name.tr(context);
+              }
+              return null;
+            }
+          ],
+        ),
+        onTap: () {
+          cubit.createCollection().then((value) {
+            context.router.maybePop();
+          });
+        });
   }
 
   Widget _buildMainProductImage() {

@@ -46,6 +46,26 @@ class UserService {
     return null;
   }
 
+  Future<bool> deleteAccount() async {
+    try {
+      final response = await _api.delete(
+        '/v1/delete-account',
+        parser: (data) => data as Map<String, dynamic>,
+      );
+      // API may return 204 No Content → message: "Success with no content"
+      if (response.message == "Delete account successfully" ||
+          response.message == 'Success with no content' ||
+          response.data == null) {
+        return true;
+      } else {
+        throw Exception('Failed to delete account: ${response.message}');
+      }
+    } catch (e, s) {
+      log('Error deleting account: $e', stackTrace: s);
+    }
+    return false;
+  }
+
   Future<bool> sendFeedback(
       {required String message, required int userId}) async {
     try {

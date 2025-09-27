@@ -8,10 +8,12 @@ class SearchWidget extends StatefulWidget {
     this.searchController,
     this.searchText,
     this.onChanged,
+    this.onClear,
   });
   final TextEditingController? searchController;
   final String? searchText;
   final VoidCallback? onChanged;
+  final VoidCallback? onClear;
 
   @override
   State<SearchWidget> createState() => _SearchWidgetState();
@@ -58,6 +60,9 @@ class _SearchWidgetState extends State<SearchWidget> {
             ? InkWell(
                 onTap: () {
                   widget.searchController?.clear();
+                  if (widget.onChanged != null) {
+                    widget.onClear!();
+                  }
                 },
                 child: RichText(
                     text: TextSpan(children: [

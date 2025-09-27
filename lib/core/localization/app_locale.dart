@@ -116,6 +116,7 @@ mixin class AppLocale {
     "what_we_dont_like": "What we don't like",
     "send_feedback_successfully": "Send feedback successfully.",
     "send_feedback_failed": "Send feedback failed. Please try again.",
+    please_enter_a_name: "Please enter a name",
   };
 
   static const String curated_objects_worth_keeping =
@@ -173,6 +174,7 @@ mixin class AppLocale {
   static const String other = "other";
   static const String create_new_list = "create_new_list";
   static const String add_a_name = "add_a_name";
+  static const String please_enter_a_name = "please_enter_a_name";
   static const String lowest_price = "lowest_price";
   static const String highest_price = "highest_price";
   static const String name_a_z = "name_a_z";
@@ -210,6 +212,9 @@ mixin class AppLocale {
   static const String what_we_dont_like = "what_we_dont_like";
   static const String send_feedback_successfully = "send_feedback_successfully";
   static const String send_feedback_failed = "send_feedback_failed";
+  static const String delete_account_successfully =
+      "delete_account_successfully";
+  static const String delete_account_failed = "delete_account_failed";
 
   void init(
       {required List<MapLocale> mapLocales,

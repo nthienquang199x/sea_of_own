@@ -4,6 +4,7 @@ import 'package:app_base/core/network/services/collection_service.dart';
 import 'package:app_base/core/network/services/product_collection_service.dart';
 import 'package:app_base/core/network/services/product_service.dart';
 import 'package:app_base/features/product/product_state.dart';
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -12,10 +13,11 @@ class ProductCubit extends BaseCubit<ProductState> {
   final _collectionService = CollectionService();
   final _productService = ProductService();
   final _productCollectionService = ProductCollectionService();
+  final createNameController = TextEditingController();
 
   void init(int productId) {
     fetchProductById(productId);
-    fetchCollections(productId);
+    fetchCollections();
   }
 
   Future<void> fetchProductById(int productId) async {
@@ -31,13 +33,28 @@ class ProductCubit extends BaseCubit<ProductState> {
     }
   }
 
-  Future<void> fetchCollections(int productId, {int? collectionId}) async {
+  Future<void> fetchCollections() async {
     try {
       showLoading();
       final collections = await _collectionService.getCollections();
       emit(state.copyWith(
         collections: collections,
       ));
+    } finally {
+      hideLoading();
+    }
+  }
+
+  Future<void> createCollection() async {
+    try {
+      showLoading();
+      final response = await _collectionService.createCollection(
+          createNameController.text, 'http://example.com/image.jpg');
+      createNameController.clear();
+      if (response?.id != null) {
+        addProductToCollections([response!.id], state.product!.id);
+      }
+      fetchCollections();
     } finally {
       hideLoading();
     }

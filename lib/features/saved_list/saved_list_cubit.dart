@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_base/base/base_cubit.dart';
 import 'package:app_base/core/network/services/collection_service.dart';
 import 'package:app_base/core/network/services/product_collection_service.dart';
@@ -17,30 +19,39 @@ class SavedListCubit extends BaseCubit<SavedListState> {
   final _collectionService = CollectionService();
   final _productCollectionService = ProductCollectionService();
   final _recentlyViewedProductService = RecentlyService();
+  Timer? _debounceTimer;
 
   void init() {
-    addSearchListener();
+    // addSearchListener();
     fetchSavedCollections();
   }
 
-  void _onSearchChanged() {
-    emit(state.copyWith(
-      searchText: searchController.text,
-    ));
+  void onSearchChanged({bool? fromClear = false}) {
+    if (fromClear == true) {
+      emit(state.copyWith(searchText: ''));
+      fetchSavedCollections();
+      return;
+    }
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      emit(state.copyWith(searchText: searchController.text));
+      fetchSavedCollections();
+    });
   }
 
-  void removeSearchListener() {
-    searchController.removeListener(_onSearchChanged);
-  }
+  // void removeSearchListener() {
+  //   searchController.removeListener(_onSearchChanged);
+  // }
 
-  void addSearchListener() {
-    searchController.addListener(_onSearchChanged);
-  }
+  // void addSearchListener() {
+  //   searchController.addListener(_onSearchChanged);
+  // }
 
   Future<void> fetchSavedCollections() async {
     try {
       showLoading();
-      final collections = await _collectionService.getCollections();
+      final collections = await _collectionService.getCollections(
+          searchKeyword: searchController.text);
       emit(state.copyWith(savedCollections: collections));
     } finally {
       hideLoading();

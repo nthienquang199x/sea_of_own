@@ -11,12 +11,10 @@ import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
-import '../home/components/custom_navigation_bar.dart';
-import '../home/models/navigation_type.dart';
 
 @RoutePage()
 class ProductsPage extends StatefulWidget {
@@ -41,38 +39,47 @@ class _ProductsPageState
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       // appBar: _buildAppBar(context),
-      bottomNavigationBar: CustomNavigationBar(
-        type: NavigationType.discover,
-        onTap: (type) {
-          context.maybePop(type);
-        },
-      ),
+      // bottomNavigationBar: CustomNavigationBar(
+      //   type: NavigationType.discover,
+      //   onTap: (type) {
+      //     context.maybePop(type);
+      //   },
+      // ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () => context.router.maybePop(),
-                      child: SvgPicture.asset(
-                        "assets/icons/ic_chevron_left.svg",
-                        colorFilter: ColorFilter.mode(
-                          context.myTheme.colorScheme.foreground,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
                     Expanded(
-                      child: Text(
-                        "Back",
-                        style: context.myTheme.textThemeT1.title.copyWith(
-                            color: context.myTheme.colorScheme.foreground,
-                            fontWeight: FontWeight.w500),
+                      child: GestureDetector(
+                        onTap: () => context.router.maybePop(),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              "assets/icons/ic_chevron_left.svg",
+                              colorFilter: ColorFilter.mode(
+                                context.myTheme.colorScheme.foreground,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                "Back",
+                                style: context.myTheme.textThemeT1.title
+                                    .copyWith(
+                                        color: context
+                                            .myTheme.colorScheme.foreground,
+                                        fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     GestureDetector(
@@ -167,7 +174,7 @@ class _ProductsPageState
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 200 / 261,
+                              childAspectRatio: 200 / 278,
                               crossAxisSpacing: 8,
                               mainAxisSpacing: 16),
                       itemCount: state.products.length,
@@ -175,14 +182,14 @@ class _ProductsPageState
                         final product = state.products[index];
                         return GestureDetector(
                           onTap: () {
+                            cubit.upsertRecentlyViewed(
+                              product.id,
+                            );
                             showModalBottomSheet(
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
                               context: context,
                               builder: (context) {
-                                cubit.upsertRecentlyViewed(
-                                  product.id,
-                                );
                                 return ProductPage(productId: product.id);
                               },
                             );
@@ -195,14 +202,24 @@ class _ProductsPageState
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                    child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(8),
-                                            topRight: Radius.circular(8)),
-                                        child: Container(
-                                          color: Colors.red,
-                                        ))),
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(8),
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: product.thumbnail != null &&
+                                            product.thumbnail!.isNotEmpty
+                                        ? product.thumbnail!
+                                        : 'https://via.placeholder.com/150',
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),

@@ -4,10 +4,14 @@ import 'package:app_base/core/network/models/collection.dart';
 class CollectionService {
   final _api = BaseApiService();
 
-  Future<List<Collection>> getCollections() async {
+  Future<List<Collection>> getCollections({String? searchKeyword}) async {
     try {
       final response = await _api.get(
         '/v1/collections/me',
+        queryParams: {
+          if (searchKeyword != null && searchKeyword.isNotEmpty)
+            'searchKeyword': searchKeyword,
+        },
         parser: (data) =>
             (data as List).map((item) => Collection.fromJson(item)).toList(),
       );

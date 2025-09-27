@@ -21,7 +21,7 @@ class SearchCubit extends BaseCubit<SearchState> {
   Timer? _debounceTimer;
 
   Future<void> init() async {
-    addSearchListener();
+    // addSearchListener();
     await fetchCategories();
 
     fetchSubCategories();
@@ -109,13 +109,19 @@ class SearchCubit extends BaseCubit<SearchState> {
     }
   }
 
-  void _onSearchChanged() {
-    emit(state.copyWith(
-      searchText: searchController.text,
-    ));
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      fetchProducts();
+  void onSearchChanged({bool? fromClear = false}) {
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (fromClear == true && (searchController.text.isEmpty)) {
+        emit(state.copyWith(searchText: ''));
+        fetchProducts();
+      } else if (searchController.text.isNotEmpty) {
+        emit(state.copyWith(searchText: searchController.text));
+        fetchProducts();
+      } else {
+        emit(state.copyWith(searchText: ''));
+        fetchProducts();
+      }
     });
   }
 
@@ -127,11 +133,11 @@ class SearchCubit extends BaseCubit<SearchState> {
         categorySelected: category, subCategoriesCategory: subCategories));
   }
 
-  void addSearchListener() {
-    searchController.addListener(_onSearchChanged);
-  }
+  // void addSearchListener() {
+  //   searchController.addListener(_onSearchChanged);
+  // }
 
-  void removeSearchListener() {
-    searchController.removeListener(_onSearchChanged);
-  }
+  // void removeSearchListener() {
+  //   searchController.removeListener(_onSearchChanged);
+  // }
 }

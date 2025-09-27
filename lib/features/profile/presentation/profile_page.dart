@@ -13,6 +13,7 @@ import 'package:app_base/utils/extension/context_ext.dart';
 import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -27,12 +28,25 @@ class _ProfilePageState
   late AnimationController _controller;
   bool? isVisibleOldPassword = false;
   bool? isVisibleNewPassword = false;
+  String appVersion = '1.0.0';
 
   @override
   void initState() {
     cubit.init();
     _controller = AnimationController(vsync: this);
+    _getAppVersion();
     super.initState();
+  }
+
+  Future<void> _getAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          appVersion = packageInfo.version;
+        });
+      }
+    } catch (e) {}
   }
 
   @override
@@ -46,10 +60,11 @@ class _ProfilePageState
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 53),
               CustomCircleAvatar(
                 isEditEnabled: false,
                 avatarSize: 120,
@@ -144,17 +159,6 @@ class _ProfilePageState
                     builder: (context) => const PrivacyPolicyCookies(),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Divider(
-                    color: context.myTheme.colorScheme.separator1,
-                    height: 1,
-                  ),
-                ),
-                _buildSettingItem(
-                  SettingsType.termsOfService.title,
-                  onTap: () {},
-                ),
               ]),
               const SizedBox(height: 16),
               _buildGroup([
@@ -173,7 +177,7 @@ class _ProfilePageState
                 height: 16,
               ),
               Text(
-                "App version 1.0.0",
+                "App version $appVersion",
                 style: context.myTheme.textThemeT1.body.copyWith(
                   color: context.myTheme.colorScheme.mutedForeground,
                 ),
@@ -236,18 +240,18 @@ class _ProfilePageState
         title: AppLocale.send_us_your_feedback,
         titleButton: AppLocale.send_feedback,
         onTap: () => {
-              cubit
-                  .sendFeedback(cubit.feedbackEditingController.text)
-                  .then((success) {
-                if (success && mounted) {
-                  Navigator.pop(context);
-                  showToast(AppLocale.send_feedback_successfully.tr(context));
-                } else if (mounted) {
-                  showToast(
-                    AppLocale.send_feedback_failed.tr(context),
-                  );
-                }
-              })
+              cubit.sendFeedbackEmail(
+                  body: cubit.feedbackEditingController.text, context: context)
+              //     .then((success) {
+              //   if (success && mounted) {
+              //     Navigator.pop(context);
+              //     showToast(AppLocale.send_feedback_successfully.tr(context));
+              //   } else if (mounted) {
+              //     showToast(
+              //       AppLocale.send_feedback_failed.tr(context),
+              //     );
+              //   }
+              // })
             },
         child: Column(
           children: [
@@ -419,6 +423,17 @@ class _ProfilePageState
       title: AppLocale.tell_us_why_you_decided_to_leave,
       titleButton: AppLocale.confirm_delete,
       textColor: context.myTheme.colorScheme.destructive,
+      onTap: () {
+        cubit.deleteAccount().then((value) {
+          if (value && mounted) {
+            showToast(AppLocale.delete_account_successfully.tr(context));
+            cubit.logout();
+          } else if (mounted) {
+            Navigator.of(context).pop();
+            showToast(AppLocale.delete_account_failed.tr(context));
+          }
+        });
+      },
       child: Container(
         padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
