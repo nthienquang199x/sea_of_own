@@ -18,6 +18,7 @@ class AppColorScheme {
   final Color primaryForeground;
   final Color iconActive;
   final Color iconInactive;
+  final Color navBarBorder;
   final Color separator1;
   final Color separator2;
   final Color secondary;
@@ -46,6 +47,7 @@ class AppColorScheme {
     required this.primaryForeground,
     required this.iconActive,
     required this.iconInactive,
+    required this.navBarBorder,
     required this.separator1,
     required this.separator2,
     required this.secondary,
@@ -75,6 +77,7 @@ class AppColorScheme {
         primaryForeground: AppColor.primaryForeground,
         iconActive: AppColor.iconActive,
         iconInactive: AppColor.iconInactive,
+        navBarBorder: AppColor.navBarBorder,
         separator1: AppColor.separator1,
         separator2: AppColor.separator2,
         secondary: AppColor.secondary,
@@ -104,6 +107,7 @@ class AppColorScheme {
         primaryForeground: AppColor.primaryForegroundDark,
         iconActive: AppColor.iconActiveDark,
         iconInactive: AppColor.iconInactiveDark,
+        navBarBorder: AppColor.navBarBorderDark,
         separator1: AppColor.separator1Dark,
         separator2: AppColor.separator2Dark,
         secondary: AppColor.secondaryDark,
@@ -151,6 +155,7 @@ class AppColor {
   static const primaryForeground = Color(0xFFFFFFFF);
   static const iconActive = Color(0xFF141414);
   static const iconInactive = Color(0xFFB8B8B8);
+  static const navBarBorder = Color(0xFFD3D3D3);
   static const separator1 = Color(0xFFD3D3D3);
   static const separator2 = Color(0xFF5E5E5E);
   static const secondary = Color(0xFFC5C5C5);
@@ -170,6 +175,7 @@ class AppColor {
   static const primaryForegroundDark = Color(0xFF000000);
   static const iconActiveDark = Color(0xFFFFFFFF);
   static const iconInactiveDark = Color(0xFF727272);
+  static const navBarBorderDark = Color(0xFF353535);
   static const separator1Dark = Color(0xFF5E5E5E);
   static const separator2Dark = Color(0xFF5E5E5E);
   static const secondaryDark = Color(0xFF616161);

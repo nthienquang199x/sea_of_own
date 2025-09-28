@@ -55,8 +55,10 @@ class AppLoadingWidget extends StatelessWidget {
                   Container(
                     height: AppDimens.spacing60,
                     width: AppDimens.spacing80,
-                    decoration:
-                        BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(AppDimens.buttonRadius)),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(AppDimens.buttonRadius)),
                   ),
                 ],
               ),
@@ -82,8 +84,10 @@ class AppLoadingWidget extends StatelessWidget {
             ),
             Text(
               message!,
-              style: context.myTheme.textThemeT1.light
-                  .copyWith(color: context.myTheme.colorScheme.textBtnColor, fontWeight: FontWeight.w700, fontSize: 18),
+              style: context.myTheme.textThemeT1.light.copyWith(
+                  color: context.myTheme.colorScheme.textBtnColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18),
               textAlign: TextAlign.center,
             )
           },
@@ -95,7 +99,8 @@ class AppLoadingWidget extends StatelessWidget {
 
 class AppLoadingController {
   final params = ValueNotifier<AppLoadingControllerParams>(
-    AppLoadingControllerParams(visible: false, hasBlurBackground: true, message: null),
+    AppLoadingControllerParams(
+        visible: false, hasBlurBackground: true, message: null),
   );
 
   showLoading({bool blurBG = true, String? msg}) {
@@ -136,7 +141,8 @@ class AppLoadingControllerParams {
 }
 
 class AppLoadingHUD extends StatelessWidget {
-  const AppLoadingHUD({super.key, required this.child, required this.controller});
+  const AppLoadingHUD(
+      {super.key, required this.child, required this.controller});
 
   final Widget child;
   final AppLoadingController controller;
@@ -153,6 +159,7 @@ class AppLoadingHUD extends StatelessWidget {
                   visible: controller.params.value.visible,
                   child: AppLoadingWidget(
                     message: controller.params.value.message,
+                    backgroundColor: Colors.transparent,
                   ));
             })
       ],

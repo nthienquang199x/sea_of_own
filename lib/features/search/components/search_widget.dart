@@ -45,7 +45,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: TextFormFieldCustom(
-        hintText: "Search Account or Product name",
+        hintText: "Search product",
         borderColor: Colors.transparent,
         fillColor: context.myTheme.colorScheme.background,
         controller: widget.searchController,

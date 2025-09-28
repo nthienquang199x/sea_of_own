@@ -101,7 +101,7 @@ class _SavedListPageState
                   return buildProductCard(collection);
                 },
                 separatorBuilder: (context, index) {
-                  return const SizedBox(height: 16);
+                  return const SizedBox(height: 8);
                 },
                 itemCount: state.savedCollections.length),
           ],
@@ -112,7 +112,7 @@ class _SavedListPageState
 
   Widget buildProductCard(Collection collection) {
     return Container(
-      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      margin: const EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
         color: context.myTheme.colorScheme.background,
         borderRadius: BorderRadius.circular(12),

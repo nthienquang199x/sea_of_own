@@ -89,7 +89,7 @@ class _ProductPageState
                                   style: context.myTheme.textThemeT1.title
                                       .copyWith(
                                     fontSize: 24,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w500,
                                     color:
                                         context.myTheme.colorScheme.foreground,
                                   )),

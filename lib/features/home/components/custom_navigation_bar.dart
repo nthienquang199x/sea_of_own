@@ -22,7 +22,7 @@ class CustomNavigationBar extends StatelessWidget {
         color: context.myTheme.colorScheme.tab,
         border: Border(
           top: BorderSide(
-            color: context.myTheme.colorScheme.separator1,
+            color: context.myTheme.colorScheme.navBarBorder,
             width: 1,
           ),
         ),

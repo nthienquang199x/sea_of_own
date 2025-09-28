@@ -62,7 +62,7 @@ class AppThemeData {
             elevation: 0.0,
             backgroundColor: colorScheme.appBarBackground),
         scaffoldBackgroundColor: colorScheme.background,
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
             margin: EdgeInsets.zero,
             color: colorScheme.cardColor,
             surfaceTintColor: colorScheme.cardSurfaceTintColor,
@@ -79,11 +79,12 @@ class AppThemeData {
           ),
           materialTapTargetSize: MaterialTapTargetSize.padded,
         ),
-        dialogBackgroundColor: colorScheme.dialogBackgroundColor,
-        bottomAppBarTheme: BottomAppBarTheme(
+        bottomAppBarTheme: BottomAppBarThemeData(
           color: colorScheme.scaffoldBackgroundColor,
           elevation: 0.0,
         ),
+        dialogTheme:
+            DialogThemeData(backgroundColor: colorScheme.dialogBackgroundColor),
       );
 
   factory AppThemeData.light() => AppThemeData(

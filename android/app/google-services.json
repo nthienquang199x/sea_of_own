@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "574777846035-8jhpocd4gd86diareqh4euvassclh6ba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seaofown.app",
+            "certificate_hash": "30a5827ab38899030d62219c0dc7343292684459"
+          }
+        },
+        {
+          "client_id": "574777846035-rb0246r41aklfsuf2595fdh6fv5419a0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seaofown.app",
+            "certificate_hash": "6ec62475f5f7dd26001661dc73ac7c7fdb319b93"
+          }
+        },
+        {
           "client_id": "574777846035-pckdp3r6kgknabrabm3emsf04amciv45.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +45,13 @@
             {
               "client_id": "574777846035-pckdp3r6kgknabrabm3emsf04amciv45.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "574777846035-e4dpmolmnorclach10mvk197dip2bjpt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.seaofown.app"
+              }
             }
           ]
         }
