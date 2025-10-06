@@ -3,7 +3,6 @@ import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/features/profile/components/custom_circle_avatar.dart';
 import 'package:app_base/features/profile/components/custom_dialog.dart';
-import 'package:app_base/features/profile/components/privacy_policy.dart';
 import 'package:app_base/features/profile/models/app_theme.dart';
 import 'package:app_base/features/profile/models/feedback_reason.dart';
 import 'package:app_base/features/profile/models/settings_type.dart';
@@ -14,6 +13,7 @@ import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -153,11 +153,16 @@ class _ProfilePageState
               _buildGroup([
                 _buildSettingItem(
                   SettingsType.privacyPolicy.title,
-                  onTap: () => showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) => const PrivacyPolicyCookies(),
-                  ),
+                  onTap: () {
+                    launchUrl(
+                      Uri.parse('https://www.seaofown.com/privacy-policy'),
+                    );
+                  },
+                  // onTap: () => showModalBottomSheet(
+                  //   context: context,
+                  //   isScrollControlled: true,
+                  //   builder: (context) => const PrivacyPolicyCookies(),
+                  // ),
                 ),
               ]),
               const SizedBox(height: 16),

@@ -46,6 +46,21 @@ class HomeCubit extends BaseCubit<HomeState> {
     }
   }
 
+  Future<void> fetchCurratedList() async {
+    try {
+      showLoading();
+      final products = await _productService.getCurratedList(
+        page: state.page,
+        perPage: state.perPage,
+      );
+      emit(state.copyWith(curratedList: products));
+    } catch (e) {
+      return;
+    } finally {
+      hideLoading();
+    }
+  }
+
   Future<void> fetchSpaces() async {
     try {
       showLoading();

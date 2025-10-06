@@ -7,8 +7,9 @@ import 'package:app_base/features/profile/presentation/profile_page.dart';
 import 'package:app_base/features/saved_list/saved_list_page.dart';
 import 'package:app_base/features/search/presentation/search_page.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_cached_network_image.dart';
+import 'package:app_base/utils/widget/spacer_widget.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -32,6 +33,7 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
     cubit.fetchCategories();
     cubit.fetchProducts();
     cubit.fetchSpaces();
+    cubit.fetchCurratedList();
     super.initState();
   }
 
@@ -142,18 +144,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
-                                  child: CachedNetworkImage(
+                                  child: CustomCachedNetworkImage(
                                     imageUrl: product.thumbnail != null &&
                                             product.thumbnail!.isNotEmpty
                                         ? product.thumbnail!
                                         : 'https://via.placeholder.com/150',
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
                                   ),
                                   // child: Container(
                                   //   decoration: const BoxDecoration(
@@ -252,18 +248,12 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(12),
                                 ),
-                                child: CachedNetworkImage(
+                                child: CustomCachedNetworkImage(
                                   imageUrl: product.thumbnail != null &&
                                           product.thumbnail!.isNotEmpty
                                       ? product.thumbnail!
                                       : 'https://via.placeholder.com/150',
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
                                 ),
                                 // child: Container(
                                 //   decoration: BoxDecoration(
@@ -433,23 +423,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
-                                  child: CachedNetworkImage(
-                                    imageUrl: space.thumnail ??
-                                        'https://via.placeholder.com/150',
+                                  child: CustomCachedNetworkImage(
+                                    imageUrl: space.thumbnail ?? "",
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                      ),
-                                      child: const Center(
-                                        child: Icon(Icons.error),
-                                      ),
-                                    ),
                                   ),
                                   // child: Container(
                                   //   decoration: BoxDecoration(
@@ -498,6 +474,109 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                 },
               )),
           const SizedBox(height: 32),
+          if (state.curratedList.isNotEmpty) ...[
+            Container(
+              height: state.curratedList.isNotEmpty ? 330 : 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: PageView.builder(
+                itemCount: state.curratedList.length,
+                padEnds: false,
+                controller: PageController(viewportFraction: 1),
+                itemBuilder: (context, index) {
+                  final product = state.curratedList[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    child: InkWell(
+                      onTap: () {
+                        cubit.upsertRecentlyViewed(
+                          product.id,
+                        );
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          context: context,
+                          builder: (context) {
+                            return ProductPage(productId: product.id);
+                          },
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: AspectRatio(
+                          aspectRatio: 396 / 353,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: context.myTheme.colorScheme.background,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AspectRatio(
+                                  aspectRatio: 396 / 295,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(12),
+                                    ),
+                                    child: CustomCachedNetworkImage(
+                                      imageUrl: product.thumbnail != null &&
+                                              product.thumbnail!.isNotEmpty
+                                          ? product.thumbnail!
+                                          : 'https://via.placeholder.com/150',
+                                      fit: BoxFit.cover,
+                                      loadingSize: 80,
+                                    ),
+                                    // child: Container(
+                                    //   decoration: const BoxDecoration(
+                                    //     color: Colors.red,
+                                    //   ),
+                                    //   child: Center(
+                                    //     child: Icon(
+                                    //       Icons.build,
+                                    //       size: 60,
+                                    //       color: Colors.grey[400],
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          product.name,
+                                          style: context
+                                              .myTheme.textThemeT1.title
+                                              .copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: context
+                                                .myTheme.colorScheme.foreground,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const VSpacing(
+              spacing: 32,
+            ),
+          ]
           // Row(
           //   children: [
           //     Expanded(

@@ -15,6 +15,7 @@ class CustomBottomSheet extends StatefulWidget {
     required this.child,
     this.showCloseButton = true,
     this.isDismissible = true,
+    this.handleKeyboardInternally = true,
   });
 
   final String? title;
@@ -24,6 +25,7 @@ class CustomBottomSheet extends StatefulWidget {
   final Widget child;
   final bool showCloseButton;
   final bool isDismissible;
+  final bool handleKeyboardInternally;
 
   @override
   State<CustomBottomSheet> createState() => _CustomBottomSheetState();
@@ -52,8 +54,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     left: 16,
                     right: 16,
                     top: 24,
-                    bottom: MediaQuery.of(context).viewInsets.bottom +
-                        MediaQuery.of(context).padding.bottom,
+                    bottom: widget.handleKeyboardInternally
+                        ? MediaQuery.of(context).viewInsets.bottom + 32
+                        : 32,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -83,9 +86,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                               context.myTheme.colorScheme.primaryForeground,
                         ),
                       },
-                      const SizedBox(
-                        height: 24,
-                      ),
                     ],
                   ),
                 );

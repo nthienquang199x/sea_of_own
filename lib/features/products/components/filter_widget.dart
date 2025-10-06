@@ -65,7 +65,7 @@ class _FilterWidgetState extends State<FilterWidget> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
+              Flexible(
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Column(
@@ -122,59 +122,65 @@ class _FilterWidgetState extends State<FilterWidget> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          color: context.myTheme.colorScheme.muted,
-                          borderRadius: BorderRadius.circular(12),
+                      if (state.subCategories.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: context.myTheme.colorScheme.muted,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              _buildFilterRow(
+                                  title: 'View all',
+                                  count: '',
+                                  value: viewAll,
+                                  onChanged: (value) {
+                                    if (state
+                                        .selectedSubCategories.isNotEmpty) {
+                                      setState(() => viewAll = value);
+                                      cubit.toogleViewAll();
+                                    }
+                                  },
+                                  showCheckbox:
+                                      state.selectedSubCategories.isEmpty),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Divider(height: 24),
+                              ),
+                              ...state.subCategories
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                final category = entry.value;
+                                final isLast =
+                                    entry.key == state.subCategories.length - 1;
+                                return Column(
+                                  children: [
+                                    _buildFilterRow(
+                                        title: category.name,
+                                        count:
+                                            subCategoryCounts[category] ?? '0',
+                                        value: state.selectedSubCategories
+                                            .where((c) => c.id == category.id)
+                                            .isNotEmpty,
+                                        onChanged: (value) {
+                                          setState(() => viewAll = false);
+                                          cubit.selectSubCategory(category);
+                                        },
+                                        showCheckbox: true),
+                                    if (!isLast)
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Divider(height: 24),
+                                      ),
+                                  ],
+                                );
+                              }),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          children: [
-                            _buildFilterRow(
-                                title: 'View all',
-                                count: '',
-                                value: viewAll,
-                                onChanged: (value) {
-                                  if (state.selectedSubCategories.isNotEmpty) {
-                                    setState(() => viewAll = value);
-                                    cubit.toogleViewAll();
-                                  }
-                                },
-                                showCheckbox:
-                                    state.selectedSubCategories.isEmpty),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Divider(height: 24),
-                            ),
-                            ...state.subCategories.asMap().entries.map((entry) {
-                              final category = entry.value;
-                              final isLast =
-                                  entry.key == state.subCategories.length - 1;
-                              return Column(
-                                children: [
-                                  _buildFilterRow(
-                                      title: category.name,
-                                      count: subCategoryCounts[category] ?? '0',
-                                      value: state.selectedSubCategories
-                                          .where((c) => c.id == category.id)
-                                          .isNotEmpty,
-                                      onChanged: (value) {
-                                        setState(() => viewAll = false);
-                                        cubit.selectSubCategory(category);
-                                      },
-                                      showCheckbox: true),
-                                  if (!isLast)
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                      child: Divider(height: 24),
-                                    ),
-                                ],
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),

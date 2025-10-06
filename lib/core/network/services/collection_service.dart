@@ -15,7 +15,7 @@ class CollectionService {
         parser: (data) =>
             (data as List).map((item) => Collection.fromJson(item)).toList(),
       );
-      if (response.message == "Success" && response.data != null) {
+      if (response.data != null) {
         return response.data!;
       } else {
         throw Exception('Failed to fetch categories: ${response.message}');

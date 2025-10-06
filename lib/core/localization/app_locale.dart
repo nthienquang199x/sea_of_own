@@ -117,6 +117,13 @@ mixin class AppLocale {
     "send_feedback_successfully": "Send feedback successfully.",
     "send_feedback_failed": "Send feedback failed. Please try again.",
     please_enter_a_name: "Please enter a name",
+    saved_to_collection_successfully: "Saved to collection successfully.",
+    saved_to_collection_failed: "Saved to collection failed.",
+    removed_from_collection_successfully:
+        "Removed from collection successfully.",
+    removed_from_collection_failed: "Removed from collection failed.",
+    delete_account_successfully: "Delete account successfully.",
+    delete_account_failed: "Delete account failed.",
   };
 
   static const String curated_objects_worth_keeping =
@@ -215,6 +222,13 @@ mixin class AppLocale {
   static const String delete_account_successfully =
       "delete_account_successfully";
   static const String delete_account_failed = "delete_account_failed";
+  static const String saved_to_collection_successfully =
+      "saved_to_collection_successfully";
+  static const String saved_to_collection_failed = "saved_to_collection_failed";
+  static const String removed_from_collection_successfully =
+      "removed_from_collection_successfully";
+  static const String removed_from_collection_failed =
+      "removed_from_collection_failed";
 
   void init(
       {required List<MapLocale> mapLocales,

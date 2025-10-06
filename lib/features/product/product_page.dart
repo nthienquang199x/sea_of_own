@@ -13,6 +13,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({super.key, required this.productId});
@@ -25,11 +26,42 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState
     extends BaseState<ProductState, ProductCubit, ProductPage> {
   bool _isDismissing = false;
+  double _pullDistance = 0.0;
+  static const double _dismissThreshold = 100.0;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     cubit.init(widget.productId);
+    _scrollController = ScrollController();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _shareProduct(ProductState state) async {
+    if (state.product == null) return;
+
+    final product = state.product!;
+    final String shareText = '''
+    ${product.name}
+    ${product.brand?.name ?? ''}
+
+    ${product.currency.symbol} ${product.salePrice}
+
+    ${product.url ?? ''}
+      ''';
+
+    await SharePlus.instance.share(
+      ShareParams(
+        text: shareText,
+        subject: product.name,
+      ),
+    );
   }
 
   @override
@@ -44,19 +76,32 @@ class _ProductPageState
           ),
           child: NotificationListener<ScrollNotification>(
             onNotification: (notification) {
-              if (notification is OverscrollNotification) {
-                final bool atTop = notification.metrics.pixels <= 0;
-                final bool pullingDown = notification.overscroll < 0;
-                if (atTop && pullingDown && !_isDismissing) {
-                  _isDismissing = true;
-                  context.router.maybePop();
+              if (notification.metrics.axis == Axis.vertical) {
+                if (notification is ScrollUpdateNotification) {
+                  final pixels = notification.metrics.pixels;
+                  final minExtent = notification.metrics.minScrollExtent;
+
+                  if (pixels < minExtent) {
+                    _pullDistance = (minExtent - pixels).abs();
+                    if (_pullDistance > _dismissThreshold && !_isDismissing) {
+                      _isDismissing = true;
+                      context.router.maybePop();
+                    }
+                  } else {
+                    _pullDistance = 0.0;
+                  }
                 }
-              } else if (notification is ScrollEndNotification) {
-                _isDismissing = false;
+                if (notification is ScrollEndNotification) {
+                  _pullDistance = 0.0;
+                  _isDismissing = false;
+                }
               }
+
               return false;
             },
             child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
                   _buildMainProductImage(),
@@ -85,7 +130,7 @@ class _ProductPageState
                         Row(
                           children: [
                             Expanded(
-                              child: Text(state.product?.category?.name ?? '',
+                              child: Text(state.product?.brand?.name ?? '',
                                   style: context.myTheme.textThemeT1.title
                                       .copyWith(
                                     fontSize: 24,
@@ -94,11 +139,14 @@ class _ProductPageState
                                         context.myTheme.colorScheme.foreground,
                                   )),
                             ),
-                            SvgPicture.asset(
-                              "assets/icons/ic_product_share.svg",
-                              colorFilter: ColorFilter.mode(
-                                context.myTheme.colorScheme.foreground,
-                                BlendMode.srcIn,
+                            GestureDetector(
+                              onTap: () => _shareProduct(state),
+                              child: SvgPicture.asset(
+                                "assets/icons/ic_product_share.svg",
+                                colorFilter: ColorFilter.mode(
+                                  context.myTheme.colorScheme.foreground,
+                                  BlendMode.srcIn,
+                                ),
                               ),
                             )
                           ],
@@ -288,6 +336,7 @@ class _ProductPageState
       padding: const EdgeInsets.only(top: 16),
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
+        final imageUrl = state.product?.images?[index].url;
         return ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: AspectRatio(
@@ -299,15 +348,12 @@ class _ProductPageState
               child: state.product?.images != null &&
                       state.product!.images!.isNotEmpty
                   ? ProductExtendedImage(
-                      imageUrl:
-                          'https://www.shutterstock.com/image-photo/boat-tree-sunset-600nw-1770893537.jpg',
+                      imageUrl: imageUrl ?? '',
                       width: double.infinity,
                       onTap: () => ExtendedImageGalleryViewer.showAsDialog(
                           context,
-                          images: state.product!.images!
-                              .map((e) =>
-                                  'https://www.shutterstock.com/image-photo/boat-tree-sunset-600nw-1770893537.jpg')
-                              .toList(),
+                          images:
+                              state.product!.images!.map((e) => e.url).toList(),
                           initialIndex: index),
                       borderRadius: BorderRadius.circular(4),
                     )
@@ -346,9 +392,15 @@ class _ProductPageState
                       return InkWell(
                         onTap: () {
                           if (isSelected == true) {
+                            cubit.showToast(AppLocale
+                                .removed_from_collection_successfully
+                                .tr(context));
                             cubit.deleteProductFromCollections(
                                 state.collections[index].id, widget.productId);
                           } else {
+                            cubit.showToast(AppLocale
+                                .saved_to_collection_successfully
+                                .tr(context));
                             cubit.addProductToCollections(
                                 [state.collections[index].id],
                                 widget.productId);
@@ -428,32 +480,33 @@ class _ProductPageState
   }
 
   Widget _buildMainProductImage() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(8),
-        topRight: Radius.circular(8),
+    return Container(
+      decoration: BoxDecoration(
+        color: context.myTheme.colorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
       ),
       child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
         child: AspectRatio(
           aspectRatio: 1,
-          child: Container(
-            decoration: BoxDecoration(
-              color: context.myTheme.colorScheme.primary,
-            ),
-            child: state.product?.images != null &&
-                    state.product!.images!.isNotEmpty
-                ? ProductExtendedImage(
-                    imageUrl: state.product?.images!.first.url ?? '',
-                    width: double.infinity,
-                    onTap: () => ExtendedImageGalleryViewer.showAsDialog(
-                        context,
-                        images:
-                            state.product?.images!.map((e) => e.url).toList() ??
-                                [],
-                        initialIndex: 0),
-                  )
-                : null,
-          ),
+          child: state.product?.images != null &&
+                  state.product!.images!.isNotEmpty
+              ? ProductExtendedImage(
+                  imageUrl: state.product?.images?.first.url ?? '',
+                  width: double.infinity,
+                  onTap: () => ExtendedImageGalleryViewer.showAsDialog(context,
+                      images:
+                          state.product?.images!.map((e) => e.url).toList() ??
+                              [],
+                      initialIndex: 0),
+                )
+              : null,
         ),
       ),
     );

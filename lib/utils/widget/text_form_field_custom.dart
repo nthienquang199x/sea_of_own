@@ -78,11 +78,11 @@ class _TextFormFieldCustomState extends State<TextFormFieldCustom> {
                   color: Colors.red,
                 ),
               ),
-          ]))
+          ])),
+          const VSpacing(
+            spacing: 8,
+          ),
         },
-        const VSpacing(
-          spacing: 8,
-        ),
         TextFormField(
           controller: widget.controller,
           autovalidateMode: AutovalidateMode.onUserInteraction,

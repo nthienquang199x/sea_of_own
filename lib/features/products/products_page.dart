@@ -2,6 +2,8 @@ import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/core/network/models/category.dart';
 import 'package:app_base/core/network/models/sub_category.dart';
+import 'package:app_base/features/home/components/custom_navigation_bar.dart';
+import 'package:app_base/features/home/models/navigation_type.dart';
 import 'package:app_base/features/product/product_page.dart';
 import 'package:app_base/features/products/components/filter_widget.dart';
 import 'package:app_base/features/products/models/sort_option.dart';
@@ -9,17 +11,17 @@ import 'package:app_base/features/products/products_cubit.dart';
 import 'package:app_base/features/products/products_state.dart';
 import 'package:app_base/features/profile/components/custom_bottom_sheet.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_cached_network_image.dart';
 import 'package:app_base/utils/widget/custom_radio_group.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 @RoutePage()
 class ProductsPage extends StatefulWidget {
-  const ProductsPage({super.key, required this.category, this.subCategory});
-  final Category category;
+  const ProductsPage({super.key, this.category, this.subCategory});
+  final Category? category;
   final SubCategory? subCategory;
 
   @override
@@ -30,7 +32,7 @@ class _ProductsPageState
     extends BaseState<ProductsState, ProductsCubit, ProductsPage> {
   @override
   void initState() {
-    cubit.init(widget.category.id, widget.subCategory?.id);
+    cubit.init(widget.category?.id, widget.subCategory?.id);
     super.initState();
   }
 
@@ -39,12 +41,12 @@ class _ProductsPageState
     return Scaffold(
       backgroundColor: context.myTheme.colorScheme.muted,
       // appBar: _buildAppBar(context),
-      // bottomNavigationBar: CustomNavigationBar(
-      //   type: NavigationType.discover,
-      //   onTap: (type) {
-      //     context.maybePop(type);
-      //   },
-      // ),
+      bottomNavigationBar: CustomNavigationBar(
+        type: NavigationType.discover,
+        onTap: (type) {
+          context.maybePop(type);
+        },
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -100,13 +102,13 @@ class _ProductsPageState
                         ).then((value) {
                           if (value == true) {
                             cubit.fetchProducts(
-                                categoryId: widget.category.id,
+                                categoryId: widget.category?.id,
                                 sortDirection: state.sortDirection.name,
                                 subCategoryId: widget.subCategory?.id);
                           } else if (value == false) {
                             cubit.onResetFilters();
                             cubit.fetchProducts(
-                                categoryId: widget.category.id,
+                                categoryId: widget.category?.id,
                                 subCategoryId: widget.subCategory?.id);
                           }
                         });
@@ -159,7 +161,7 @@ class _ProductsPageState
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      widget.category.name,
+                      widget.category?.name ?? widget.subCategory?.name ?? '',
                       style: context.myTheme.textThemeT1.title.copyWith(
                         color: context.myTheme.colorScheme.foreground,
                         fontWeight: FontWeight.w500,
@@ -206,18 +208,12 @@ class _ProductsPageState
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(8),
                                   ),
-                                  child: CachedNetworkImage(
+                                  child: CustomCachedNetworkImage(
                                     imageUrl: product.thumbnail != null &&
                                             product.thumbnail!.isNotEmpty
                                         ? product.thumbnail!
                                         : 'https://via.placeholder.com/150',
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
                                   ),
                                 ),
                                 Padding(
@@ -279,7 +275,7 @@ class _ProductsPageState
           titleButton: AppLocale.sort,
           onTap: () {
             cubit.fetchProducts(
-                categoryId: widget.category.id,
+                categoryId: widget.category?.id,
                 sortDirection: state.sortDirection.name,
                 subCategoryId: widget.subCategory?.id);
             Navigator.of(context).pop();

@@ -1,6 +1,8 @@
+import 'package:app_base/app/theme/colors.dart';
 import 'package:app_base/utils/widget/custom_extended_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ExtendedImageGalleryViewer extends StatefulWidget {
   final List<String> images;
@@ -21,16 +23,48 @@ class ExtendedImageGalleryViewer extends StatefulWidget {
     required List<String> images,
     int initialIndex = 0,
   }) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: AppColor.backgroundDark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: AppColor.backgroundDark,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+    );
+
     showDialog(
       context: context,
       builder: (context) => Dialog.fullscreen(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         child: ExtendedImageGalleryViewer(
           images: images,
           initialIndex: initialIndex,
         ),
       ),
-    );
+    ).then((_) {
+      // Reset status bar về theme hiện tại của app
+      final brightness = Theme.of(context).brightness;
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarColor: brightness == Brightness.dark
+              ? AppColor.backgroundDark
+              : AppColor.background,
+          statusBarIconBrightness: brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark,
+          statusBarBrightness: brightness == Brightness.dark
+              ? Brightness.dark
+              : Brightness.light,
+          systemNavigationBarColor: brightness == Brightness.dark
+              ? AppColor.backgroundDark
+              : AppColor.background,
+          systemNavigationBarIconBrightness: brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark,
+        ),
+      );
+    });
   }
 }
 
@@ -50,19 +84,37 @@ class _ExtendedImageGalleryViewerState
   }
 
   void _closeDialog() {
+    // Reset status bar về theme hiện tại của app
+    final brightness = Theme.of(context).brightness;
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: brightness == Brightness.dark
+            ? AppColor.backgroundDark
+            : AppColor.background,
+        statusBarIconBrightness:
+            brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+        statusBarBrightness:
+            brightness == Brightness.dark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: brightness == Brightness.dark
+            ? AppColor.backgroundDark
+            : AppColor.background,
+        systemNavigationBarIconBrightness:
+            brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+      ),
+    );
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.transparent,
+      color: Colors.black,
       height: double.infinity,
       child: Stack(
         children: [
           Positioned.fill(
             child: GestureDetector(
-              onTap: _closeDialog,
+              // onTap: _closeDialog,
               onVerticalDragStart: (_) {
                 _dragDistance = 0;
               },
@@ -86,7 +138,9 @@ class _ExtendedImageGalleryViewerState
                     padding: const EdgeInsets.all(4.0),
                     child: GalleryExtendedImage(
                       imageUrl: widget.images[imageIndex],
-                      onTap: _closeDialog,
+                      // onTap: _closeDialog,
+                      onTap: () {},
+                      onDoubleTap: () {},
                     ),
                   );
                 },
@@ -110,56 +164,55 @@ class _ExtendedImageGalleryViewerState
                 duration: const Duration(milliseconds: 300),
                 height: kToolbarHeight,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.8),
-                      Colors.transparent,
-                    ],
-                  ),
+                  color: Colors.white.withValues(alpha: 0.3),
+                  // gradient: LinearGradient(
+                  //   begin: Alignment.topCenter,
+                  //   end: Alignment.bottomCenter,
+                  //   colors: [
+                  //     Colors.black.withValues(alpha: 0.8),
+                  //     Colors.transparent,
+                  //   ],
+                  // ),
                 ),
-                child: SafeArea(
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 48),
-                      Expanded(
-                        child: Text(
-                          '${currentIndex + 1} / ${widget.images.length}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 48),
+                    Expanded(
+                      child: Text(
+                        '${currentIndex + 1} / ${widget.images.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
                         ),
+                        textAlign: TextAlign.center,
                       ),
+                    ),
 
-                      IconButton(
-                        icon: const Icon(Icons.close,
-                            color: Colors.white, size: 28),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      // IconButton(
-                      //   icon: const Icon(Icons.share,
-                      //       color: Colors.white, size: 28),
-                      //   onPressed: () {
-                      //     // Share functionality
-                      //     print(
-                      //         'Share image: ${widget.images[currentIndex]}');
-                      //   },
-                      // ),
-                      // IconButton(
-                      //   icon: const Icon(Icons.download,
-                      //       color: Colors.white, size: 28),
-                      //   onPressed: () {
-                      //     // Download functionality
-                      //     print(
-                      //         'Download image: ${widget.images[currentIndex]}');
-                      //   },
-                      // ),
-                    ],
-                  ),
+                    IconButton(
+                      icon: const Icon(Icons.close,
+                          color: Colors.white, size: 28),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    // IconButton(
+                    //   icon: const Icon(Icons.share,
+                    //       color: Colors.white, size: 28),
+                    //   onPressed: () {
+                    //     // Share functionality
+                    //     print(
+                    //         'Share image: ${widget.images[currentIndex]}');
+                    //   },
+                    // ),
+                    // IconButton(
+                    //   icon: const Icon(Icons.download,
+                    //       color: Colors.white, size: 28),
+                    //   onPressed: () {
+                    //     // Download functionality
+                    //     print(
+                    //         'Download image: ${widget.images[currentIndex]}');
+                    //   },
+                    // ),
+                  ],
                 ),
               ),
             ),

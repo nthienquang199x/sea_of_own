@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:app_base/utils/widget/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageDialog extends StatelessWidget {
@@ -33,15 +33,11 @@ class ImageDialog extends StatelessWidget {
         child: Stack(
           children: [
             isNetwork
-                ? CachedNetworkImage(
+                ? CustomCachedNetworkImage(
                     imageUrl: imagePath,
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                    loadingSize: 60,
                   )
                 : Image.asset(
                     imagePath,

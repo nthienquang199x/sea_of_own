@@ -17,8 +17,10 @@ class ProductsCubit extends BaseCubit<ProductsState> {
   final _productService = ProductService();
   final _recentlyViewedProductService = RecentlyService();
 
-  void init(int categoryId, int? subCategoryId) {
-    fetchSubCategories(categoryId);
+  void init(int? categoryId, int? subCategoryId) {
+    if (categoryId != null) {
+      fetchSubCategories(categoryId);
+    }
     fetchProducts(categoryId: categoryId, subCategoryId: subCategoryId);
   }
 
@@ -81,18 +83,14 @@ class ProductsCubit extends BaseCubit<ProductsState> {
   }
 
   Future<void> fetchProducts(
-      {required int categoryId,
-      String? sortDirection,
-      int? subCategoryId}) async {
+      {int? categoryId, String? sortDirection, int? subCategoryId}) async {
     try {
       showLoading();
       final products = await _productService.getAllProducts(
         page: state.page,
         perPage: state.perPage,
         sortDirection: sortDirection,
-        categoryIds: [
-          categoryId,
-        ],
+        categoryIds: categoryId != null ? [categoryId] : null,
         subCategoryIds: subCategoryId != null
             ? [subCategoryId, ...state.selectedSubCategories.map((e) => e.id)]
             : state.selectedSubCategories.map((e) => e.id).toList(),

@@ -123,7 +123,7 @@ class ProductSavedListRouteArgs {
 class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
   ProductsRoute({
     Key? key,
-    required Category category,
+    Category? category,
     SubCategory? subCategory,
     List<PageRouteInfo>? children,
   }) : super(
@@ -141,7 +141,8 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<ProductsRouteArgs>();
+      final args = data.argsAs<ProductsRouteArgs>(
+          orElse: () => const ProductsRouteArgs());
       return ProductsPage(
         key: args.key,
         category: args.category,
@@ -154,13 +155,13 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
 class ProductsRouteArgs {
   const ProductsRouteArgs({
     this.key,
-    required this.category,
+    this.category,
     this.subCategory,
   });
 
   final Key? key;
 
-  final Category category;
+  final Category? category;
 
   final SubCategory? subCategory;
 

@@ -35,11 +35,11 @@ _i174.GetIt $initGetit(
   );
   gh.factory<_i844.AuthService>(() => _i844.AuthService());
   gh.factory<_i624.HomeCubit>(() => _i624.HomeCubit());
+  gh.factory<_i280.ProductsCubit>(() => _i280.ProductsCubit());
   gh.factory<_i996.SavedListCubit>(() => _i996.SavedListCubit());
+  gh.factory<_i98.ProductCubit>(() => _i98.ProductCubit());
   gh.factory<_i178.SearchCubit>(() => _i178.SearchCubit());
   gh.factory<_i336.ProfileCubit>(() => _i336.ProfileCubit());
-  gh.factory<_i98.ProductCubit>(() => _i98.ProductCubit());
-  gh.factory<_i280.ProductsCubit>(() => _i280.ProductsCubit());
   gh.singleton<_i449.LocalStorage>(() => _i449.LocalStorage());
   gh.singleton<_i189.AppCubit>(() => _i189.AppCubit());
   gh.factory<_i538.LoginCubit>(() => _i538.LoginCubit(gh<_i844.AuthService>()));

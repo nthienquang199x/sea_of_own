@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../app/theme/dimens.dart';
 import '../../utils/widget/spacer_widget.dart';
@@ -17,16 +19,10 @@ class AppLoadingIndicator extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox.square(
-          dimension: dimension ?? AppDimens.icon25,
-          child: LoadingIndicator(
-            indicatorType: Indicator.circleStrokeSpin,
-            colors: [
-              color ?? context.myTheme.colorScheme.cardColor,
-            ],
-            strokeWidth: 1,
-          ),
-        ),
+        _LottieLoader(
+          size: dimension ?? AppDimens.icon80,
+          color: color ?? context.myTheme.colorScheme.cardColor,
+        )
       ],
     );
   }
@@ -46,38 +42,42 @@ class AppLoadingWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: AppDimens.spacing60,
-                    width: AppDimens.spacing80,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(AppDimens.buttonRadius)),
-                  ),
-                ],
-              ),
-              const Column(
-                children: [
-                  SizedBox.square(
-                    dimension: AppDimens.icon30,
-                    child: LoadingIndicator(
-                      indicatorType: Indicator.ballPulseSync,
-                      colors: [
-                        Colors.grey,
-                      ],
-                      strokeWidth: 2,
-                    ),
-                  )
-                ],
-              ),
-            ],
+          const SizedBox.square(
+            dimension: AppDimens.icon80,
+            child: _LottieLoader(
+              size: AppDimens.icon80,
+              color: Colors.red,
+            ),
           ),
+          // Stack(
+          //   alignment: AlignmentDirectional.center,
+          //   children: [
+          //     Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Container(
+          //           height: AppDimens.spacing60,
+          //           width: AppDimens.spacing80,
+          //           decoration: BoxDecoration(
+          //               color: Colors.white,
+          //               borderRadius:
+          //                   BorderRadius.circular(AppDimens.buttonRadius)),
+          //         ),
+          //       ],
+          //     ),
+          //     const Column(
+          //       children: [
+          //         SizedBox.square(
+          //           dimension: AppDimens.icon60,
+          //           child: _LottieLoader(
+          //             size: AppDimens.icon60,
+          //             color: Colors.grey,
+          //           ),
+          //         )
+          //       ],
+          //     ),
+          //   ],
+          // ),
           if (message != null) ...{
             const VSpacing(
               spacing: AppDimens.spacing20,
@@ -163,6 +163,37 @@ class AppLoadingHUD extends StatelessWidget {
                   ));
             })
       ],
+    );
+  }
+}
+
+class _LottieLoader extends StatelessWidget {
+  const _LottieLoader({required this.size, required this.color});
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<ByteData>(
+      future: rootBundle.load('assets/lotties/loading.json'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
+          return Lottie.memory(
+            snapshot.data!.buffer.asUint8List(),
+            repeat: true,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+          );
+        }
+        return LoadingIndicator(
+          indicatorType: Indicator.circleStrokeSpin,
+          colors: [color],
+          strokeWidth: 1.5,
+        );
+      },
     );
   }
 }

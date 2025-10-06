@@ -20,7 +20,8 @@ class _SplashPageState extends State<SplashPage> {
         child: Center(
           child: SvgPicture.asset(
             "assets/icons/app_icon.svg",
-            width: 200,
+            width: 115,
+            height: 115,
           ),
         ),
       ),

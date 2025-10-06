@@ -1,5 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:lottie/lottie.dart';
 
 class CustomExtendedImage extends StatelessWidget {
   final String imageUrl;
@@ -22,6 +25,7 @@ class CustomExtendedImage extends StatelessWidget {
   final Widget? customLoadingWidget;
   final Widget? customErrorWidget;
   final VoidCallback? onTap;
+  final VoidCallback? onDoubleTap;
   final BorderRadius? borderRadius;
   final double? width;
   final double? height;
@@ -48,6 +52,7 @@ class CustomExtendedImage extends StatelessWidget {
     this.customLoadingWidget,
     this.customErrorWidget,
     this.onTap,
+    this.onDoubleTap,
     this.borderRadius,
     this.width,
     this.height,
@@ -75,43 +80,53 @@ class CustomExtendedImage extends StatelessWidget {
           initialAlignment: initialAlignment,
         );
       },
+      onDoubleTap: onDoubleTap != null
+          ? (ExtendedImageGestureState state) {
+              final currentScale = state.gestureDetails?.totalScale ?? 1.0;
+              double targetScale;
+
+              if (currentScale <= 1.0) {
+                targetScale = 3.0;
+              } else {
+                targetScale = 1.0;
+              }
+
+              state.handleDoubleTap(
+                scale: targetScale,
+                doubleTapPosition: state.pointerDownPosition,
+              );
+            }
+          : null,
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
             return customLoadingWidget ??
                 Center(
-                  child: CircularProgressIndicator(
-                    color: loadingColor,
-                    strokeWidth: 2,
+                  child: FutureBuilder<ByteData>(
+                    future: rootBundle.load('assets/lotties/loading.json'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.hasData) {
+                        return Lottie.memory(
+                          snapshot.data!.buffer.asUint8List(),
+                          repeat: true,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.contain,
+                        );
+                      }
+                      return const LoadingIndicator(
+                        indicatorType: Indicator.circleStrokeSpin,
+                        colors: [Colors.black],
+                        strokeWidth: 1.5,
+                      );
+                    },
                   ),
                 );
           case LoadState.completed:
             return null;
           case LoadState.failed:
-            return customErrorWidget ??
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error,
-                        color: errorColor,
-                        size: errorIconSize,
-                      ),
-                      if (errorText != null) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          errorText!,
-                          style: TextStyle(
-                            color: errorColor,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ],
-                  ),
-                );
+            return const SizedBox();
         }
       },
     );
@@ -125,6 +140,7 @@ class CustomExtendedImage extends StatelessWidget {
     if (onTap != null) {
       image = GestureDetector(
         onTap: onTap,
+        behavior: HitTestBehavior.translucent,
         child: image,
       );
     }
@@ -143,10 +159,7 @@ class ProductExtendedImage extends CustomExtendedImage {
     super.height,
   }) : super(
           fit: BoxFit.cover,
-          mode: ExtendedImageMode.gesture,
-          inPageView: false,
-          maxScale: 3.0,
-          animationMaxScale: 3.5,
+          mode: ExtendedImageMode.none,
           loadingColor: Colors.grey,
           errorColor: Colors.grey,
           errorIconSize: 40,
@@ -158,10 +171,17 @@ class GalleryExtendedImage extends CustomExtendedImage {
     super.key,
     required super.imageUrl,
     super.onTap,
+    super.onDoubleTap,
   }) : super(
           fit: BoxFit.contain,
           mode: ExtendedImageMode.gesture,
-          inPageView: true,
+          inPageView: false,
+          minScale: 0.5,
+          maxScale: 5.0,
+          animationMinScale: 0.5,
+          animationMaxScale: 5.5,
+          speed: 1.0,
+          inertialSpeed: 100.0,
           loadingColor: Colors.white,
           errorColor: Colors.red,
           errorText: 'Failed to load image',

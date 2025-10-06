@@ -9,9 +9,9 @@ import 'package:app_base/features/saved_list/saved_list_cubit.dart';
 import 'package:app_base/features/saved_list/saved_list_state.dart';
 import 'package:app_base/features/search/components/search_widget.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_cached_network_image.dart';
 import 'package:app_base/utils/widget/text_form_field_custom.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -47,7 +47,6 @@ class _SavedListPageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -137,22 +136,12 @@ class _SavedListPageState
                 topLeft: Radius.circular(8),
                 bottomLeft: Radius.circular(8),
               ),
-              child: CachedNetworkImage(
+              child: CustomCachedNetworkImage(
                 imageUrl: collection.thumbnail ?? '',
                 fit: BoxFit.cover,
                 height: 114,
                 width: 114,
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.error),
-                  ),
-                ),
+                loadingSize: 50,
               ),
             ),
             Expanded(

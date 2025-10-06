@@ -142,6 +142,7 @@ class AppColor {
   static const color4C4C4C = Color(0xFF4C4C4C);
   static const colorFFCC00 = Color(0xFFFFCC00);
   static const color00A6FF = Color(0xFF00A6FF);
+  static const colorDADADA = Color(0xFFDADADA);
 
   static const Color scaffoldDark = Color(0xff222736);
   static const Color drawerBG = Color(0xFFE9F0F9);

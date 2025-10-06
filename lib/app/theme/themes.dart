@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../utils/extension/font_extension.dart';
 import 'colors.dart';
@@ -60,7 +61,20 @@ class AppThemeData {
         appBarTheme: AppBarTheme(
             surfaceTintColor: colorScheme.appBarBackground,
             elevation: 0.0,
-            backgroundColor: colorScheme.appBarBackground),
+            backgroundColor: colorScheme.appBarBackground,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: colorScheme.background,
+              statusBarIconBrightness: brightness == Brightness.dark
+                  ? Brightness.light
+                  : Brightness.dark,
+              statusBarBrightness: brightness == Brightness.dark
+                  ? Brightness.dark
+                  : Brightness.light,
+              systemNavigationBarColor: colorScheme.background,
+              systemNavigationBarIconBrightness: brightness == Brightness.dark
+                  ? Brightness.light
+                  : Brightness.dark,
+            )),
         scaffoldBackgroundColor: colorScheme.background,
         cardTheme: CardThemeData(
             margin: EdgeInsets.zero,

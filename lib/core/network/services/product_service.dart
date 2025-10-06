@@ -101,4 +101,28 @@ class ProductService {
       throw Exception('Error unliking product: $e');
     }
   }
+
+  Future<List<Product>> getCurratedList({
+    required int page,
+    required int perPage,
+  }) async {
+    try {
+      final response = await _api.get(
+        '/v1/collections/products/featured',
+        queryParams: {
+          'page': page,
+          'perPage': perPage,
+        },
+        parser: (data) =>
+            (data as List).map((item) => Product.fromJson(item)).toList(),
+      );
+      if (response.message == "Success" && response.data != null) {
+        return response.data!;
+      } else {
+        throw Exception('Failed to fetch categories: ${response.message}');
+      }
+    } catch (e) {
+      return [];
+    }
+  }
 }

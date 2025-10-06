@@ -8,8 +8,8 @@ import 'package:app_base/features/search/components/search_widget.dart';
 import 'package:app_base/features/search/presentation/search_cubit.dart';
 import 'package:app_base/features/search/presentation/search_state.dart';
 import 'package:app_base/utils/extension/context_ext.dart';
+import 'package:app_base/utils/widget/custom_cached_network_image.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -219,19 +219,15 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(8),
                                   ),
-                                  child: CachedNetworkImage(
+                                  child: CustomCachedNetworkImage(
                                     imageUrl: state
                                         .productsRecentlyViewed[index]
                                         .thumbnail,
                                     fit: BoxFit.cover,
                                     height: 114,
                                     width: 114,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
+                                    loadingSize: 50,
+                                    errorWidget: Container(
                                       decoration: BoxDecoration(
                                         color: Colors.grey[200],
                                       ),
@@ -261,7 +257,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
       onTap: () {
         context.router
             .push(
-          ProductsRoute(category: category, subCategory: subCategory),
+          ProductsRoute(subCategory: subCategory),
         )
             .then((value) {
           if (value != null && value is NavigationType) {
@@ -327,15 +323,13 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                 topLeft: Radius.circular(4),
                 bottomLeft: Radius.circular(4),
               ),
-              child: CachedNetworkImage(
+              child: CustomCachedNetworkImage(
                 imageUrl: product.thumbnail ?? '',
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-                errorWidget: (context, url, error) => Container(
+                loadingSize: 40,
+                errorWidget: Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                   ),

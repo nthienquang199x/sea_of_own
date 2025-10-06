@@ -54,7 +54,7 @@ class _ProductSavedListPageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 53),
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
@@ -343,21 +343,37 @@ class _ProductSavedListPageState
               cubit.toggleRename();
               showModalBottomSheet(
                 context: context,
-                builder: (context) => CustomBottomSheet(
+                isScrollControlled: true,
+                builder: (context) => Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: CustomBottomSheet(
                     title: AppLocale.rename,
                     titleButton: AppLocale.save_changes,
+                    handleKeyboardInternally: false,
                     onTap: () {
                       cubit
                           .updateCollection(
                               widget.id, cubit.nameEditingController.text)
                           .then((success) {
-                        if (success && mounted) {
-                          setState(() {});
-                          Navigator.pop(context);
+                        if (context.mounted) {
+                          if (success) {
+                            cubit.showToast(AppLocale
+                                .renamed_collection_successfully
+                                .tr(context));
+                            setState(() {});
+                            Navigator.pop(context);
+                          } else {
+                            cubit.showToast(AppLocale
+                                .removed_from_collection_failed
+                                .tr(context));
+                          }
                         }
                       });
                     },
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormFieldCustom(
                           hintText: widget.title,
@@ -366,9 +382,12 @@ class _ProductSavedListPageState
                           controller: cubit.nameEditingController,
                           keyboardType: TextInputType.text,
                           borderRadius: BorderRadius.circular(8),
+                          // autofocus: true,
                         ),
                       ],
-                    )),
+                    ),
+                  ),
+                ),
               );
             },
           ),

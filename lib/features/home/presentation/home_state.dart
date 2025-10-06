@@ -8,6 +8,7 @@ class HomeState {
   final List<Space> spaces;
   final int page;
   final int perPage;
+  final List<Product> curratedList;
 
   HomeState({
     this.categories = const [],
@@ -15,6 +16,7 @@ class HomeState {
     this.spaces = const [],
     this.page = 1,
     this.perPage = 10,
+    this.curratedList = const [],
   });
   HomeState copyWith({
     List<Category>? categories,
@@ -22,6 +24,7 @@ class HomeState {
     List<Space>? spaces,
     int? page,
     int? perPage,
+    List<Product>? curratedList,
   }) {
     return HomeState(
       categories: categories ?? this.categories,
@@ -29,6 +32,7 @@ class HomeState {
       spaces: spaces ?? this.spaces,
       page: page ?? this.page,
       perPage: perPage ?? this.perPage,
+      curratedList: curratedList ?? this.curratedList,
     );
   }
 }

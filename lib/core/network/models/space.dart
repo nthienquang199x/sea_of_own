@@ -1,7 +1,7 @@
 class Space {
   final int id;
   final String name;
-  final String? thumnail;
+  final String? thumbnail;
   final int? order;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -9,7 +9,7 @@ class Space {
   Space({
     required this.id,
     required this.name,
-    this.thumnail,
+    this.thumbnail,
     this.order,
     this.createdAt,
     this.updatedAt,
@@ -19,7 +19,7 @@ class Space {
     return Space(
       id: json['id'] as int,
       name: json['name'] as String,
-      thumnail: json['thumnail'] as String?,
+      thumbnail: json['thumbnail'] as String?,
       order: json['order'] as int?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
@@ -34,7 +34,7 @@ class Space {
     return {
       'id': id,
       'name': name,
-      'thumnail': thumnail,
+      'thumbnail': thumbnail,
       'order': order,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -44,7 +44,7 @@ class Space {
   Space copyWith({
     int? id,
     String? name,
-    String? thumnail,
+    String? thumbnail,
     int? order,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -52,7 +52,7 @@ class Space {
     return Space(
       id: id ?? this.id,
       name: name ?? this.name,
-      thumnail: thumnail ?? this.thumnail,
+      thumbnail: thumbnail ?? this.thumbnail,
       order: order ?? this.order,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
