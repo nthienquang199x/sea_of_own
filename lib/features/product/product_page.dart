@@ -77,6 +77,7 @@ class _ProductPageState
           child: NotificationListener<ScrollNotification>(
             onNotification: (notification) {
               if (notification.metrics.axis == Axis.vertical) {
+                // iOS: ScrollUpdateNotification với pixels < minExtent
                 if (notification is ScrollUpdateNotification) {
                   final pixels = notification.metrics.pixels;
                   final minExtent = notification.metrics.minScrollExtent;
@@ -89,11 +90,25 @@ class _ProductPageState
                     }
                   } else {
                     _pullDistance = 0.0;
+                    // Chỉ reset _isDismissing nếu chưa trigger dismiss
+                    if (!_isDismissing) {
+                      _isDismissing = false;
+                    }
                   }
                 }
-                if (notification is ScrollEndNotification) {
+                // Android: OverscrollNotification
+                else if (notification is OverscrollNotification) {
+                  _pullDistance = notification.overscroll.abs();
+                  if (_pullDistance > _dismissThreshold && !_isDismissing) {
+                    _isDismissing = true;
+                    context.router.maybePop();
+                  }
+                }
+                // Chỉ reset khi scroll end và chưa dismiss
+                else if (notification is ScrollEndNotification) {
                   _pullDistance = 0.0;
-                  _isDismissing = false;
+                  // Không reset _isDismissing nếu đã trigger dismiss
+                  // để tránh việc dismiss bị gián đoạn
                 }
               }
 
@@ -101,7 +116,7 @@ class _ProductPageState
             },
             child: SingleChildScrollView(
               controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
                   _buildMainProductImage(),

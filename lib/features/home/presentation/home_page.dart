@@ -398,6 +398,9 @@ class _HomePageState extends BaseState<HomeState, HomeCubit, HomePage> {
                   final space = state.spaces[index];
                   return InkWell(
                     onTap: () {
+                      context.pushRoute(ProductsRoute(
+                        space: space,
+                      ));
                       // showModalBottomSheet(
                       //   isScrollControlled: true,
                       //   backgroundColor: Colors.transparent,

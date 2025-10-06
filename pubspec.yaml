@@ -78,7 +78,7 @@ dependencies:
   extended_image: ^9.1.0
   package_info_plus: ^8.0.0
   url_launcher: ^6.3.2
-  share_plus: ^12.0.0
+  share_plus: ^11.1.0
 
 dev_dependencies:
   # Base

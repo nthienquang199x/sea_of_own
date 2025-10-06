@@ -1,6 +1,7 @@
 import 'package:app_base/base/base_state.dart';
 import 'package:app_base/core/localization/app_locale.dart';
 import 'package:app_base/core/network/models/category.dart';
+import 'package:app_base/core/network/models/space.dart';
 import 'package:app_base/core/network/models/sub_category.dart';
 import 'package:app_base/features/home/components/custom_navigation_bar.dart';
 import 'package:app_base/features/home/models/navigation_type.dart';
@@ -20,9 +21,10 @@ import 'package:flutter_svg/svg.dart';
 
 @RoutePage()
 class ProductsPage extends StatefulWidget {
-  const ProductsPage({super.key, this.category, this.subCategory});
+  const ProductsPage({super.key, this.category, this.subCategory, this.space});
   final Category? category;
   final SubCategory? subCategory;
+  final Space? space;
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -32,7 +34,7 @@ class _ProductsPageState
     extends BaseState<ProductsState, ProductsCubit, ProductsPage> {
   @override
   void initState() {
-    cubit.init(widget.category?.id, widget.subCategory?.id);
+    cubit.init(widget.category?.id, widget.subCategory?.id, widget.space?.id);
     super.initState();
   }
 
@@ -104,12 +106,14 @@ class _ProductsPageState
                             cubit.fetchProducts(
                                 categoryId: widget.category?.id,
                                 sortDirection: state.sortDirection.name,
-                                subCategoryId: widget.subCategory?.id);
+                                subCategoryId: widget.subCategory?.id,
+                                spaceId: widget.space?.id);
                           } else if (value == false) {
                             cubit.onResetFilters();
                             cubit.fetchProducts(
                                 categoryId: widget.category?.id,
-                                subCategoryId: widget.subCategory?.id);
+                                subCategoryId: widget.subCategory?.id,
+                                spaceId: widget.space?.id);
                           }
                         });
                       },
@@ -161,7 +165,10 @@ class _ProductsPageState
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      widget.category?.name ?? widget.subCategory?.name ?? '',
+                      widget.category?.name ??
+                          widget.subCategory?.name ??
+                          widget.space?.name ??
+                          '',
                       style: context.myTheme.textThemeT1.title.copyWith(
                         color: context.myTheme.colorScheme.foreground,
                         fontWeight: FontWeight.w500,
@@ -277,7 +284,8 @@ class _ProductsPageState
             cubit.fetchProducts(
                 categoryId: widget.category?.id,
                 sortDirection: state.sortDirection.name,
-                subCategoryId: widget.subCategory?.id);
+                subCategoryId: widget.subCategory?.id,
+                spaceId: widget.space?.id);
             Navigator.of(context).pop();
           },
           child: Container(

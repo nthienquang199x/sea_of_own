@@ -125,6 +125,7 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
     Key? key,
     Category? category,
     SubCategory? subCategory,
+    Space? space,
     List<PageRouteInfo>? children,
   }) : super(
           ProductsRoute.name,
@@ -132,6 +133,7 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
             key: key,
             category: category,
             subCategory: subCategory,
+            space: space,
           ),
           initialChildren: children,
         );
@@ -147,6 +149,7 @@ class ProductsRoute extends PageRouteInfo<ProductsRouteArgs> {
         key: args.key,
         category: args.category,
         subCategory: args.subCategory,
+        space: args.space,
       );
     },
   );
@@ -157,6 +160,7 @@ class ProductsRouteArgs {
     this.key,
     this.category,
     this.subCategory,
+    this.space,
   });
 
   final Key? key;
@@ -165,9 +169,11 @@ class ProductsRouteArgs {
 
   final SubCategory? subCategory;
 
+  final Space? space;
+
   @override
   String toString() {
-    return 'ProductsRouteArgs{key: $key, category: $category, subCategory: $subCategory}';
+    return 'ProductsRouteArgs{key: $key, category: $category, subCategory: $subCategory, space: $space}';
   }
 }
 

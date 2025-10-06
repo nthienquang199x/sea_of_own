@@ -15,6 +15,7 @@ class ProductService {
     num? maxPrice,
     List<int>? categoryIds,
     List<int>? subCategoryIds,
+    List<int>? spaceIds,
   }) async {
     try {
       final response = await _api.get(
@@ -32,6 +33,8 @@ class ProductService {
             'categoryIds': categoryIds.join(','),
           if (subCategoryIds != null && subCategoryIds.isNotEmpty)
             'subCategoryIds': subCategoryIds.join(','),
+          if (spaceIds != null && spaceIds.isNotEmpty)
+            'spaceIds': spaceIds.join(','),
         },
         parser: (data) =>
             (data as List).map((item) => Product.fromJson(item)).toList(),
