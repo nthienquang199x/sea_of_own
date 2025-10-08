@@ -424,45 +424,55 @@ class _ProfilePageState
   }
 
   Widget buildDialogFeedbackReason() {
-    return CustomBottomSheet(
-      title: AppLocale.tell_us_why_you_decided_to_leave,
-      titleButton: AppLocale.confirm_delete,
-      textColor: context.myTheme.colorScheme.destructive,
-      onTap: () {
-        cubit.deleteAccount().then((value) {
-          if (value && mounted) {
-            showToast(AppLocale.delete_account_successfully.tr(context));
-            cubit.logout();
-          } else if (mounted) {
-            Navigator.of(context).pop();
-            showToast(AppLocale.delete_account_failed.tr(context));
-          }
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          color: context.myTheme.colorScheme.background,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            CustomRadioGroup<FeedbackReason>(
-              selected: FeedbackReason.other,
-              options: FeedbackReason.values,
-              onChanged: (value) {},
-              itemLabelBuilder: (option) => option.title.tr(context),
-            ),
-            const SizedBox(height: 4),
-            TextFormFieldCustom(
-              hintText: AppLocale.please_explain_a_little_more.tr(context),
-              borderColor: context.myTheme.colorScheme.mutedForeground,
-              fillColor: context.myTheme.colorScheme.background,
-              controller: cubit.textEditingController,
-              keyboardType: TextInputType.text,
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ],
+    FeedbackReason? tempSelectedReason = state.selectedReason;
+
+    return StatefulBuilder(
+      builder: (context, setDialogState) => CustomBottomSheet(
+        title: AppLocale.tell_us_why_you_decided_to_leave,
+        titleButton: AppLocale.confirm_delete,
+        textColor: context.myTheme.colorScheme.destructive,
+        onTap: () {
+          cubit.deleteAccount().then((value) {
+            if (value && mounted) {
+              showToast(AppLocale.delete_account_successfully.tr(context));
+              cubit.logout();
+            } else if (mounted) {
+              showToast(AppLocale.delete_account_failed.tr(context));
+            }
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.all(24.0),
+          decoration: BoxDecoration(
+            color: context.myTheme.colorScheme.background,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              CustomRadioGroup<FeedbackReason>(
+                selected: tempSelectedReason,
+                options: FeedbackReason.values,
+                onChanged: (value) {
+                  setDialogState(() {
+                    tempSelectedReason = value;
+                  });
+                  cubit.onChangeFeedbackReason(value);
+                },
+                itemLabelBuilder: (option) => option.title.tr(context),
+              ),
+              if (tempSelectedReason == FeedbackReason.other) ...[
+                const SizedBox(height: 10),
+                TextFormFieldCustom(
+                  hintText: AppLocale.please_explain_a_little_more.tr(context),
+                  borderColor: context.myTheme.colorScheme.mutedForeground,
+                  fillColor: context.myTheme.colorScheme.background,
+                  controller: cubit.textEditingController,
+                  keyboardType: TextInputType.text,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ]
+            ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:app_base/base/base_cubit.dart';
 import 'package:app_base/core/network/services/user_service.dart';
 import 'package:app_base/core/storage/local_storage.dart';
 import 'package:app_base/features/profile/models/app_theme.dart';
+import 'package:app_base/features/profile/models/feedback_reason.dart';
 import 'package:app_base/features/profile/presentation/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -136,5 +137,9 @@ class ProfileCubit extends BaseCubit<ProfileState> {
   void onSavedTheme(AppTheme theme) {
     emit(state.copyWith(selectedTheme: theme));
     onChangeTheme(theme);
+  }
+
+  void onChangeFeedbackReason(FeedbackReason? reason) {
+    emit(state.copyWith(selectedReason: reason));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:app_base/core/network/base/base_api_service.dart';
 import 'package:app_base/core/network/models/product.dart';
+import 'package:dio/dio.dart';
 
 class ProductCollectionService {
   final _api = BaseApiService();
@@ -24,10 +25,15 @@ class ProductCollectionService {
   Future<String> deleteProductFromCollection(
       int collectionId, int productId) async {
     try {
-      final response = await _api.delete(
-        '/v1/collections/$collectionId/products/$productId',
-        parser: (data) => data,
-      );
+      final response = await _api.delete('/v1/collections/products',
+          parser: (data) => data as Map<String, dynamic>,
+          options: Options(
+            contentType: Headers.jsonContentType,
+          ),
+          data: {
+            'collectionId': collectionId,
+            'productId': productId,
+          });
       return response.message;
     } catch (e) {
       throw Exception('Failed to delete product from collection');

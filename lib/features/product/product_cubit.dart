@@ -80,7 +80,7 @@ class ProductCubit extends BaseCubit<ProductState> {
     try {
       showLoading();
       final response = await _productCollectionService
-          .deleteProductFromCollection(productId, collectionId);
+          .deleteProductFromCollection(collectionId, productId);
       showToast(response);
       fetchProductById(productId);
     } catch (e) {

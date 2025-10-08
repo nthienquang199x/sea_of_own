@@ -70,9 +70,13 @@ class _ProductPageState
       children: [
         Container(
           margin: const EdgeInsets.only(top: 100),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: context.myTheme.colorScheme.background,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
           ),
           child: NotificationListener<ScrollNotification>(
             onNotification: (notification) {
@@ -407,21 +411,14 @@ class _ProductPageState
                       return InkWell(
                         onTap: () {
                           if (isSelected == true) {
-                            cubit.showToast(AppLocale
-                                .removed_from_collection_successfully
-                                .tr(context));
                             cubit.deleteProductFromCollections(
                                 state.collections[index].id, widget.productId);
                           } else {
-                            cubit.showToast(AppLocale
-                                .saved_to_collection_successfully
-                                .tr(context));
                             cubit.addProductToCollections(
                                 [state.collections[index].id],
                                 widget.productId);
                           }
                           context.router.maybePop();
-                          // cubit.chooseCollections(state.collections[index]);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -59,6 +59,7 @@ class BaseApiService {
     String path, {
     dynamic data,
     required T Function(dynamic data) parser,
+    Options? options,
     bool showErrorToast = true,
   }) async {
     return _wrap(
