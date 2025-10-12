@@ -85,6 +85,7 @@ class _SavedListPageState
                 ],
               ),
             ),
+            const SizedBox(height: 10),
             SearchWidget(
               searchController: cubit.searchController,
               searchText: state.searchText,

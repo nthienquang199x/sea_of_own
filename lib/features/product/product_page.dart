@@ -510,7 +510,7 @@ class _ProductPageState
           child: state.product?.images != null &&
                   state.product!.images!.isNotEmpty
               ? ProductExtendedImage(
-                  imageUrl: state.product?.images?.first.url ?? '',
+                  imageUrl: state.product?.thumbnail ?? '',
                   width: double.infinity,
                   onTap: () => ExtendedImageGalleryViewer.showAsDialog(context,
                       images:

@@ -54,7 +54,7 @@ class _SearchPageState extends BaseState<SearchState, SearchCubit, SearchPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 0),
+            const SizedBox(height: 10),
             SearchWidget(
               searchController: cubit.searchController,
               searchText: state.searchText,

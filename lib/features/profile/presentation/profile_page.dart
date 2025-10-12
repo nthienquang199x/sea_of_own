@@ -72,7 +72,9 @@ class _ProfilePageState
               ),
               const SizedBox(height: 12),
               Text(
-                state.user?.name ?? "",
+                state.user?.name.isEmpty ?? true
+                    ? "Untitled Connoisseur"
+                    : state.user?.name ?? "",
                 style: context.myTheme.textThemeT1.title.copyWith(
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
